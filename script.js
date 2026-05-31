@@ -933,20 +933,19 @@ function tutupPopupInstal() {
 function validasiLogin() {
     const inputBox = document.getElementById('access-code');
     const errorBox = document.getElementById('error-message'); // Mengambil tempat teks salah
-    if (!inputBox) return; // Lewati jika sedang tidak di index.html
+    if (!inputBox) return;
     
     const password = inputBox.value.trim(); 
-   
-       // Reset pesan error setiap kali tombol ditekan
+    
+    // Reset pesan error setiap kali tombol ditekan
     if (errorBox) {
         errorBox.textContent = "";
         errorBox.style.display = "none";
+    }
     
-    // SILAKAN PILIH SALAH SATU PASSWORD YANG ANDA INGINKAN DI SINI
-    // Saat ini saya set menggunakan "admin1234". Jika ingin diganti, tinggal ubah teks di bawah ini.
     if (password === "admin1234") {
         sessionStorage.setItem("statusAdmin", "aktif");
-        window.location.href = "admin.html"; // Mengarah ke file admin Anda
+        window.location.href = "admin.html";
     } else if (password === "") {
         // Tampilan jika password kosong
         if (errorBox) {
