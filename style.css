@@ -885,6 +885,8 @@ body:has(.login-page-wrapper) .top-header {
     justify-content: center !important; 
     padding: 15px 20px !important;
     box-shadow: none !important; /* Hilangkan bayangan bawaan agar garis merah terlihat bersih */
+    padding-top: 25px !important;
+    padding-bottom: 25px !important;
 }
 
 /* 3. Pusatkan area logo dan teks */
