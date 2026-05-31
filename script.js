@@ -932,9 +932,15 @@ function tutupPopupInstal() {
 
 function validasiLogin() {
     const inputBox = document.getElementById('access-code');
+    const errorBox = document.getElementById('error-message'); // Mengambil tempat teks salah
     if (!inputBox) return; // Lewati jika sedang tidak di index.html
     
     const password = inputBox.value.trim(); 
+   
+       // Reset pesan error setiap kali tombol ditekan
+    if (errorBox) {
+        errorBox.textContent = "";
+        errorBox.style.display = "none";
     
     // SILAKAN PILIH SALAH SATU PASSWORD YANG ANDA INGINKAN DI SINI
     // Saat ini saya set menggunakan "admin1234". Jika ingin diganti, tinggal ubah teks di bawah ini.
@@ -942,19 +948,21 @@ function validasiLogin() {
         sessionStorage.setItem("statusAdmin", "aktif");
         window.location.href = "admin.html"; // Mengarah ke file admin Anda
     } else if (password === "") {
-        alert("Password tidak boleh kosong!");
+        // Tampilan jika password kosong
+        if (errorBox) {
+            errorBox.textContent = "Password tidak boleh kosong!";
+            errorBox.style.display = "block";
+        }
+        inputBox.focus();
     } else {
-        alert("Password salah! Khusus internal BPH MMS 05.");
-        inputBox.value = "";
+        // Tampilan jika password salah (Menggantikan fungsi alert lama)
+        if (errorBox) {
+            errorBox.textContent = "Password salah! Khusus internal BPH MMS 05.";
+            errorBox.style.display = "block";
+        }
+        inputBox.value = ""; // Mengosongkan kembali inputan
+        inputBox.focus(); // Otomatis kursor aktif lagi di kotak input
     }
-}
-
-// Fitur tombol enter di halaman login (Cukup ditulis 1 kali)
-const inputAkses = document.getElementById('access-code');
-if (inputAkses) {
-    inputAkses.addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') validasiLogin();
-    });
 }
 
 // SAKELAR SATPAM: Menjaga file admin.html Anda dari tembakan URL langsung (Cukup ditulis 1 kali)
