@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Portal Admin - BPH MMS 05</title>
+    
+    <link rel="icon" href="images/mms.png" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="style.css"> </head>
+<body>
+
+    <header class="site-header">
+        <div class="header-logo-area">
+            <div class="logo-wrapper">
+                <img src="images/mms.png" alt="Logo MMS" class="mini-logo">
+                <div class="header-text">
+                    <span class="brand-title">BPH MMS 05</span>
+                    <span class="brand-subtitle">Sedahromo Lor 05</span>
+                </div>
+            </div>
+        </div>
+        <div class="header-secure-badge">
+            <i class="fa-solid fa-shield-halved"></i>
+        </div>
+    </header>
+
+    <div class="login-page-wrapper">
+        <div class="login-content-box">
+            <h3 class="box-title">PORTAL UTAMA ADMIN</h3>
+            <hr class="box-divider">
+            <p class="box-subtitle">Silakan masukkan kode akses khusus pengurus untuk masuk ke sistem administrasi data.</p>
+            
+            <div class="input-wrapper">
+                <i class="fa-solid fa-lock"></i>
+                <input type="password" id="access-code" class="login-input" placeholder="Masukkan Password...">
+            </div>
+            
+            <button onclick="validasiLogin()" class="btn-login">
+                <i class="fa-solid fa-right-to-bracket"></i> Masuk Sistem
+            </button>
+        </div>
+    </div>
+
+    <footer class="portal-footer">
+        <p>&copy; 2026 Admin Panel Muda Mudi Sedahromo Lor 05.</p>
+    </footer>
+
+    <script src="script.js"></script> 
+</body>
+</html>
