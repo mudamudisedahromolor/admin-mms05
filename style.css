@@ -458,17 +458,10 @@ body {
     
     .submenu { position: static; box-shadow: none; padding-left: 15px; background-color: #B71C1C; }
 
-    .navbar-mobile-only { 
-        display: flex !important; 
-        flex-direction: column; 
-        padding: 15px 20px; 
-        background-color: #B71C1C; 
-        border-top: 1px solid rgba(255,255,255,0.1); 
+    /* FIX: Menambahkan .login-page-wrapper agar elemen form login turun kebawah & tidak tumpang tindih di HP */
+    .finance-page-wrapper, .structure-page-wrapper, .gallery-page-wrapper, .hero-container, .login-page-wrapper { 
+        padding-top: 140px !important; 
     }
-    .navbar-mobile-only .header-socials { justify-content: center; width: 100%; gap: 24px; }
-    .navbar-mobile-only .header-socials a { color: #ffffff !important; font-size: 18px; }
-
-    .finance-page-wrapper, .structure-page-wrapper, .gallery-page-wrapper, .hero-container { padding-top: 75px !important; }
 
     .content-box, .content-box-structure, .content-box-gallery { padding: 20px; width: 95%; }
     .box-title { font-size: 22px !important; }
@@ -933,9 +926,10 @@ body.login-page-body .box-subtitle {
     transition: all 0.3s ease-in-out;
 }
 
-/* 📱 SETTINGAN UNTUK LAYAR HP (Mobile First) */
+/* 📱 FIX FIXED POSITION: Dipaksa mengunci absolut di bawah layar HP agar tidak terdorong layout atas */
 @media (max-width: 767px) {
     #pwa-install-popup {
+        position: fixed !important;
         bottom: 20px !important;
         top: auto !important;
         left: 50% !important; 
