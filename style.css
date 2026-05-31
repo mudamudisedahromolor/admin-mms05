@@ -873,7 +873,7 @@ body:has(.login-page-wrapper) .mini-logo {
     width: 55px !important; 
     height: auto !important;
     margin-top: 5px !important;    
-    margin-bottom: 5px !important;
+    margin-bottom: 0px !important;
 }
 
 body:has(.login-page-wrapper) .brand-title {
