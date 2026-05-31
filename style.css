@@ -894,3 +894,8 @@ body:has(.login-page-wrapper) .brand-subtitle {
     opacity: 1 !important;
     color: #666 !important; /* Warna abu-abu bawaan biar serasi */
 }
+
+/* MEMBERI JARAK ANTARA HEADER YANG MELAYANG DENGAN KOTAK LOGIN */
+body:has(.login-page-wrapper) .login-page-wrapper {
+    padding-top: 180px !important; /* Naikan angkanya (misal 200px atau 220px) jika ingin kotak semakin turun ke bawah */
+}
