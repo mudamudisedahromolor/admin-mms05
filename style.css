@@ -10,6 +10,8 @@
 body { 
     font-family: 'Poppins', sans-serif; 
     background-color: #f4f4f4; 
+    overflow-x: hidden; /* Mencegah halaman meluber keluar layar */
+    width: 100%;
 }
 
 /* ==========================================================================
@@ -185,7 +187,7 @@ body {
     display: flex; 
     align-items: center; 
     justify-content: center; 
-    padding-top: 100px;
+    padding-top: 170px;
 }
 
 .hero-overlay { 
@@ -414,7 +416,7 @@ body {
 
 /* ==========================================================================
    7. MEDIA QUERIES KHUSUS DESKTOP / LAPTOP (PC)
-   ========================================================================== */
+   ========================================================================= */
 @media screen and (min-width: 769px) {
     .submenu-item:hover > .sub-submenu-dalam { display: block; }
     .sub-submenu-dalam { position: absolute; top: 0; left: 100%; min-width: 200px; box-shadow: 2px 4px 6px rgba(0,0,0,0.15); }
@@ -835,50 +837,51 @@ body {
     width: 100%;
 }
 
-/* ❌ KELOMPOK FILTER GLOBAL: KHUSUS PORTAL LOGIN GATEWAY */
-body:has(.login-page-wrapper) .main-navbar,
-body:has(.login-page-wrapper) .header-right-stuff,
-body:has(.login-page-wrapper) .header-secure-badge {
+/* ❌ ATURAN KHUSUS GATEWAY LOGIN (DIISOLASI DENGAN EXPLICIT BODY CLASS) */
+body.login-page-body .main-navbar,
+body.login-page-body .header-right-stuff,
+body.login-page-body .header-secure-badge {
     display: none !important;
 }
 
-body:has(.login-page-wrapper) .site-header {
+body.login-page-body .site-header {
+    position: fixed !important;
     height: auto !important;
     min-height: unset !important;
     background-color: #ffffff !important;
     border-bottom: 4px solid #E53935 !important; 
 }
 
-body:has(.login-page-wrapper) .top-header {
+body.login-page-body .top-header {
     background-color: #ffffff !important;
     justify-content: center !important; 
     padding: 20px 20px !important; 
     box-shadow: none !important; 
 }
 
-body:has(.login-page-wrapper) .header-logo-area {
+body.login-page-body .header-logo-area {
     justify-content: center !important;
     width: 100%;
 }
 
-body:has(.login-page-wrapper) .logo-wrapper {
+body.login-page-body .logo-wrapper {
     flex-direction: column !important; 
     text-align: center !important;
     gap: 6px !important;
 }
 
-body:has(.login-page-wrapper) .mini-logo {
+body.login-page-body .mini-logo {
     width: 55px !important; 
     height: auto !important;
     margin-top: 5px !important;    
     margin-bottom: 0px !important;
 }
 
-body:has(.login-page-wrapper) .brand-title {
+body.login-page-body .brand-title {
     font-size: 18px !important;
 }
 
-body:has(.login-page-wrapper) .brand-subtitle {
+body.login-page-body .brand-subtitle {
     display: block !important;
     visibility: visible !important;
     opacity: 1 !important;
@@ -887,7 +890,7 @@ body:has(.login-page-wrapper) .brand-subtitle {
     margin-bottom: 5px !important; 
 }
 
-body:has(.login-page-wrapper) .box-subtitle {
+body.login-page-body .box-subtitle {
     margin-bottom: 35px !important; 
 }
 
@@ -914,7 +917,7 @@ body:has(.login-page-wrapper) .box-subtitle {
 }
 
 /* ==========================================================================
-   13. BANNER PWA ASLI MMS - RESPONSIF MULTI DEVICE
+   13. BANNER PWA ASLI MMS - VERSI RESPONSIF HP & LAPTOP (ANTI-TUMPUK)
    ========================================================================== */
 #pwa-install-popup {
     display: none; 
@@ -930,23 +933,27 @@ body:has(.login-page-wrapper) .box-subtitle {
     transition: all 0.3s ease-in-out;
 }
 
+/* 📱 SETTINGAN UNTUK LAYAR HP (Mobile First) */
 @media (max-width: 767px) {
     #pwa-install-popup {
-        top: 85px; 
-        left: 50%; 
-        transform: translateX(-50%); 
-        width: 92%; 
-        max-width: 400px; 
+        bottom: 20px !important;
+        top: auto !important;
+        left: 50% !important; 
+        transform: translateX(-50%) !important; 
+        width: 92% !important; 
+        max-width: 400px !important; 
     }
 }
 
+/* 💻 SETTINGAN UNTUK LAPTOP / DESKTOP */
 @media (min-width: 768px) {
     #pwa-install-popup {
-        top: 90px; 
-        right: 25px; 
-        left: auto; 
-        transform: none; 
-        width: 360px; 
+        top: 90px !important; 
+        bottom: auto !important;
+        right: 25px !important; 
+        left: auto !important; 
+        transform: none !important; 
+        width: 360px !important; 
     }
 }
 
