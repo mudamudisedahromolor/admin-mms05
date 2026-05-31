@@ -631,42 +631,60 @@ window.bukaFotoFull = function(url) { const modal = document.getElementById('mod
 window.tutupFoto = function() { const modal = document.getElementById('modal-foto-full'); if(modal) modal.style.display = 'none'; };
 
 /* ==========================================================================
-   8. SISTEM PROMPT SEBELUM INSTALASI PWA (MMS 05)
+   8. SISTEM PROMPT SEBELUM INSTALASI PWA (MMS 05 - PAKSA MUNCUL TERUS)
    ========================================================================== */
 function initSistemPWA() {
+    const popup = document.getElementById('pwa-install-popup');
+    const tombolInstal = document.getElementById('btn-instal-pwa');
+
+    // PAKSA 1: Langsung munculkan pop-up secara visual saat web dibuka tanpa syarat!
+    if (popup) {
+        popup.style.display = 'block';
+    }
+
+    // 1. Tangkap pemicu (prompt) instalasi resmi dari browser
     window.addEventListener('beforeinstallprompt', (e) => {
+        // Mencegah banner bawaan Chrome/browser HP yang gampang hilang
         e.preventDefault(); 
         pemicuInstal = e;
-        const popup = document.getElementById('pwa-install-popup');
+
+        // PAKSA 2: Jaminan lapis kedua agar pop-up dipastikan aktif di layar
         if (popup) popup.style.display = 'block';
     });
 
-    const tombolInstal = document.getElementById('btn-instal-pwa');
+    // 2. Logika ketika warga mengklik tombol "Instal Sekarang"
     if (tombolInstal) {
         tombolInstal.addEventListener('click', async () => {
             if (!pemicuInstal) {
-                alert("Silakan klik tombol Titik Tiga di pojok kanan atas browser kamu, lalu pilih 'Tambahkan ke Layar Utama' / 'Instal Aplikasi' ya, Bro!");
+                // Jalur pintas cadangan jika sistem browser HP warga lambat merespon perintah instal otomatis
+                alert("Silakan klik tombol Titik Tiga (menu browser) di pojok kanan atas HP kamu, lalu pilih 'Tambahkan ke Layar Utama' atau 'Instal Aplikasi' ya, Bro!");
                 return;
             }
+            
+            // Munculkan dialog instalasi resmi sistem operasi HP
             pemicuInstal.prompt();
+            
+            // Cek respon pilihan dari warga
             const { outcome } = await pemicuInstal.userChoice;
             console.log(`Pilihan user PWA: ${outcome}`);
+            
             pemicuInstal = null; 
             tutupPopupInstal();
         });
     }
 
+    // 3. Jika aplikasi SUDAH BENAR-BENAR TERINSTAL di HP, baru matikan pop-up secara permanen
     window.addEventListener('appinstalled', () => { 
-        console.log('Aplikasi MMS 05 Sukses Terinstal!');
+        console.log('Aplikasi MMS 05 Sukses Terinstal di HP Warga!');
         tutupPopupInstal(); 
     });
 }
 
 function tutupPopupInstal() { 
     const popup = document.getElementById('pwa-install-popup'); 
+    // Hanya menyembunyikan elemen saat tombol diklik (tanpa menyimpan cookie penolak)
     if (popup) popup.style.display = 'none'; 
 }
-
 /* ==========================================================================
    9. GATEWAY LOGIN & VALIDASI ADMIN SECURITY
    ========================================================================== */
