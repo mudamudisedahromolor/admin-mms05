@@ -926,4 +926,76 @@ function tutupPopupInstal() {
     }
 }
 
+// ========================================================
+// TAMBAHAN LOGIKA UNTUK GATEWAY LOGIN & SATPAM ADMIN
+// ========================================================
+function validasiLogin() {
+    const inputBox = document.getElementById('access-code');
+    if (!inputBox) return; // Lewati jika sedang tidak di index.html
+    
+    const password = inputBox.value.trim(); 
+    
+    // Silakan ganti "mms05merah" dengan password yang Anda inginkan
+    if (password === "mms05merah") {
+        sessionStorage.setItem("statusAdmin", "aktif");
+        window.location.href = "admin.html"; // Mengarah ke file admin Anda
+    } else if (password === "") {
+        alert("Password tidak boleh kosong!");
+    } else {
+        alert("Password salah! Khusus internal BPH MMS 05.");
+        inputBox.value = "";
+    }
+}
 
+// Fitur tombol enter di halaman login
+const inputAkses = document.getElementById('access-code');
+if (inputAkses) {
+    inputAkses.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') validasiLogin();
+    });
+}
+
+// SAKELAR SATPAM: Menjaga file admin.html Anda dari tembakan URL langsung
+if (window.location.pathname.includes("admin.html")) {
+    if (sessionStorage.getItem("statusAdmin") !== "aktif") {
+        alert("Akses ditolak! Anda harus login terlebih dahulu.");
+        window.location.href = "index.html";
+    }
+}
+
+// ========================================================
+// TAMBAHAN LOGIKA UNTUK GATEWAY LOGIN & SATPAM ADMIN
+// ========================================================
+function validasiLogin() {
+    const inputBox = document.getElementById('access-code');
+    if (!inputBox) return; // Lewati jika sedang tidak di index.html
+    
+    const password = inputBox.value.trim(); 
+    
+    // Silakan ganti "mms05merah" dengan password yang Anda inginkan
+    if (password === "mms05merah") {
+        sessionStorage.setItem("statusAdmin", "aktif");
+        window.location.href = "admin.html"; // Mengarah ke file admin Anda
+    } else if (password === "") {
+        alert("Password tidak boleh kosong!");
+    } else {
+        alert("Password salah! Khusus internal BPH MMS 05.");
+        inputBox.value = "";
+    }
+}
+
+// Fitur tombol enter di halaman login
+const inputAkses = document.getElementById('access-code');
+if (inputAkses) {
+    inputAkses.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') validasiLogin();
+    });
+}
+
+// SAKELAR SATPAM: Menjaga file admin.html Anda dari tembakan URL langsung
+if (window.location.pathname.includes("admin.html")) {
+    if (sessionStorage.getItem("statusAdmin") !== "aktif") {
+        alert("Akses ditolak! Anda harus login terlebih dahulu.");
+        window.location.href = "index.html";
+    }
+}
