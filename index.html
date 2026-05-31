@@ -51,19 +51,20 @@
         <p>&copy; 2026 Admin Panel Muda Mudi Sedahromo Lor 05.</p>
     </footer>
 
-    <div id="pwa-install-popup" style="display: none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; background-color: #ffffff; box-shadow: 0 4px 20px rgba(0,0,0,0.25); border-radius: 12px; padding: 16px; z-index: 999999; font-family: sans-serif; border-left: 5px solid #E53935;">
-    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-        <img src="images/mms.png" alt="Logo MMS" style="width: 45px; height: 45px; border-radius: 8px;">
-        <div>
-            <h4 style="margin: 0; color: #333; font-size: 15px;">Aplikasi BPH MMS 05</h4>
-            <p style="margin: 2px 0 0 0; color: #666; font-size: 12px;">Tambahkan ke layar utama HP agar akses lebih cepat</p>
+    <div id="pwa-install-popup">
+    <div class="pwa-mms-container">
+        <img src="images/mms.png" alt="Logo MMS" class="pwa-mms-logo">
+        <div class="pwa-mms-text-block">
+            <h4 class="pwa-mms-title">Aplikasi BPH MMS 05</h4>
+            <p class="pwa-mms-subtitle">Tambahkan ke layar utama HP agar akses lebih cepat</p>
         </div>
     </div>
-    <div style="display: flex; justify-content: flex-end; gap: 10px;">
-        <button onclick="tutupPopupInstal()" style="background: none; border: none; color: #888; font-weight: bold; cursor: pointer; padding: 8px 12px; font-size: 13px;">Nanti Saja</button>
-        <button id="btn-instal-pwa" style="background-color: #E53935; border: none; color: white; font-weight: bold; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; box-shadow: 0 2px 5px rgba(229,57,53,0.3);">Instal Sekarang</button>
+    <div class="pwa-mms-buttons">
+        <button onclick="tutupPopupInstal()" class="pwa-mms-btn-later">Nanti Saja</button>
+        <button id="btn-instal-pwa" class="pwa-mms-btn-install">Instal Sekarang</button>
     </div>
 </div>
+
 
     <script src="script.js"></script> 
 </body>
