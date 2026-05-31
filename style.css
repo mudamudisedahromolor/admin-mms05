@@ -900,4 +900,27 @@ body:has(.login-page-wrapper) .box-subtitle {
     margin-bottom: 35px !important; /* Standarnya 20px. Naikkan ke 40px jika ingin jaraknya semakin renggang ke bawah */
 }
 
+/* DESIGN TEKS ERROR SALAH PASSWORD */
+.error-text {
+    display: none; /* Tersembunyi secara default, baru muncul kalau salah */
+    color: #D32F2F; /* Warna merah peringatan tegas */
+    background-color: #FFEBEE; /* Kotak latar merah muda tipis agar teks kontras */
+    font-size: 13px;
+    font-weight: 600;
+    padding: 10px;
+    border-radius: 6px;
+    margin-top: -10px; /* Merapatkan posisi dengan kotak input di atasnya */
+    margin-bottom: 20px; /* Memberi jarak aman ke tombol login di bawahnya */
+    text-align: center;
+    border: 1px solid #FFCDD2;
+    animation: shakeEffect 0.3s ease-in-out; /* Efek getar halus saat salah */
+}
+
+/* Animasi getar estetik saat salah password */
+@keyframes shakeEffect {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
 
