@@ -3,36 +3,31 @@
    BERKAS UTAMA    : SCRIPT.JS (LOGIKA INTERAKTIF & DATABASE REAL-TIME)
    ========================================================================== */
 
-// Konstanta Global yang dipakai bersama oleh seluruh modul halaman
-const namaBulanIndo = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "December"];
+const namaBulanIndo = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+let pemicuInstal = null; 
 
 /* ==========================================================================
    1. SISTEM INISIALISASI UTAMA
-   --------------------------------------------------------------------------
-   Instruksi: Menjalankan berbagai fungsi ketika halaman web selesai dimuat.
    ========================================================================== */
 document.addEventListener("DOMContentLoaded", function() {
     initNavigasiMobile();
     initCarouselOrganisasi();
-    initHeroSlider(); // Inisialisasi slider untuk halaman beranda (index.html)
+    initHeroSlider(); 
+    initSistemPWA();
     
-    // Memuat database eksternal berdasarkan halaman yang sedang dibuka
     if (document.getElementById('data-tabel-keuangan')) loadKeuanganDariDrive();
     if (document.getElementById('data-tabel-rapat')) loadRapatDariDrive();
     if (document.getElementById('data-tabel-dokumentasi')) loadDokumentasiDariDrive();
-    if (document.getElementById('data-tabel-anggota')) loadAnggotaDariDrive(); // Deteksi otomatis Halaman Anggota
+    if (document.getElementById('data-tabel-anggota')) loadAnggotaDariDrive(); 
 });
 
 /* ==========================================================================
    2. SISTEM NAVIGASI & MENU DROPDOWN MOBILE (HP)
-   --------------------------------------------------------------------------
-   Instruksi: Mengatur fungsi buka-tutup menu utama dan sub-menu untuk HP.
    ========================================================================== */
 function initNavigasiMobile() {
     const menuBtn = document.getElementById('mobile-menu-btn');
     const navBar = document.querySelector('.main-navbar');
     
-    // A. Tombol Hamburger (Buka/Tutup Navigasi Utama) - Diisolasi agar selalu aman
     if (menuBtn && navBar) {
         menuBtn.addEventListener('click', function(e) {
             e.preventDefault();
@@ -40,7 +35,6 @@ function initNavigasiMobile() {
         });
     }
 
-    // B. Trigger Dropdown Kegiatan (Diberi pengaman 'if' ketat per baris agar tidak freeze)
     const btnBulanan = document.getElementById('btn-bulanan');
     const menuRapat = document.getElementById('menu-rapat');
     const btnTahunan = document.getElementById('btn-tahunan');
@@ -66,8 +60,6 @@ function initNavigasiMobile() {
 /* ==========================================================================
    3. SISTEM CAROUSEL & SLIDER GAMBAR
    ========================================================================== */
-
-// --- A. Carousel Struktur Organisasi (Swiper.js) ---
 function initCarouselOrganisasi() {
     if (document.querySelector('.mySwiper') && typeof Swiper !== 'undefined') {
         new Swiper(".mySwiper", {
@@ -75,17 +67,16 @@ function initCarouselOrganisasi() {
             spaceBetween: 15,
             centeredSlides: true, 
             loop: true,
-            initialSlide: 2, // Fokus awal ke Ketua
+            initialSlide: 2, 
             observer: true,
             observeParents: true,
             breakpoints: {
-                768: { slidesPerView: 3, spaceBetween: 30 } // Tampilan 3 kolom di Desktop
+                768: { slidesPerView: 3, spaceBetween: 30 }
             }
         });
     }
 }
 
-// --- B. Slider Otomatis Halaman Beranda (index.html) ---
 const kegiatanData = [
     {
         gambar: "images/foto-tirakatan.jpg", 
@@ -95,7 +86,7 @@ const kegiatanData = [
     {
         gambar: "images/foto-lomba.jpg",
         judul: "Lomba Agustusan Tahun 2025",
-        deskripsi: "Salah satu lomba anak yaitu pindah air dengan sendok untuk memperingati hari ulang tahun kemerdekaan Indonesia.yang ke-80 Tahun"
+        deskripsi: "Salah satu lomba anak yaitu pindah air dengan sendok untuk memperingati hari ulang tahun kemerdekaan Indonesia yang ke-80 Tahun"
     },
     {
         gambar: "images/momen-kebersamaan.jpg",
@@ -156,7 +147,6 @@ window.currentSlide = function(n) {
     clearInterval(slideTimer);
     autoSlide();
 }
-
 
 /* ==========================================================================
    4. SISTEM TRANSPARANSI KAS KEUANGAN (GOOGLE SHEETS TSV)
@@ -229,28 +219,18 @@ async function loadKeuanganDariDrive() {
             daftarBulan.add(bln);
 
             dataKeuanganGlobal.push({ 
-                tanggal: tglRaw, 
-                bulan: bln, 
-                tahun: thn, 
-                keterangan: ketTransaksi, 
-                tipe: statusTipe, 
-                jumlah: nominalFix.toString(), 
-                linkNota: linkNotaRaw
+                tanggal: tglRaw, bulan: bln, tahun: thn, keterangan: ketTransaksi, tipe: statusTipe, jumlah: nominalFix.toString(), linkNota: linkNotaRaw
             });
         }
 
-        dataKeuanganGlobal.sort((a, b) => {
-            return parseTanggalKeObjek(b.tanggal) - parseTanggalKeObjek(a.tanggal);
-        });
-
+        dataKeuanganGlobal.sort((a, b) => parseTanggalKeObjek(b.tanggal) - parseTanggalKeObjek(a.tanggal));
         isiDropdown('filter-tahun', Array.from(daftarTahun).sort().reverse());
         isiDropdown('filter-bulan', Array.from(daftarBulan).sort((a,b) => namaBulanIndo.indexOf(a) - namaBulanIndo.indexOf(b)));
-        
         terapkanFilter();
     } catch (e) {
         console.error("Gagal memuat data keuangan", e);
         const tBody = document.getElementById('data-tabel-keuangan');
-        if (tBody) tBody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:red;">Gagal memuat data dari database. Pastikan koneksi internet stabil.</td></tr>`;
+        if (tBody) tBody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:red;">Gagal memuat data dari database.</td></tr>`;
     }
 }
 
@@ -274,10 +254,6 @@ window.terapkanFilter = function() {
                (item.keterangan.toLowerCase().includes(cari) || item.tanggal.toLowerCase().includes(cari));
     });
 
-    dataTersaringGlobal.sort((a, b) => {
-        return parseTanggalKeObjek(b.tanggal) - parseTanggalKeObjek(a.tanggal);
-    });
-
     let m = 0, k = 0;
     let dataUntukKartu = thn === "Semua" ? dataKeuanganGlobal : dataKeuanganGlobal.filter(item => item.tahun === thn);
 
@@ -291,7 +267,6 @@ window.terapkanFilter = function() {
     
     const saldoCardTitle = document.querySelector('.card-box.saldo h4');
     if (saldoCardTitle) saldoCardTitle.innerHTML = `<i class="fa-solid fa-wallet"></i> Saldo Kas ${thn === "Semua" ? "Keseluruhan" : "(" + thn + ")"}`;
-    
     document.getElementById('saldo-akhir').innerText = formatRupiah(m - k);
 
     halamanSaatIni = 1; 
@@ -328,7 +303,6 @@ function renderTabel() {
     if (totalHal > 1) {
         let tombolNav = "";
         const styleBtn = "padding:8px 16px; background:#E53935; color:white; border:none; border-radius:4px; cursor:pointer; font-weight:bold; font-size:12px;";
-        
         if (halamanSaatIni === 1) {
             tombolNav = `<div style="text-align:right;"><button onclick="nav(1)" style="${styleBtn}">Halaman Selanjutnya <i class="fa-solid fa-chevron-right"></i></button></div>`;
         } else if (halamanSaatIni === totalHal) {
@@ -341,19 +315,13 @@ function renderTabel() {
     tbody.innerHTML = html;
 }
 
-window.nav = (dir) => { 
-    halamanSaatIni += dir; 
-    renderTabel(); 
-};
+window.nav = (dir) => { halamanSaatIni += dir; renderTabel(); };
 
 /* ==========================================================================
    5. SISTEM NOTULEN & HASIL MUSYAWARAH RAPAT BULANAN
    ========================================================================== */
 const linkTsvRapat = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRq9to0l-2kWwtGcTvwY70z_Ga8NAVmI-C_k4LYoDgTxGhqPY954gdkuRGmqRYe3wP-zSd6M9cUz-qC/pub?gid=1613608992&single=true&output=tsv";
-let dataRapatGlobal = [];
-let dataRapatTersaring = [];
-let halRapatSaatIni = 1;
-const barisRapatPerHal = 5; 
+let dataRapatGlobal = []; let dataRapatTersaring = []; let halRapatSaatIni = 1; const barisRapatPerHal = 5; 
 
 async function loadRapatDariDrive() {
     try {
@@ -363,80 +331,45 @@ async function loadRapatDariDrive() {
         dataRapatGlobal = [];
         let daftarTahunRapat = new Set();
         let daftarBulanRapat = new Set();
-
-        let baris = [];
-        let barisSaatIni = [];
-        let diDalamKutip = false;
-        let penampungTeks = "";
+        let baris = [], barisSaatIni = [], diDalamKutip = false, penampungTeks = "";
 
         for (let i = 0; i < teksData.length; i++) {
-            let char = teksData[i];
-            let nextChar = teksData[i + 1];
-
+            let char = teksData[i], nextChar = teksData[i + 1];
             if (char === '"') {
                 diDalamKutip = !diDalamKutip; 
             } else if (char === '\t' && !diDalamKutip) {
-                barisSaatIni.push(penampungTeks.trim());
-                penampungTeks = "";
+                barisSaatIni.push(penampungTeks.trim()); penampungTeks = "";
             } else if ((char === '\n' || char === '\r') && !diDalamKutip) {
                 if (char === '\r' && nextChar === '\n') i++; 
                 barisSaatIni.push(penampungTeks.trim());
                 if (barisSaatIni.length > 0) baris.push(barisSaatIni);
-                barisSaatIni = [];
-                penampungTeks = "";
-            } else {
-                penampungTeks += char;
-            }
+                barisSaatIni = []; penampungTeks = "";
+            } else { penampungTeks += char; }
         }
-        if (penampungTeks) {
-            barisSaatIni.push(penampungTeks.trim());
-            baris.push(barisSaatIni);
-        }
+        if (penampungTeks) { barisSaatIni.push(penampungTeks.trim()); baris.push(barisSaatIni); }
 
         for (let i = 1; i < baris.length; i++) {
-            let kolom = baris[i];
-            if (kolom.length < 5) continue;
-
-            let tglRaw = kolom[1] || ""; 
-            let agendaRaw = kolom[2] || "-";
-            
+            let kolom = baris[i]; if (kolom.length < 5) continue;
+            let tglRaw = kolom[1] || ""; let agendaRaw = kolom[2] || "-";
             let hasilRaw = kolom[3] || "-";
-            let hasilFormatBaris = hasilRaw
-                .replace(/\r\n/g, '<br>')
-                .replace(/\n/g, '<br>')
-                .replace(/\r/g, '<br>');
-
+            let hasilFormatBaris = hasilRaw.replace(/\r\n/g, '<br>').replace(/\n/g, '<br>').replace(/\r/g, '<br>');
             let lokasiRaw = kolom[4] || "-";
 
             let tglSplit = tglRaw.includes("/") ? tglRaw.split("/") : tglRaw.split("-");
             let thn = tglSplit[2] || tglSplit[0] || "2026";
             if(thn.length > 4) thn = thn.substring(0,4); 
-            
-            let indexBulan = parseInt(tglSplit[1], 10) - 1;
-            let bln = namaBulanIndo[indexBulan] || "Semua";
+            let bln = namaBulanIndo[parseInt(tglSplit[1], 10) - 1] || "Semua";
 
-            if(thn && thn !== "") daftarTahunRapat.add(thn);
+            if(thn) daftarTahunRapat.add(thn);
             if(bln && bln !== "Semua") daftarBulanRapat.add(bln);
 
-            dataRapatGlobal.push({ 
-                tanggal: tglRaw, 
-                bulan: bln, 
-                tahun: thn, 
-                agenda: agendaRaw, 
-                hasil: hasilFormatBaris, 
-                lokasi: lokasiRaw 
-            });
+            dataRapatGlobal.push({ tanggal: tglRaw, bulan: bln, tahun: thn, agenda: agendaRaw, hasil: hasilFormatBaris, lokasi: lokasiRaw });
         }
 
         isiDropdown('filter-rapat-tahun', Array.from(daftarTahunRapat).sort().reverse());
         isiDropdown('filter-rapat-bulan', Array.from(daftarBulanRapat).sort((a,b) => namaBulanIndo.indexOf(a) - namaBulanIndo.indexOf(b)));
-
         terapkanFilterRapat();
-    } catch (e) {
-        console.error("Gagal memuat arsip rapat", e);
-        const tBodyRapat = document.getElementById('data-tabel-rapat');
-        if (tBodyRapat) tBodyRapat.innerHTML = `<tr><td colspan="4" style="text-align:center; color:red;">Gagal memuat database rapat.</td></tr>`;
-    }
+    } catch (e) { console.error("Gagal memuat arsip rapat", e); }
 }
 
 window.terapkanFilterRapat = function() {
@@ -445,24 +378,17 @@ window.terapkanFilterRapat = function() {
     const cari = document.getElementById('input-cari-rapat').value.toLowerCase();
 
     dataRapatTersaring = dataRapatGlobal.filter(item => {
-        return (thn === "Semua" || item.tahun === thn) && 
-               (bln === "Semua" || item.bulan === bln) && 
+        return (thn === "Semua" || item.tahun === thn) && (bln === "Semua" || item.bulan === bln) && 
                (item.agenda.toLowerCase().includes(cari) || item.hasil.toLowerCase().includes(cari) || item.lokasi.toLowerCase().includes(cari));
     });
-
-    halRapatSaatIni = 1; 
-    renderTabelRapat();
+    halRapatSaatIni = 1; renderTabelRapat();
 }
 
 function renderTabelRapat() {
-    const tbody = document.getElementById('data-tabel-rapat');
-    if (!tbody) return;
-
+    const tbody = document.getElementById('data-tabel-rapat'); if (!tbody) return;
     if (dataRapatTersaring.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:20px; color:#666;">Tidak ada arsip hasil rapat yang cocok.</td></tr>`;
-        return;
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:20px; color:#666;">Tidak ada arsip hasil rapat yang cocok.</td></tr>`; return;
     }
-
     const start = (halRapatSaatIni - 1) * barisRapatPerHal;
     const pageData = dataRapatTersaring.slice(start, start + barisRapatPerHal);
     
@@ -470,20 +396,14 @@ function renderTabelRapat() {
         <tr>
             <td style="font-weight: 500; color: #333; vertical-align: top;"><i class="fa-regular fa-calendar-days" style="color:#E53935; margin-right:5px;"></i> ${i.tanggal}</td>
             <td style="font-weight: bold; color: #E53935; vertical-align: top;">${i.agenda}</td>
-            <td style="vertical-align: top; padding-right:20px;">
-                <div style="line-height: 1.6; text-align: left; color: #333; display: block; white-space: normal;">
-                    ${i.hasil}
-                </div>
-            </td>
+            <td style="vertical-align: top; padding-right:20px;"><div style="line-height: 1.6; text-align: left; color: #333;">${i.hasil}</div></td>
             <td style="vertical-align: top;"><i class="fa-solid fa-location-dot" style="color: #666; margin-right:4px;"></i> ${i.lokasi}</td>
         </tr>
     `).join('');
 
     const totalHal = Math.ceil(dataRapatTersaring.length / barisRapatPerHal);
     if (totalHal > 1) {
-        let tombolNav = "";
-        const styleBtn = "padding:8px 16px; background:#E53935; color:white; border:none; border-radius:4px; cursor:pointer; font-weight:bold;";
-        
+        let tombolNav = ""; const styleBtn = "padding:8px 16px; background:#E53935; color:white; border:none; border-radius:4px; cursor:pointer; font-weight:bold;";
         if (halRapatSaatIni === 1) {
             tombolNav = `<div style="text-align:right;"><button onclick="navRapat(1)" style="${styleBtn}">Halaman Selanjutnya <i class="fa-solid fa-chevron-right"></i></button></div>`;
         } else if (halRapatSaatIni === totalHal) {
@@ -495,78 +415,46 @@ function renderTabelRapat() {
     }
     tbody.innerHTML = html;
 }
-
-window.navRapat = (dir) => { 
-    halRapatSaatIni += dir; 
-    renderTabelRapat(); 
-    setTimeout(() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }, 100);
-};
+window.navRapat = (dir) => { halRapatSaatIni += dir; renderTabelRapat(); setTimeout(() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }, 100); };
 
 /* ==========================================================================
    6. SISTEM DOKUMENTASI & GALERI KEGIATAN
    ========================================================================== */
 const linkTsvDokumentasi = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSGNBxjdguHX3DyMAm4824Cw9Nv6t83MDuqojSZUcwftKAKyuC2jRLtPGId7FdK7w1asPeEVVtdSqqN/pub?gid=600804245&single=true&output=tsv";
-let dataDokumentasiGlobal = [];
-let dataDokumentasiTersaring = [];
-let halDokSaatIni = 1;
-const barisDokPerHal = 5; 
+let dataDokumentasiGlobal = []; let dataDokumentasiTersaring = []; let halDokSaatIni = 1; const barisDokPerHal = 5; 
 
 async function loadDokumentasiDariDrive() {
     try {
         const response = await fetch(`${linkTsvDokumentasi}&cache=${new Date().getTime()}`);
-        const teksData = await response.text();
-        const baris = teksData.split("\n");
-        
-        dataDokumentasiGlobal = [];
-        let daftarTahunDok = new Set();
-        let daftarBulanDok = new Set();
+        const teksData = await response.text(); const baris = teksData.split("\n");
+        dataDokumentasiGlobal = []; let daftarTahunDok = new Set(); let daftarBulanDok = new Set();
 
         for (let i = 1; i < baris.length; i++) {
-            const barisBersih = baris[i].trim();
-            if (!barisBersih) continue;
-            
-            const kolom = barisBersih.split("\t");
-            if (kolom.length < 5) continue; 
+            const barisBersih = baris[i].trim(); if (!barisBersih) continue;
+            const kolom = barisBersih.split("\t"); if (kolom.length < 5) continue; 
 
-            let tglRaw = kolom[1] ? kolom[1].trim() : ""; 
-            let agendaRaw = kolom[2] ? kolom[2].trim() : "-";
-            let kegiatanRaw = kolom[3] ? kolom[3].trim() : "-";
-            let subjekRaw = kolom[4] ? kolom[4].trim() : "-";
-            let linkFotoAsli = kolom[5] ? kolom[5].trim() : ""; 
-            
-            if (!tglRaw) continue;
+            let tglRaw = kolom[1] ? kolom[1].trim() : ""; let agendaRaw = kolom[2] ? kolom[2].trim() : "-";
+            let kegiatanRaw = kolom[3] ? kolom[3].trim() : "-"; let subjekRaw = kolom[4] ? kolom[4].trim() : "-";
+            let linkFotoAsli = kolom[5] ? kolom[5].trim() : ""; if (!tglRaw) continue;
 
             let tglSplit = tglRaw.includes("/") ? tglRaw.split("/") : tglRaw.split("-");
-            let thn = tglSplit[2] ? tglSplit[2].trim() : "2026";
-            if(thn.length > 4) thn = thn.substring(0,4);
-            
-            let indexBulan = parseInt(tglSplit[1], 10) - 1;
-            let bln = namaBulanIndo[indexBulan] || "Semua";
+            let thn = tglSplit[2] ? tglSplit[2].trim() : "2026"; if(thn.length > 4) thn = thn.substring(0,4);
+            let bln = namaBulanIndo[parseInt(tglSplit[1], 10) - 1] || "Semua";
 
-            if(thn && thn.trim() !== "") daftarTahunDok.add(thn);
-            if(bln && bln !== "Semua") daftarBulanDok.add(bln);
-
-            dataDokumentasiGlobal.push({ 
-                tanggal: tglRaw, bulan: bln, tahun: thn, agenda: agendaRaw, kegiatan: kegiatanRaw, subjek: subjekRaw, linkAsli: linkFotoAsli 
-            });
+            if(thn) daftarTahunDok.add(thn); if(bln && bln !== "Semua") daftarBulanDok.add(bln);
+            dataDokumentasiGlobal.push({ tanggal: tglRaw, bulan: bln, tahun: thn, agenda: agendaRaw, kegiatan: kegiatanRaw, subjek: subjekRaw, linkAsli: linkFotoAsli });
         }
 
         dataDokumentasiGlobal.sort((itemA, itemB) => {
             let splitA = itemA.tanggal.includes("/") ? itemA.tanggal.split("/") : itemA.tanggal.split("-");
             let splitB = itemB.tanggal.includes("/") ? itemB.tanggal.split("/") : itemB.tanggal.split("-");
-            let dateA = new Date(splitA[2], splitA[1] - 1, splitA[0]);
-            let dateB = new Date(splitB[2], splitB[1] - 1, splitB[0]);
-            return dateB - dateA;
+            return new Date(splitB[2], splitB[1] - 1, splitB[0]) - new Date(splitA[2], splitA[1] - 1, splitA[0]);
         });
 
         isiDropdown('filter-dok-tahun', Array.from(daftarTahunDok).sort().reverse());
         isiDropdown('filter-dok-bulan', Array.from(daftarBulanDok).sort((a,b) => namaBulanIndo.indexOf(a) - namaBulanIndo.indexOf(b)));
-
         terapkanFilterDokumentasi();
-    } catch (e) {
-        console.error("Gagal memuat data dokumentasi", e);
-        document.getElementById('data-tabel-dokumentasi').innerHTML = `<tr><td colspan="5" style="text-align:center; color:red; padding:20px;">Gagal terhubung ke database dokumentasi.</td></tr>`;
-    }
+    } catch (e) { console.error("Gagal memuat data dokumentasi", e); }
 }
 
 window.terapkanFilterDokumentasi = function() {
@@ -575,89 +463,61 @@ window.terapkanFilterDokumentasi = function() {
     const cari = document.getElementById('input-cari-dok').value.toLowerCase();
 
     dataDokumentasiTersaring = dataDokumentasiGlobal.filter(item => {
-        return (thn === "Semua" || item.tahun === thn) && 
-               (bln === "Semua" || item.bulan === bln) && 
+        return (thn === "Semua" || item.tahun === thn) && (bln === "Semua" || item.bulan === bln) && 
                (item.agenda.toLowerCase().includes(cari) || item.kegiatan.toLowerCase().includes(cari) || item.subjek.toLowerCase().includes(cari));
     });
-
-    halDokSaatIni = 1; 
-    renderTabelDokumentasi();
+    halDokSaatIni = 1; renderTabelDokumentasi();
 }
 
 function renderTabelDokumentasi() {
-    const tbody = document.getElementById('data-tabel-dokumentasi');
-    if (!tbody) return;
-
+    const tbody = document.getElementById('data-tabel-dokumentasi'); if (!tbody) return;
     if (dataDokumentasiTersaring.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:30px; color:#666;">Tidak ditemukan rekaman kegiatan yang cocok.</td></tr>`;
-        return;
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:30px; color:#666;">Tidak ditemukan rekaman kegiatan yang cocok.</td></tr>`; return;
     }
-
     const start = (halDokSaatIni - 1) * barisDokPerHal;
     const pageData = dataDokumentasiTersaring.slice(start, start + barisDokPerHal);
 
     let html = pageData.map(i => {
         let kolomMedia = "";
-        
         if (i.linkAsli) {
             let daftarLink = i.linkAsli.split(",").map(link => link.trim());
             kolomMedia = `<div style="display: flex; flex-direction: column; gap: 14px; align-items: center;">`;
-            
             daftarLink.forEach((linkSingle, index) => {
                 if (!linkSingle) return;
-                
-                let renderUrl = linkSingle;
-                let isImg = false;
-                
+                let renderUrl = linkSingle, isImg = false;
                 if (linkSingle.includes("id=")) {
                     let idFile = linkSingle.split("id=")[1].split("&")[0];
-                    renderUrl = `https://drive.google.com/thumbnail?id=${idFile}&sz=w800`;
-                    isImg = true;
+                    renderUrl = `https://drive.google.com/thumbnail?id=${idFile}&sz=w800`; isImg = true;
                 } else if (linkSingle.includes("/d/")) {
                     let idFile = linkSingle.split("/d/")[1].split("/")[0];
-                    renderUrl = `https://drive.google.com/thumbnail?id=${idFile}&sz=w800`;
-                    isImg = true;
-                } else if (linkSingle.match(/\.(jpeg|jpg|gif|png)$/) != null) {
-                    isImg = true;
-                }
+                    renderUrl = `https://drive.google.com/thumbnail?id=${idFile}&sz=w800`; isImg = true;
+                } else if (linkSingle.match(/\.(jpeg|jpg|gif|png)$/) != null) { isImg = true; }
 
                 if (isImg) {
                     kolomMedia += `
                         <div style="text-align:center; margin-bottom: 5px;">
-                            <a href="${linkSingle}" target="_blank">
-                                <img src="${renderUrl}" alt="${i.agenda}" style="max-width:260px; max-height:200px; object-fit:contain; background-color:#fafafa; border-radius:6px; box-shadow:0 2px 6px rgba(0,0,0,0.12); border:1px solid #ddd;">
-                            </a>
-                            <br>
+                            <a href="${linkSingle}" target="_blank"><img src="${renderUrl}" alt="${i.agenda}" style="max-width:260px; max-height:200px; object-fit:contain; background-color:#fafafa; border-radius:6px; box-shadow:0 2px 6px rgba(0,0,0,0.12); border:1px solid #ddd;"></a><br>
                             <a href="${linkSingle}" target="_blank" style="font-size:11px; color:#E53935; text-decoration:none; display:inline-block; margin-top:4px; font-weight:600;"><i class="fa-solid fa-magnifying-glass-plus"></i> Foto ${index + 1} (Penuh)</a>
                         </div>`;
                 } else {
-                    kolomMedia += `
-                        <a href="${linkSingle}" target="_blank" style="padding:6px 12px; background:#f5f5f5; border:1px solid #ccc; border-radius:4px; text-decoration:none; color:#333; font-size:11px; display:inline-block; font-weight:bold;">
-                            <i class="fa-solid fa-paperclip" style="color:#E53935;"></i> Buka Berkas ${index + 1}
-                        </a>`;
+                    kolomMedia += `<a href="${linkSingle}" target="_blank" style="padding:6px 12px; background:#f5f5f5; border:1px solid #ccc; border-radius:4px; text-decoration:none; color:#333; font-size:11px; display:inline-block; font-weight:bold;"><i class="fa-solid fa-paperclip" style="color:#E53935;"></i> Buka Berkas ${index + 1}</a>`;
                 }
             });
             kolomMedia += `</div>`;
-        } else {
-            kolomMedia = `<div style="text-align:center; color:#999; font-style:italic; font-size:12px;">Tidak ada file</div>`;
-        }
+        } else { kolomMedia = `<div style="text-align:center; color:#999; font-style:italic; font-size:12px;">Tidak ada file</div>`; }
 
-        return `
-            <tr>
-                <td style="font-weight:500; color:#444; vertical-align:top;"><i class="fa-regular fa-calendar" style="color:#E53935; margin-right:4px;"></i> ${i.tanggal}</td>
-                <td style="vertical-align:top; padding-top:15px;">${kolomMedia}</td>
-                <td style="font-weight:bold; color:#E53935; vertical-align:top; line-height:1.4;">${i.agenda}</td>
-                <td style="font-weight:600; color:#555; vertical-align:top;">${i.subjek}</td>
-                <td style="line-height:1.6; text-align:justify; white-space:pre-line; vertical-align:top; padding-right:10px;">${i.kegiatan}</td>
-            </tr>
-        `;
+        return `<tr>
+            <td style="font-weight:500; color:#444; vertical-align:top;"><i class="fa-regular fa-calendar" style="color:#E53935; margin-right:4px;"></i> ${i.tanggal}</td>
+            <td style="vertical-align:top; padding-top:15px;">${kolomMedia}</td>
+            <td style="font-weight:bold; color:#E53935; vertical-align:top; line-height:1.4;">${i.agenda}</td>
+            <td style="font-weight:600; color:#555; vertical-align:top;">${i.subjek}</td>
+            <td style="line-height:1.6; text-align:justify; white-space:pre-line; vertical-align:top; padding-right:10px;">${i.kegiatan}</td>
+        </tr>`;
     }).join('');
 
     const totalHal = Math.ceil(dataDokumentasiTersaring.length / barisDokPerHal);
     if (totalHal > 1) {
-        let tombolNav = "";
-        const styleBtn = "padding:8px 16px; background:#E53935; color:white; border:none; border-radius:4px; cursor:pointer; font-weight:bold;";
-        
+        let tombolNav = ""; const styleBtn = "padding:8px 16px; background:#E53935; color:white; border:none; border-radius:4px; cursor:pointer; font-weight:bold;";
         if (halDokSaatIni === 1) {
             tombolNav = `<div style="text-align:right;"><button onclick="navDok(1)" style="${styleBtn}">Halaman Selanjutnya <i class="fa-solid fa-chevron-right"></i></button></div>`;
         } else if (halDokSaatIni === totalHal) {
@@ -669,105 +529,59 @@ function renderTabelDokumentasi() {
     }
     tbody.innerHTML = html;
 }
-
-window.navDok = (dir) => { 
-    halDokSaatIni += dir; 
-    renderTabelDokumentasi(); 
-    setTimeout(() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }, 100);
-};
+window.navDok = (dir) => { halDokSaatIni += dir; renderTabelDokumentasi(); setTimeout(() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }, 100); };
 
 /* ==========================================================================
-   8. MODUL KHUSUS: DATABASE ANGGOTA, UMUR JUJUR & FOTO POPUP
+   7. DATABASE ANGGOTA, UMUR JUJUR & FOTO POPUP
    ========================================================================== */
 const linkTsvAnggota = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR45-ysPdK4uVibwJQbXKvaGGA2zlX3m2GnAS2392fiSDwENSz9ABffImneI-u4ZGmErvHbdM5RJoDi/pub?gid=992968433&single=true&output=tsv";
-let dataAnggotaGlobal = [];
-let dataAnggotaTersaring = [];
-let halAnggotaSaatIni = 1;
-const barisAnggotaPerHal = 7; 
+let dataAnggotaGlobal = []; let dataAnggotaTersaring = []; let halAnggotaSaatIni = 1; const barisAnggotaPerHal = 7; 
 
 async function loadAnggotaDariDrive() {
     try {
         const response = await fetch(`${linkTsvAnggota}&cache=${new Date().getTime()}`);
-        const teksData = await response.text();
-        const baris = teksData.split("\n");
-        
+        const teksData = await response.text(); const baris = teksData.split("\n");
         dataAnggotaGlobal = [];
 
         for (let i = 1; i < baris.length; i++) {
-            const barisBersih = baris[i].trim();
-            if (!barisBersih) continue;
-            
+            const barisBersih = baris[i].trim(); if (!barisBersih) continue;
             const kolom = barisBersih.split("\t");
             
-            let nama = kolom[2] ? kolom[2].trim() : "-";         
-            let nim = kolom[4] ? kolom[4].trim() : "-";          
-            let tglLahirRaw = kolom[6] ? kolom[6].trim() : "";   
-            let linkFotoRaw = kolom[13] ? kolom[13].trim() : ""; 
-            
-            let usiaTeks = "-";
-            let tahunLahirInt = 0;
+            let nama = kolom[2] ? kolom[2].trim() : "-"; let nim = kolom[4] ? kolom[4].trim() : "-";          
+            let tglLahirRaw = kolom[6] ? kolom[6].trim() : ""; let linkFotoRaw = kolom[13] ? kolom[13].trim() : ""; 
+            let usiaTeks = "-", tahunLahirInt = 0;
 
             let matchTahun = tglLahirRaw.match(/\b(19\d{2}|20\d{2})\b/);
-            if (matchTahun) {
-                tahunLahirInt = parseInt(matchTahun[0], 10);
-            }
+            if (matchTahun) { tahunLahirInt = parseInt(matchTahun[0], 10); }
 
             if (tahunLahirInt > 0) {
-                let tglInggris = tglLahirRaw.toLowerCase()
-                    .replace('mei', 'may').replace('agu', 'aug').replace('okt', 'oct').replace('des', 'dec');
-                
-                let tglLahirObj = new Date(tglInggris);
-                let hariIni = new Date();
-                let umur = hariIni.getFullYear() - tahunLahirInt;
-
+                let tglInggris = tglLahirRaw.toLowerCase().replace('mei', 'may').replace('agu', 'aug').replace('okt', 'oct').replace('des', 'dec');
+                let tglLahirObj = new Date(tglInggris); let hariIni = new Date(); let umur = hariIni.getFullYear() - tahunLahirInt;
                 if (!isNaN(tglLahirObj.getTime())) {
                     let bulanSelisih = hariIni.getMonth() - tglLahirObj.getMonth();
-                    if (bulanSelisih < 0 || (bulanSelisih === 0 && hariIni.getDate() < tglLahirObj.getDate())) {
-                        umur--; 
-                    }
+                    if (bulanSelisih < 0 || (bulanSelisih === 0 && hariIni.getDate() < tglLahirObj.getDate())) { umur--; }
                 }
                 usiaTeks = umur + " Tahun";
             }
-
-            if (tahunLahirInt > 0) {
-                dataAnggotaGlobal.push({ 
-                    nim: nim, nama: nama, tahunLahirInt: tahunLahirInt, usia: usiaTeks, foto: linkFotoRaw 
-                });
-            }
+            if (tahunLahirInt > 0) { dataAnggotaGlobal.push({ nim: nim, nama: nama, tahunLahirInt: tahunLahirInt, usia: usiaTeks, foto: linkFotoRaw }); }
         }
         terapkanFilterAnggota();
-    } catch (e) {
-        console.error("Gagal memuat database anggota", e);
-        const tBody = document.getElementById('data-tabel-anggota');
-        if (tBody) tBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:red; padding:20px;">Gagal memuat data dari database.</td></tr>`;
-    }
+    } catch (e) { console.error("Gagal memuat database anggota", e); }
 }
 
 window.terapkanFilterAnggota = function() {
-    const cariInput = document.getElementById('input-cari-anggota');
-    if(!cariInput) return;
-
+    const cariInput = document.getElementById('input-cari-anggota'); if(!cariInput) return;
     const cari = cariInput.value.toLowerCase();
-
-    dataAnggotaTersaring = dataAnggotaGlobal.filter(item => {
-        return item.nama.toLowerCase().includes(cari) || item.nim.toLowerCase().includes(cari);
-    });
-
-    halAnggotaSaatIni = 1; 
-    renderTabelAnggota();
+    dataAnggotaTersaring = dataAnggotaGlobal.filter(item => item.nama.toLowerCase().includes(cari) || item.nim.toLowerCase().includes(cari));
+    halAnggotaSaatIni = 1; renderTabelAnggota();
 }
 
 function renderTabelAnggota() {
-    const tbody = document.getElementById('data-tabel-anggota');
-    if (!tbody) return;
-
+    const tbody = document.getElementById('data-tabel-anggota'); if (!tbody) return;
     if (dataAnggotaTersaring.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:30px; color:#666;"><strong>Data anggota tidak ditemukan.</strong></td></tr>`;
-        return;
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:30px; color:#666;"><strong>Data anggota tidak ditemukan.</strong></td></tr>`; return;
     }
-
-    const start = (halAnggotaSaatIni - 1) * barisAnggotaPerHal;
-    const dataPerHalaman = dataAnggotaTersaring.slice(start, start + barisAnggotaPerHal);
+    const start = (halAnggotaSaatIni - 1) * barisAnggotaPerHal; const dataPerHalaman = dataAnggotaTersaring.slice(start, start + barisAnggotaPerHal);
     
     let html = dataPerHalaman.map(i => {
         let linkDefaultAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(i.nama)}&background=E53935&color=fff&size=150&bold=true`;
@@ -775,57 +589,31 @@ function renderTabelAnggota() {
         
         if (i.foto && i.foto !== "" && i.foto !== "-") {
             let idFile = "";
-            if (i.foto.includes("id=")) {
-                idFile = i.foto.split("id=")[1].split("&")[0];
-            } else if (i.foto.includes("/d/")) {
-                idFile = i.foto.split("/d/")[1].split("/")[0];
-            }
-            
-            if (idFile !== "") {
-                urlFotoTampil = `https://drive.google.com/thumbnail?id=${idFile}&sz=w800`;
-            } else if (i.foto.startsWith("http")) {
-                urlFotoTampil = i.foto;
-            }
+            if (i.foto.includes("id=")) { idFile = i.foto.split("id=")[1].split("&")[0]; } 
+            else if (i.foto.includes("/d/")) { idFile = i.foto.split("/d/")[1].split("/")[0]; }
+            if (idFile !== "") { urlFotoTampil = `https://drive.google.com/thumbnail?id=${idFile}&sz=w800`; } 
+            else if (i.foto.startsWith("http")) { urlFotoTampil = i.foto; }
         }
 
         let generasi = "-";
-        if (i.tahunLahirInt <= 1964) {
-            generasi = '<span style="background-color: #5D4037; color: white; padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; display: inline-block; min-width: 85px; text-align: center;">Baby Boomer</span>';
-        } else if (i.tahunLahirInt >= 1965 && i.tahunLahirInt <= 1980) {
-            generasi = '<span style="background-color: #7B1FA2; color: white; padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; display: inline-block; min-width: 85px; text-align: center;">Gen X</span>';
-        } else if (i.tahunLahirInt >= 1981 && i.tahunLahirInt <= 1996) {
-            generasi = '<span style="background-color: #0288D1; color: white; padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; display: inline-block; min-width: 85px; text-align: center;">Millennial</span>';
-        } else if (i.tahunLahirInt >= 1997 && i.tahunLahirInt <= 2012) {
-            generasi = '<span style="background-color: #388E3C; color: white; padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; display: inline-block; min-width: 85px; text-align: center;">Gen Z</span>';
-        } else if (i.tahunLahirInt >= 2013 && i.tahunLahirInt <= 2024) {
-            generasi = '<span style="background-color: #F57C00; color: white; padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; display: inline-block; min-width: 85px; text-align: center;">Gen Alpha</span>';
-        } else if (i.tahunLahirInt >= 2025) {
-            generasi = '<span style="background-color: #D32F2F; color: white; padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; display: inline-block; min-width: 85px; text-align: center;">Gen Beta</span>';
-        } 
+        if (i.tahunLahirInt <= 1964) generasi = '<span style="background-color: #5D4037; color: white; padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; display: inline-block; min-width: 85px; text-align: center;">Baby Boomer</span>';
+        else if (i.tahunLahirInt >= 1965 && i.tahunLahirInt <= 1980) generasi = '<span style="background-color: #7B1FA2; color: white; padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; display: inline-block; min-width: 85px; text-align: center;">Gen X</span>';
+        else if (i.tahunLahirInt >= 1981 && i.tahunLahirInt <= 1996) generasi = '<span style="background-color: #0288D1; color: white; padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; display: inline-block; min-width: 85px; text-align: center;">Millennial</span>';
+        else if (i.tahunLahirInt >= 1997 && i.tahunLahirInt <= 2012) generasi = '<span style="background-color: #388E3C; color: white; padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; display: inline-block; min-width: 85px; text-align: center;">Gen Z</span>';
+        else if (i.tahunLahirInt >= 2013 && i.tahunLahirInt <= 2024) generasi = '<span style="background-color: #F57C00; color: white; padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; display: inline-block; min-width: 85px; text-align: center;">Gen Alpha</span>';
 
-        return `
-            <tr style="height: 90px; vertical-align: middle;"> 
-                <td style="font-size: 14px; font-weight: bold; color: #555;">${i.nim}</td>
-                <td style="padding: 10px 0;">
-                    <img src="${urlFotoTampil}" alt="Foto ${i.nama}" 
-                         style="width: 75px; height: 75px; object-fit: cover; border-radius: 50%; border: 3px solid #E53935; box-shadow: 0 4px 8px rgba(0,0,0,0.15); background-color: #fafafa; display: block; margin: 0 auto; cursor: pointer; position: relative; z-index: 10;" 
-                         onerror="this.src='${linkDefaultAvatar}'"
-                         onclick="event.stopPropagation(); window.bukaFotoFull('${urlFotoTampil}');">
-                </td>
-                <td style="text-align: left; padding-left: 20px; font-size: 15px; font-weight: 600; color: #333;">
-                    <i class="fa-solid fa-user" style="color:#E53935; margin-right:8px; font-size: 13px;"></i> ${i.nama}
-                </td>
-                <td><span class="badge-usia" style="font-size: 13px; font-weight: 600; padding: 4px 10px;">${i.usia}</span></td>
-                <td>${generasi}</td>
-            </tr>
-        `;
+        return `<tr style="height: 90px; vertical-align: middle;"> 
+            <td style="font-size: 14px; font-weight: bold; color: #555;">${i.nim}</td>
+            <td style="padding: 10px 0;"><img src="${urlFotoTampil}" alt="Foto ${i.nama}" style="width: 75px; height: 75px; object-fit: cover; border-radius: 50%; border: 3px solid #E53935; box-shadow: 0 4px 8px rgba(0,0,0,0.15); display: block; margin: 0 auto; cursor: pointer;" onerror="this.src='${linkDefaultAvatar}'" onclick="event.stopPropagation(); window.bukaFotoFull('${urlFotoTampil}');"></td>
+            <td style="text-align: left; padding-left: 20px; font-size: 15px; font-weight: 600; color: #333;"><i class="fa-solid fa-user" style="color:#E53935; margin-right:8px;"></i> ${i.nama}</td>
+            <td><span class="badge-usia" style="font-size: 13px; font-weight: 600; padding: 4px 10px;">${i.usia}</span></td>
+            <td>${generasi}</td>
+        </tr>`;
     }).join('');
 
     const totalHal = Math.ceil(dataAnggotaTersaring.length / barisAnggotaPerHal);
     if (totalHal > 1) {
-        let tombolNav = "";
-        const styleBtn = "padding:8px 16px; background:#E53935; color:white; border:none; border-radius:4px; cursor:pointer; font-weight:bold; font-size:12px;";
-        
+        let tombolNav = ""; const styleBtn = "padding:8px 16px; background:#E53935; color:white; border:none; border-radius:4px; cursor:pointer; font-weight:bold; font-size:12px;";
         if (halAnggotaSaatIni === 1) {
             tombolNav = `<div style="text-align:right;"><button onclick="window.navAnggota(1)" style="${styleBtn}">Halaman Selanjutnya <i class="fa-solid fa-chevron-right"></i></button></div>`;
         } else if (halAnggotaSaatIni === totalHal) {
@@ -838,133 +626,70 @@ function renderTabelAnggota() {
     tbody.innerHTML = html;
 }
 
-window.navAnggota = function(arah) { 
-    halAnggotaSaatIni += arah; 
-    renderTabelAnggota(); 
-    setTimeout(() => { document.querySelector('.finance-table').scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 50);
-};
+window.navAnggota = function(arah) { halAnggotaSaatIni += arah; renderTabelAnggota(); setTimeout(() => { document.querySelector('.finance-table').scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 50); };
+window.bukaFotoFull = function(url) { const modal = document.getElementById('modal-foto-full'); const imgModal = document.getElementById('img-modal-tampil'); if(modal && imgModal) { imgModal.src = url; modal.style.display = 'flex'; } };
+window.tutupFoto = function() { const modal = document.getElementById('modal-foto-full'); if(modal) modal.style.display = 'none'; };
 
-window.bukaFotoFull = function(url) {
-    const modal = document.getElementById('modal-foto-full');
-    const imgModal = document.getElementById('img-modal-tampil');
-    if(modal && imgModal) {
-        imgModal.src = url; 
-        modal.style.display = 'flex'; 
-    } else {
-        alert("Kode HTML Popup (modal-foto-full) belum dipasang di file daftar-anggota.html");
+/* ==========================================================================
+   8. SISTEM PROMPT SEBELUM INSTALASI PWA (MMS 05)
+   ========================================================================== */
+function initSistemPWA() {
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault(); 
+        pemicuInstal = e;
+        const popup = document.getElementById('pwa-install-popup');
+        if (popup) popup.style.display = 'block';
+    });
+
+    const tombolInstal = document.getElementById('btn-instal-pwa');
+    if (tombolInstal) {
+        tombolInstal.addEventListener('click', async () => {
+            if (!pemicuInstal) {
+                alert("Silakan klik tombol Titik Tiga di pojok kanan atas browser kamu, lalu pilih 'Tambahkan ke Layar Utama' / 'Instal Aplikasi' ya, Bro!");
+                return;
+            }
+            pemicuInstal.prompt();
+            const { outcome } = await pemicuInstal.userChoice;
+            console.log(`Pilihan user PWA: ${outcome}`);
+            pemicuInstal = null; 
+            tutupPopupInstal();
+        });
     }
+
+    window.addEventListener('appinstalled', () => { 
+        console.log('Aplikasi MMS 05 Sukses Terinstal!');
+        tutupPopupInstal(); 
+    });
 }
 
-window.tutupFoto = function() {
-    const modal = document.getElementById('modal-foto-full');
-    if(modal) {
-        modal.style.display = 'none'; 
-    }
+function tutupPopupInstal() { 
+    const popup = document.getElementById('pwa-install-popup'); 
+    if (popup) popup.style.display = 'none'; 
 }
 
 /* ==========================================================================
-   9. FUNGSI UTILITAS & PEMBANTU UMUM
+   9. GATEWAY LOGIN & VALIDASI ADMIN SECURITY
    ========================================================================== */
-function isiDropdown(id, dataArray) {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.innerHTML = el.options[0].outerHTML; 
-    dataArray.forEach(item => {
-        let opt = document.createElement("option");
-        opt.value = item; 
-        opt.text = item;
-        el.appendChild(opt);
-    });
-}
-
-function formatRupiah(angka) { 
-    return 'Rp ' + Math.abs(angka).toLocaleString('id-ID'); 
-}
-
-
-// ========================================================
-// LOGIKA OTOMATIS POP-UP INSTAL APLIKASI (PWA) DI INDEX
-// ========================================================
-let pemicuInstal;
-
-window.addEventListener('beforeinstallprompt', (e) => {
-    // Mencegah browser memunculkan pop-up bawaan yang gampang hilang
-    e.preventDefault();
-    // Simpan event perintah agar bisa kita panggil lewat tombol kustom
-    pemicuInstal = e;
-    
-    // Munculkan kotak pop-up buatan kita di index.html secara instan
-    const popup = document.getElementById('pwa-install-popup');
-    if (popup) {
-        popup.style.display = 'block';
-    }
-});
-
-// Jalankan fungsi instalasi saat tombol "Instal Sekarang" diklik
-const tombolInstal = document.getElementById('btn-instal-pwa');
-if (tombolInstal) {
-    tombolInstal.addEventListener('click', async () => {
-        if (!pemicuInstal) return;
-        
-        // Munculkan dialog instalasi resmi dari sistem HP/Browser
-        pemicuInstal.prompt();
-        
-        // Tunggu pilihan dari user (setuju instal atau batalkan)
-        const { outcome } = await pemicuInstal.userChoice;
-        console.log(`Pilihan user: ${outcome}`);
-        
-        // Bersihkan pemicu dan sembunyikan kembali pop-up kita
-        pemicuInstal = null;
-        tutupPopupInstal();
-    });
-}
-
-function tutupPopupInstal() {
-    const popup = document.getElementById('pwa-install-popup');
-    if (popup) {
-        popup.style.display = 'none';
-    }
-}
-
-// ========================================================
-// LOGIKA TUNGGAL PORTAL GATEWAY LOGIN & SATPAM ADMIN
-// ========================================================
-
 function validasiLogin() {
     const inputBox = document.getElementById('access-code');
-    const errorBox = document.getElementById('error-message'); // Mengambil tempat teks salah
+    const errorBox = document.getElementById('error-message');
     if (!inputBox) return;
     
     const password = inputBox.value.trim(); 
-    
-    // Reset pesan error setiap kali tombol ditekan
-    if (errorBox) {
-        errorBox.textContent = "";
-        errorBox.style.display = "none";
-    }
+    if (errorBox) { errorBox.textContent = ""; errorBox.style.display = "none"; }
     
     if (password === "admin1234") {
         sessionStorage.setItem("statusAdmin", "aktif");
         window.location.href = "admin.html";
     } else if (password === "") {
-        // Tampilan jika password kosong
-        if (errorBox) {
-            errorBox.textContent = "Password tidak boleh kosong!";
-            errorBox.style.display = "block";
-        }
+        if (errorBox) { errorBox.textContent = "Password tidak boleh kosong!"; errorBox.style.display = "block"; }
         inputBox.focus();
     } else {
-        // Tampilan jika password salah (Menggantikan fungsi alert lama)
-        if (errorBox) {
-            errorBox.textContent = "Password salah! Khusus internal BPH MMS 05.";
-            errorBox.style.display = "block";
-        }
-        inputBox.value = ""; // Mengosongkan kembali inputan
-        inputBox.focus(); // Otomatis kursor aktif lagi di kotak input
+        if (errorBox) { errorBox.textContent = "Password salah! Khusus internal BPH MMS 05."; errorBox.style.display = "block"; }
+        inputBox.value = ""; inputBox.focus();
     }
 }
 
-// SAKELAR SATPAM: Menjaga file admin.html Anda dari tembakan URL langsung (Cukup ditulis 1 kali)
 if (window.location.pathname.includes("admin.html")) {
     if (sessionStorage.getItem("statusAdmin") !== "aktif") {
         alert("Akses ditolak! Anda harus login terlebih dahulu.");
@@ -972,75 +697,14 @@ if (window.location.pathname.includes("admin.html")) {
     }
 }
 
-
-
-// ==========================================================================
-// LOGIKA PWA MMS 05 - PAKSA POP-UP INSTAL MUNCUL TERUS TIAP BUKA WEB
-// ==========================================================================
-let pemicuInstal;
-const ID_KOTAK_POPUP = 'pwa-install-popup';
-const ID_TOMBOL_INSTAL = 'btn-instal-pwa';
-
-// 1. Tangkap pemicu instalasi resmi dari browser asli
-window.addEventListener('beforeinstallprompt', (e) => {
-    // Mencegah browser menampilkan infobar bawaan chrome yang gampang ilang
-    e.preventDefault();
-    
-    // Simpan pemicunya ke variabel global kita
-    pemicuInstal = e;
-    
-    // PAKSA: Kotak pop-up buatanmu langsung ditampilkan ke layar tanpa syarat!
-    const popup = document.getElementById(ID_KOTAK_POPUP);
-    if (popup) {
-        popup.style.display = 'block';
-    }
-});
-
-// 2. Jalur Pintas Cadangan: Jika browser lambat melempar pemicu asli di HP warga,
-// kita paksa kotak pop-up tetap tampil secara visual sebagai pengingat sejak awal
-document.addEventListener("DOMContentLoaded", () => {
-    const popup = document.getElementById(ID_KOTAK_POPUP);
-    if (popup) {
-        popup.style.display = 'block';
-    }
-});
-
-// 3. Jalankan fungsi instalasi saat tombol "Instal Sekarang" diklik warga
-const tombolInstal = document.getElementById(ID_TOMBOL_INSTAL);
-if (tombolInstal) {
-    tombolInstal.addEventListener('click', async () => {
-        if (!pemicuInstal) {
-            // Jika browser HP belum siap melempar pemicu instalasi otomatis
-            alert("Silakan klik tombol Titik Tiga di pojok kanan atas browser kamu, lalu pilih 'Tambahkan ke Layar Utama' / 'Instal Aplikasi' ya, Bro!");
-            return;
-        }
-        
-        // Munculkan dialog instalasi resmi dari sistem HP/Browser
-        pemicuInstal.prompt();
-        
-        // Tunggu pilihan dari warga (setuju instal atau batalkan)
-        const { outcome } = await pemicuInstal.userChoice;
-        console.log(`Pilihan user: ${outcome}`);
-        
-        // Bersihkan pemicu dan sembunyikan kembali pop-up kita
-        pemicuInstal = null;
-        tutupPopupInstal();
+/* ==========================================================================
+   10. UTILITIES / FUNGSI PEMBANTU UMUM
+   ========================================================================== */
+function isiDropdown(id, dataArray) {
+    const el = document.getElementById(id); if (!el) return;
+    el.innerHTML = el.options[0].outerHTML; 
+    dataArray.forEach(item => {
+        let opt = document.createElement("option"); opt.value = item; opt.text = item; el.appendChild(opt);
     });
 }
-
-// 4. Fungsi menutup pop-up (HANYA menyembunyikan sementara saat itu saja)
-function tutupPopupInstal() {
-    const popup = document.getElementById(ID_KOTAK_POPUP);
-    if (popup) {
-        popup.style.display = 'none';
-    }
-    // JANGAN tulis perintah penolak/cookie apa pun di sini, biar pas di-refresh tetep nongol!
-}
-
-// 5. Sistem Deteksi Mutlak: Jika aplikasi SUDAH BERHASIL DIINSTAL dan dijadikan launcher di HP,
-// otomatis fungsi ini mengunci pop-up agar mati permanen demi kenyamanan warga
-window.addEventListener('appinstalled', () => {
-    console.log('Aplikasi MMS 05 Sukses Terinstal di HP Warga!');
-    tutupPopupInstal();
-});
-
+function formatRupiah(angka) { return 'Rp ' + Math.abs(angka).toLocaleString('id-ID'); }
