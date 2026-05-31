@@ -877,7 +877,7 @@ body:has(.login-page-wrapper) .main-navbar {
 /* FIX: Paksa garis merah muncul di bagian paling bawah header desktop/laptop */
 body:has(.login-page-wrapper) .site-header {
     background-color: #ffffff !important;
-    border-bottom: 30px solid #E53935 !important; /* Garis merah tegas dipasang di sini */
+    border-bottom: 20px solid #E53935 !important; /* Garis merah tegas dipasang di sini */
 }
 
 body:has(.login-page-wrapper) .top-header {
