@@ -922,3 +922,18 @@ body:has(.login-page-wrapper) .header-secure-badge {
 .login-page-wrapper {
     padding-top: 130px !important;
 }
+
+/* ==========================================================================
+   PENGATURAN UKURAN KOTAK LOGIN ADMIN (BISA DIEDIT SESUAI SELERA)
+   ========================================================================== */
+body:has(.login-page-wrapper) .login-content-box {
+    /* 1. Atur Lebar Kotak */
+    max-width: 420px !important;  /* Standar awal 380px. Naikkan angkanya jika ingin kotak lebih lebar */
+    width: 90% !important;        /* Menjaga kotak tetap aman/responsive saat dibuka di layar HP */
+
+    /* 2. Atur Jarak Dalam Kotak (Padding) */
+    padding: 40px 35px !important; /* Angka pertama (40px) = jarak atas-bawah, Angka kedua (35px) = jarak kiri-kanan */
+    
+    /* 3. Atur Ketebalan Garis Merah Atas (Opsional) */
+    border-top: 6px solid #E53935 !important; /* Ubah 6px jika ingin garis merah di atas kotak lebih tebal/tipis */
+}
