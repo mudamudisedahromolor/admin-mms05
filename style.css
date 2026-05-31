@@ -935,5 +935,5 @@ body:has(.login-page-wrapper) .login-content-box {
     padding: 40px 35px !important; /* Angka pertama (40px) = jarak atas-bawah, Angka kedua (35px) = jarak kiri-kanan */
     
     /* 3. Atur Ketebalan Garis Merah Atas (Opsional) */
-    border-top: 6px solid #E53935 !important; /* Ubah 6px jika ingin garis merah di atas kotak lebih tebal/tipis */
+    border-top: 30px solid #E53935 !important; /* Ubah 6px jika ingin garis merah di atas kotak lebih tebal/tipis */
 }
