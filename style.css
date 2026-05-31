@@ -862,3 +862,58 @@ body {
     background-color: #ffffff;
     width: 100%;
 }
+
+
+
+/* ==========================================================================
+   PERBAIKAN LAYOUT HEADER GATEWAY ADMIN (LOGO TENGAH & BEBAS PINK)
+   ========================================================================== */
+
+/* 1. Paksa area navbar bawaan agar tersembunyi khusus di halaman login */
+body:has(.login-page-wrapper) .main-navbar {
+    display: none !important;
+}
+
+/* 2. Atur ulang header agar kontennya bisa didorong ke tengah */
+body:has(.login-page-wrapper) .top-header {
+    background-color: #ffffff !important;
+    justify-content: center !important; /* Membuat isi header maju ke tengah */
+    padding: 15px 20px !important;
+    border-bottom: 2px solid #E53935; /* Garis pembatas bawah merah solid tegas */
+}
+
+/* 3. Pusatkan area logo dan teks */
+body:has(.login-page-wrapper) .header-logo-area {
+    justify-content: center !important;
+    width: 100%;
+}
+
+body:has(.login-page-wrapper) .logo-wrapper {
+    flex-direction: column !important; /* Membuat logo dan teks tersusun atas-bawah */
+    text-align: center !important;
+    gap: 6px !important;
+}
+
+body:has(.login-page-wrapper) .mini-logo {
+    width: 55px !important; /* Ukuran logo sedikit diperbesar agar proporsional di tengah */
+    height: auto !important;
+}
+
+body:has(.login-page-wrapper) .brand-title {
+    font-size: 18px !important;
+}
+
+body:has(.login-page-wrapper) .brand-subtitle {
+    font-size: 12px !important;
+}
+
+/* 4. Sembunyikan lencana keamanan dan medsos kanan khusus di gateway desktop */
+body:has(.login-page-wrapper) .header-right-stuff,
+body:has(.login-page-wrapper) .header-secure-badge {
+    display: none !important;
+}
+
+/* 5. Atur jarak aman kotak login dari header atas */
+.login-page-wrapper {
+    padding-top: 130px !important;
+}
