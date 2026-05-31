@@ -9,11 +9,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="style.css"> 
     <link rel="manifest" href="manifest.json">
-
 </head>
-<body>
-
-    <header class="site-header">
+<body class="login-page-body"> <header class="site-header">
         <div class="header-logo-area">
             <div class="logo-wrapper">
                 <img src="images/mms.png" alt="Logo MMS" class="mini-logo">
@@ -32,18 +29,18 @@
         <div class="login-content-box">
             <h3 class="box-title">PORTAL UTAMA ADMIN</h3>
             <hr class="box-divider">
-            <p class="box-subtitle">Silakan masukkan kode akses khusus pengurus untuk masuk ke sistem administrasi data.<br>  </p>
+            <p class="box-subtitle">Silakan masukkan kode akses khusus pengurus untuk masuk ke sistem administrasi data.</p>
             
-   <div class="input-wrapper">
-      <i class="fa-solid fa-lock"></i>
-         <input type="password" id="access-code" class="login-input" placeholder="Masukkan Password...">
+            <div class="input-wrapper">
+                <i class="fa-solid fa-lock"></i>
+                <input type="password" id="access-code" class="login-input" placeholder="Masukkan Password...">
             </div>
+            
             <div id="error-message" class="error-text"></div>
 
-<button onclick="validasiLogin()" class="btn-login">
-    <i class="fa-solid fa-right-to-bracket"></i> Masuk Sistem
-</button>
-            
+            <button onclick="validasiLogin()" class="btn-login">
+                <i class="fa-solid fa-right-to-bracket"></i> Masuk Sistem
+            </button>
         </div>
     </div>
 
@@ -52,19 +49,18 @@
     </footer>
 
     <div id="pwa-install-popup">
-    <div class="pwa-mms-container">
-        <img src="images/mms.png" alt="Logo MMS" class="pwa-mms-logo">
-        <div class="pwa-mms-text-block">
-            <h4 class="pwa-mms-title">Aplikasi BPH MMS 05</h4>
-            <p class="pwa-mms-subtitle">Tambahkan ke layar utama HP agar akses lebih cepat</p>
+        <div class="pwa-mms-container">
+            <img src="images/mms.png" alt="Logo MMS" class="pwa-mms-logo">
+            <div class="pwa-mms-text-block">
+                <h4 class="pwa-mms-title">Aplikasi BPH MMS 05</h4>
+                <p class="pwa-mms-subtitle">Tambahkan ke layar utama HP agar akses lebih cepat</p>
+            </div>
+        </div>
+        <div class="pwa-mms-buttons">
+            <button onclick="tutupPopupInstal()" class="pwa-mms-btn-later">Nanti Saja</button>
+            <button id="btn-instal-pwa" class="pwa-mms-btn-install">Instal Sekarang</button>
         </div>
     </div>
-    <div class="pwa-mms-buttons">
-        <button onclick="tutupPopupInstal()" class="pwa-mms-btn-later">Nanti Saja</button>
-        <button id="btn-instal-pwa" class="pwa-mms-btn-install">Instal Sekarang</button>
-    </div>
-</div>
-
 
     <script src="script.js"></script> 
 </body>
