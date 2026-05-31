@@ -883,6 +883,6 @@ body:has(.login-page-wrapper) .brand-title {
 body:has(.login-page-wrapper) .brand-subtitle {
     display: block !important;
     visibility: visible !important;
-    font-size: 12px !important;
-    margin-bottom: 5px !important; 
+    font-size: 10px !important;
+    margin-bottom: 2px !important; 
 }
