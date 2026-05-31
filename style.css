@@ -885,8 +885,7 @@ body:has(.login-page-wrapper) .top-header {
     justify-content: center !important; 
     padding: 15px 20px !important; 
     box-shadow: none !important; /* Hilangkan bayangan bawaan agar garis merah terlihat bersih */
-    padding-top: 35px !important;
-    padding-bottom: 35px !important;
+
 }
 
 /* 3. Pusatkan area logo dan teks */
@@ -904,6 +903,7 @@ body:has(.login-page-wrapper) .logo-wrapper {
 body:has(.login-page-wrapper) .mini-logo {
     width: 55px !important; /* Ukuran logo sedikit diperbesar agar proporsional di tengah */
     height: auto !important;
+    margin-top: 15px !important;    /* Menurunkan logo dari atap atas */
 }
 
 body:has(.login-page-wrapper) .brand-title {
@@ -912,6 +912,7 @@ body:has(.login-page-wrapper) .brand-title {
 
 body:has(.login-page-wrapper) .brand-subtitle {
     font-size: 12px !important;
+    margin-bottom: 15px !important; /* Jarak dengan List Merah
 }
 
 /* 4. Sembunyikan lencana keamanan dan medsos kanan khusus di gateway desktop */
