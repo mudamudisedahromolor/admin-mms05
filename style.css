@@ -138,7 +138,7 @@ body {
     position: absolute; 
     top: 100%; 
     left: 0; 
-    background-color: #C62828; /* Merah Marun Solid agar kontras dan tidak pink */
+    background-color: #C62828; 
     list-style: none; 
     padding: 0;
     margin: 0;
@@ -835,9 +835,7 @@ body {
     width: 100%;
 }
 
-/* ==========================================================================
-   SCOPE GLOBAL FILTER: KHUSUS HALAMAN PORTAL LOGIN GATEWAY
-   ========================================================================== */
+/* ❌ KELOMPOK FILTER GLOBAL: KHUSUS PORTAL LOGIN GATEWAY */
 body:has(.login-page-wrapper) .main-navbar,
 body:has(.login-page-wrapper) .header-right-stuff,
 body:has(.login-page-wrapper) .header-secure-badge {
@@ -848,7 +846,7 @@ body:has(.login-page-wrapper) .site-header {
     height: auto !important;
     min-height: unset !important;
     background-color: #ffffff !important;
-    border-bottom: 4px solid #E53935 !important; /* Batas bawah merah murni solid tegas */
+    border-bottom: 4px solid #E53935 !important; 
 }
 
 body:has(.login-page-wrapper) .top-header {
@@ -883,69 +881,58 @@ body:has(.login-page-wrapper) .brand-title {
 body:has(.login-page-wrapper) .brand-subtitle {
     display: block !important;
     visibility: visible !important;
+    opacity: 1 !important;
+    color: #666 !important; 
     font-size: 12px !important;
     margin-bottom: 5px !important; 
 }
 
-/* MEMAKSA SUBTITLE UNTUK MUNCUL DI HALAMAN LOGIN */
-body:has(.login-page-wrapper) .brand-subtitle {
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    color: #666 !important; /* Warna abu-abu bawaan biar serasi */
-}
-
-/* MEMBERI JARAK ANTARA TEKS KETERANGAN DENGAN KOTAK INPUT PASSWORD */
 body:has(.login-page-wrapper) .box-subtitle {
-    margin-bottom: 35px !important; /* Standarnya 20px. Naikkan ke 40px jika ingin jaraknya semakin renggang ke bawah */
+    margin-bottom: 35px !important; 
 }
 
 /* DESIGN TEKS ERROR SALAH PASSWORD */
 .error-text {
-    display: none; /* Tersembunyi secara default, baru muncul kalau salah */
-    color: #D32F2F; /* Warna merah peringatan tegas */
-    background-color: #FFEBEE; /* Kotak latar merah muda tipis agar teks kontras */
+    display: none; 
+    color: #D32F2F; 
+    background-color: #FFEBEE; 
     font-size: 13px;
     font-weight: 600;
     padding: 10px;
     border-radius: 6px;
-    margin-top: -10px; /* Merapatkan posisi dengan kotak input di atasnya */
-    margin-bottom: 20px; /* Memberi jarak aman ke tombol login di bawahnya */
+    margin-top: -10px; 
+    margin-bottom: 20px; 
     text-align: center;
     border: 1px solid #FFCDD2;
-    animation: shakeEffect 0.3s ease-in-out; /* Efek getar halus saat salah */
+    animation: shakeEffect 0.3s ease-in-out; 
 }
 
-/* Animasi getar estetik saat salah password */
 @keyframes shakeEffect {
     0%, 100% { transform: translateX(0); }
     25% { transform: translateX(-5px); }
     75% { transform: translateX(5px); }
 }
 
-
-
 /* ==========================================================================
-   CSS BANNER PWA ASLI MMS - VERSI RESPONSIF HP & LAPTOP (ANTI-TUMPUK)
+   13. BANNER PWA ASLI MMS - RESPONSIF MULTI DEVICE
    ========================================================================== */
 #pwa-install-popup {
-    display: none; /* Dikontrol penuh oleh script.js */
+    display: none; 
     position: fixed; 
     font-family: sans-serif; 
     background-color: #ffffff; 
     box-shadow: 0 4px 24px rgba(0,0,0,0.25); 
     border-radius: 12px; 
     padding: 16px; 
-    z-index: 999999 !important; /* Jaminan mutlak berada di lapisan paling atas */
-    border-left: 5px solid #E53935; /* Aksen merah tebal andalanmu */
+    z-index: 999999 !important; 
+    border-left: 5px solid #E53935; 
     box-sizing: border-box;
     transition: all 0.3s ease-in-out;
 }
 
-/* 📱 SETTINGAN UNTUK LAYAR HP (Mobile First) */
 @media (max-width: 767px) {
     #pwa-install-popup {
-        top: 85px; /* Menggantung rapi di bawah navbar merah HP */
+        top: 85px; 
         left: 50%; 
         transform: translateX(-50%); 
         width: 92%; 
@@ -953,20 +940,16 @@ body:has(.login-page-wrapper) .box-subtitle {
     }
 }
 
-/* 💻 SETTINGAN OTOMATIS MINGGIR UNTUK LAYAR LAPTOP / DESKTOP (Layar Besar) */
 @media (min-width: 768px) {
     #pwa-install-popup {
-        top: 90px; /* Di bawah navbar laptop */
-        right: 25px; /* Minggir ke pojok kanan agar konten tengah bersih */
-        left: auto; /* Reset settingan left HP */
-        transform: none; /* Reset settingan tengah HP */
-        width: 360px; /* Lebar ideal untuk desktop */
+        top: 90px; 
+        right: 25px; 
+        left: auto; 
+        transform: none; 
+        width: 360px; 
     }
 }
 
-/* ==========================================================================
-   STRUKTUR ELEMEN DALAM (TETAP DIPERTAHANKAN SEPERTI ASLI PUNYAMU)
-   ========================================================================== */
 .pwa-mms-container {
     display: flex; 
     align-items: center; 
@@ -1035,7 +1018,3 @@ body:has(.login-page-wrapper) .box-subtitle {
 .pwa-mms-btn-install:hover {
     background-color: #d32f2f !important;
 }
-
-
-
-
