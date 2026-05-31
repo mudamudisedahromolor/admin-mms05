@@ -723,7 +723,7 @@ body {
 
 
 /* ====================================================
-   TAMBAHAN UNTUK TOMBOL GOOGLE FORM |Input Cash Flow|
+   TAMBAHAN UNTUK TOMBOL GOOGLE FORM |Idnput Cash Flow|
    =================================================== */
 
 .google-form-btn-container {
@@ -759,4 +759,106 @@ body {
 
 .btn-google-form:active {
     transform: translateY(0);
+}
+
+
+/* ==========================================================================
+   11. PORTAL LOGIN GATEWAY ADMIN KUSTOM (KAS KECIL - MERAH MMS 05)
+   ========================================================================== */
+.login-page-wrapper {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    min-height: calc(100vh - 140px);
+}
+
+.login-content-box {
+    background: #ffffff;
+    width: 100%;
+    max-width: 380px;
+    padding: 35px 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    text-align: center;
+    border-top: 5px solid #E53935; /* Garis merah tegas khas MMS 05 */
+    margin: auto;
+}
+
+.header-secure-badge {
+    color: #E53935;
+    font-size: 18px;
+    background: rgba(229, 57, 53, 0.1);
+    padding: 8px 12px;
+    border-radius: 20px;
+}
+
+.input-wrapper {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.input-wrapper i {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888;
+    font-size: 16px;
+}
+
+.login-input {
+    width: 100%;
+    padding: 14px 14px 14px 45px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 15px;
+    outline: none;
+    transition: all 0.3s ease;
+    background-color: #fafafa;
+}
+
+.login-input:focus {
+    border-color: #E53935;
+    background-color: #fff;
+    box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.1);
+}
+
+.btn-login {
+    width: 100%;
+    padding: 14px;
+    background-color: #E53935;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    box-shadow: 0 4px 10px rgba(229, 57, 53, 0.2);
+    transition: all 0.3s ease;
+}
+
+.btn-login:hover {
+    background-color: #c62828;
+    box-shadow: 0 6px 15px rgba(198, 40, 40, 0.3);
+    transform: translateY(-1px);
+}
+
+.btn-login:active {
+    transform: translateY(0);
+}
+
+.portal-footer {
+    text-align: center;
+    padding: 15px;
+    font-size: 12px;
+    color: #888;
+    border-top: 1px solid #eee;
+    background-color: #ffffff;
+    width: 100%;
 }
