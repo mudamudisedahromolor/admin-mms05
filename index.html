@@ -31,14 +31,16 @@
             <hr class="box-divider">
             <p class="box-subtitle">Silakan masukkan kode akses khusus pengurus untuk masuk ke sistem administrasi data.<br>  </p>
             
-            <div class="input-wrapper">
-                <i class="fa-solid fa-lock"></i>
-                <input type="password" id="access-code" class="login-input" placeholder="Masukkan Password...">
+   <div class="input-wrapper">
+      <i class="fa-solid fa-lock"></i>
+         <input type="password" id="access-code" class="login-input" placeholder="Masukkan Password...">
             </div>
+            <div id="error-message" class="error-text"></div>
+
+<button onclick="validasiLogin()" class="btn-login">
+    <i class="fa-solid fa-right-to-bracket"></i> Masuk Sistem
+</button>
             
-            <button onclick="validasiLogin()" class="btn-login">
-                <i class="fa-solid fa-right-to-bracket"></i> Masuk Sistem
-            </button>
         </div>
     </div>
 
