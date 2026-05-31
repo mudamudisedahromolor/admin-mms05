@@ -973,7 +973,7 @@ function validasiLogin() {
     const password = inputBox.value.trim(); 
     
     // Silakan ganti "mms05merah" dengan password yang Anda inginkan
-    if (password === "mms05merah") {
+    if (password === "admin1234") {
         sessionStorage.setItem("statusAdmin", "aktif");
         window.location.href = "admin.html"; // Mengarah ke file admin Anda
     } else if (password === "") {
