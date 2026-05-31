@@ -895,4 +895,9 @@ body:has(.login-page-wrapper) .brand-subtitle {
     color: #666 !important; /* Warna abu-abu bawaan biar serasi */
 }
 
+/* MEMBERI JARAK ANTARA TEKS KETERANGAN DENGAN KOTAK INPUT PASSWORD */
+body:has(.login-page-wrapper) .box-subtitle {
+    margin-bottom: 35px !important; /* Standarnya 20px. Naikkan ke 40px jika ingin jaraknya semakin renggang ke bawah */
+}
+
 
