@@ -886,3 +886,11 @@ body:has(.login-page-wrapper) .brand-subtitle {
     font-size: 10px !important;
     margin-bottom: 2px !important; 
 }
+
+/* MEMAKSA SUBTITLE UNTUK MUNCUL DI HALAMAN LOGIN */
+body:has(.login-page-wrapper) .brand-subtitle {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    color: #666 !important; /* Warna abu-abu bawaan biar serasi */
+}
