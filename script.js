@@ -631,40 +631,42 @@ window.bukaFotoFull = function(url) { const modal = document.getElementById('mod
 window.tutupFoto = function() { const modal = document.getElementById('modal-foto-full'); if(modal) modal.style.display = 'none'; };
 
 /* ==========================================================================
-   8. SISTEM PROMPT SEBELUM INSTALASI PWA (MMS 05 - PAKSA MUNCUL TERUS)
+   8. SISTEM PROMPT SEBELUM INSTALASI PWA (VERSI FIX MACET HP)
    ========================================================================== */
 function initSistemPWA() {
     const popup = document.getElementById('pwa-install-popup');
     const tombolInstal = document.getElementById('btn-instal-pwa');
 
-    // PAKSA 1: Langsung munculkan pop-up secara visual saat web dibuka tanpa syarat!
+    // Amankan: Langsung paksa tampil secara visual di gateway login
     if (popup) {
         popup.style.display = 'block';
     }
 
-    // 1. Tangkap pemicu (prompt) instalasi resmi dari browser
+    // Tangkap pemicu instalasi resmi dari browser HP
     window.addEventListener('beforeinstallprompt', (e) => {
-        // Mencegah banner bawaan Chrome/browser HP yang gampang hilang
         e.preventDefault(); 
         pemicuInstal = e;
-
-        // PAKSA 2: Jaminan lapis kedua agar pop-up dipastikan aktif di layar
         if (popup) popup.style.display = 'block';
     });
 
-    // 2. Logika ketika warga mengklik tombol "Instal Sekarang"
+    // Logika klik tombol "Instal Sekarang"
     if (tombolInstal) {
         tombolInstal.addEventListener('click', async () => {
+            // JIKA DI HP PEMICU OTOMATIS BELUM SIAP / MACET, JALANKAN ALTERNATIF INI:
             if (!pemicuInstal) {
-                // Jalur pintas cadangan jika sistem browser HP warga lambat merespon perintah instal otomatis
-                alert("Silakan klik tombol Titik Tiga (menu browser) di pojok kanan atas HP kamu, lalu pilih 'Tambahkan ke Layar Utama' atau 'Instal Aplikasi' ya, Bro!");
+                // Deteksi apakah user pakai perangkat iOS (iPhone/iPad)
+                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+                
+                if (isIOS) {
+                    alert("Untuk iPhone/iOS, silakan klik tombol 'Share' (ikon kotak panah ke atas) di bagian bawah Safari, lalu pilih 'Add to Home Screen' / 'Tambahkan ke Layar Utama', Bro!");
+                } else {
+                    alert("Sistem browser HP kamu sedang memproses. Silakan klik tombol Titik Tiga di pojok kanan atas browser Chrome kamu, lalu pilih 'Tambahkan ke Layar Utama' atau 'Instal Aplikasi' ya, Bro!");
+                }
                 return;
             }
             
-            // Munculkan dialog instalasi resmi sistem operasi HP
+            // Jika pemicu otomatis browser siap, langsung jalankan instalasi resmi
             pemicuInstal.prompt();
-            
-            // Cek respon pilihan dari warga
             const { outcome } = await pemicuInstal.userChoice;
             console.log(`Pilihan user PWA: ${outcome}`);
             
@@ -673,16 +675,14 @@ function initSistemPWA() {
         });
     }
 
-    // 3. Jika aplikasi SUDAH BENAR-BENAR TERINSTAL di HP, baru matikan pop-up secara permanen
     window.addEventListener('appinstalled', () => { 
-        console.log('Aplikasi MMS 05 Sukses Terinstal di HP Warga!');
+        console.log('Aplikasi MMS 05 Sukses Terinstal!');
         tutupPopupInstal(); 
     });
 }
 
 function tutupPopupInstal() { 
     const popup = document.getElementById('pwa-install-popup'); 
-    // Hanya menyembunyikan elemen saat tombol diklik (tanpa menyimpan cookie penolak)
     if (popup) popup.style.display = 'none'; 
 }
 /* ==========================================================================
