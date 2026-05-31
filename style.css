@@ -874,12 +874,17 @@ body:has(.login-page-wrapper) .main-navbar {
     display: none !important;
 }
 
-/* 2. Atur ulang header agar kontennya bisa didorong ke tengah */
+/* FIX: Paksa garis merah muncul di bagian paling bawah header desktop/laptop */
+body:has(.login-page-wrapper) .site-header {
+    background-color: #ffffff !important;
+    border-bottom: 3px solid #E53935 !important; /* Garis merah tegas dipasang di sini */
+}
+
 body:has(.login-page-wrapper) .top-header {
     background-color: #ffffff !important;
-    justify-content: center !important; /* Membuat isi header maju ke tengah */
+    justify-content: center !important; 
     padding: 15px 20px !important;
-    border-bottom: 2px solid #E53935; /* Garis pembatas bawah merah solid tegas */
+    box-shadow: none !important; /* Hilangkan bayangan bawaan agar garis merah terlihat bersih */
 }
 
 /* 3. Pusatkan area logo dan teks */
