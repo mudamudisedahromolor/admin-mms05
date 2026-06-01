@@ -872,10 +872,11 @@ body.login-page-body .mini-logo {
     margin-bottom: 0px !important;
 }
 
-body.login-page-body .brand-title {
-    font-size: 15px !important; /* DIUBAH: Sedikit diperkecil untuk resolusi HP agar tidak meluber keluar area putih */
-    color: #2c3e50 !important;
+body.login-page-body .logo-wrapper .brand-title {
+    font-size: 15px !important; 
+    color: #2c3e50 !important; /* Memaksa teks judul menjadi Biru Tua Admin */
 }
+
 
 body.login-page-body .brand-subtitle {
     display: block !important;
