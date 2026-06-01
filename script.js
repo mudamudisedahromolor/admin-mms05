@@ -708,12 +708,7 @@ function validasiLogin() {
     }
 }
 
-if (window.location.pathname.includes("admin.html")) {
-    if (sessionStorage.getItem("statusAdmin") !== "aktif") {
-        alert("Akses ditolak! Anda harus login terlebih dahulu.");
-        window.location.href = "index.html";
-    }
-}
+
 
 /* ==========================================================================
    10. UTILITIES / FUNGSI PEMBANTU UMUM
