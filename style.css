@@ -831,7 +831,7 @@ body {
     width: 100%;
 }
 
-/* â ATURAN KHUSUS GATEWAY LOGIN (FIX RESPONSIVE WARNA HEADER) */
+/* ❌ ATURAN KHUSUS GATEWAY LOGIN (DIISOLASI DENGAN EXPLICIT BODY CLASS) */
 body.login-page-body .main-navbar,
 body.login-page-body .header-right-stuff,
 body.login-page-body .header-secure-badge {
@@ -839,19 +839,25 @@ body.login-page-body .header-secure-badge {
 }
 
 body.login-page-body .site-header {
-    position: relative !important; 
+    position: fixed !important; /* Diubah ke fixed agar mengunci di koordinat 0 top screen */
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
     height: auto !important;
     min-height: unset !important;
-    background-color: #2c3e50 !important; /* DIUBAH: Menjadi Biru Tua/Gelap agar menyatu dengan background atas */
+    background-color: #2c3e50 !important; 
     border-bottom: 4px solid #1a252f !important; 
-    width: 100%;
-}
+    z-index: 1000 !important;
+    box-shadow: none !important;
+
 
 body.login-page-body .top-header {
-    background-color: #2c3e50 !important; /* DIUBAH: Mengikuti warna dasar Biru Tua (Bukan Putih lagi) */
+    background-color: #2c3e50 !important; 
     justify-content: center !important; 
-    padding: 20px 20px !important; 
+    padding: 16px 20px !important; /* Padding seimbang tanpa margin bocor */
     box-shadow: none !important; 
+    width: 100% !important;
+    display: flex !important;
 }
 
 body.login-page-body .header-logo-area {
@@ -875,23 +881,27 @@ body.login-page-body .mini-logo {
 /* MENYESUAIKAN WARNA TEKS DENGAN BACKGROUND BARU */
 body.login-page-body .logo-wrapper .brand-title {
     font-size: 15px !important; 
-    color: #ffffff !important; /* DIUBAH: Menjadi Putih agar terbaca jelas di atas background Biru Tua */
+    color: #ffffff !important; 
 }
 
 body.login-page-body .brand-subtitle {
     display: block !important;
     visibility: visible !important;
     opacity: 1 !important;
-    color: rgba(255, 255, 255, 0.8) !important; /* DIUBAH: Menjadi Putih Transparan (Sama persis seperti versi resmi di HP) */
+    color: rgba(255, 255, 255, 0.8) !important; 
     font-size: 11px !important;
     margin-bottom: 0px !important; 
 }
 
 /* JARAK CONTAINER LOGIN DI HP */
 body.login-page-body .login-page-wrapper {
-    padding-top: 40px !important; 
-    min-height: calc(100vh - 120px) !important;
+    padding-top: 160px !important; /* Mengatur jarak turunnya kotak "Portal Utama Admin" dari header atas */
+    min-height: calc(100vh - 60px) !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
+
 
 
 /* DESIGN TEKS ERROR SALAH PASSWORD */
