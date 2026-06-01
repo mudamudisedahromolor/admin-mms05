@@ -697,7 +697,7 @@ function validasiLogin() {
     if (errorBox) { errorBox.textContent = ""; errorBox.style.display = "none"; }
     
     if (password === "admin1234") {
-        sessionStorage.setItem("statusAdmin", "aktif");
+        sessionStorage.setItem("statusAdmin", "sukses");
         window.location.href = "admin.html";
     } else if (password === "") {
         if (errorBox) { errorBox.textContent = "Password tidak boleh kosong!"; errorBox.style.display = "block"; }
