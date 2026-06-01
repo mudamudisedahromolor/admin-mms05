@@ -9,8 +9,8 @@
 
 body { 
     font-family: 'Poppins', sans-serif; 
-    background-color: #f4f4f4; 
-    overflow-x: hidden; /* Mencegah halaman meluber keluar layar */
+    background-color: #f4f6f9; /* Dipertahankan: Abu-abu bawaan konten admin */
+    overflow-x: hidden; 
     width: 100%;
 }
 
@@ -27,7 +27,7 @@ body {
 }
 
 .top-header { 
-    background-color: #fff; 
+    background-color: #fff; /* Dipertahankan: Putih */
     display: flex; 
     justify-content: space-between; 
     align-items: center; 
@@ -59,15 +59,16 @@ body {
 }
 
 .brand-title { 
-    color: #333; 
+    color: #2c3e50; /* DIUBAH: Biru Tua */
     font-weight: bold; 
     font-size: 18px; 
     letter-spacing: 0.5px; 
 }
 
 .brand-subtitle { 
-    color: #666; 
+    color: #1a252f; /* DIUBAH: Hitam Charcoal */
     font-size: 13px; 
+    font-weight: bold;
 }
 
 .header-right-stuff { 
@@ -90,7 +91,7 @@ body {
 
 .header-socials a:hover { 
     transform: scale(1.15); 
-    color: #E53935; 
+    color: #2c3e50; /* DIUBAH: Hover medsos jadi Biru Tua */
 }
 
 .menu-toggle { 
@@ -102,9 +103,9 @@ body {
     color: #333;
 }
 
-/* Baris Merah Navbar Layer 1 */
+/* Baris Navbar Layer 1 */
 .main-navbar { 
-    background-color: #E53935; 
+    background-color: #2c3e50; /* DIUBAH: Biru Tua */
     padding: 0 40px; 
 }
 
@@ -127,7 +128,7 @@ body {
 }
 
 .nav-item a:hover { 
-    background-color: #C62828; 
+    background-color: #1a252f; /* DIUBAH: Hover menu jadi Hitam Charcoal */
 }
 
 .navbar-mobile-only {
@@ -140,7 +141,7 @@ body {
     position: absolute; 
     top: 100%; 
     left: 0; 
-    background-color: #C62828; 
+    background-color: #1a252f; /* DIUBAH: Hitam Charcoal */
     list-style: none; 
     padding: 0;
     margin: 0;
@@ -158,8 +159,8 @@ body {
 }
 
 .submenu-item > a:hover { 
-    color: yellow !important; 
-    background-color: #C62828; 
+    color: #00ffff !important; /* Cyan kontras tinggi di latar gelap */
+    background-color: #2c3e50; /* DIUBAH: Hover dropdown jadi Biru Tua */
 }
 
 .nav-item:hover > .submenu { 
@@ -171,7 +172,7 @@ body {
     list-style: none; 
     padding: 0;
     margin: 0;
-    background-color: #bd2724; 
+    background-color: #11181f; /* DIUBAH: Hitam Pekat */
 }
 
 /* ==========================================================================
@@ -196,7 +197,7 @@ body {
     left: 0; 
     width: 100%; 
     height: 100%; 
-    background-color: rgba(0, 0, 0, 0.6); 
+    background-color: rgba(26, 37, 47, 0.75); /* DIUBAH: Overlay ke Hitam Charcoal Tint */
     z-index: 1; 
 }
 
@@ -240,7 +241,7 @@ body {
 .content-box {
     position: relative; 
     z-index: 2; 
-    background-color: #ffffff;
+    background-color: #ffffff; /* Dipertahankan: Putih */
     width: 90%; 
     max-width: 800px; 
     padding: 40px 50px; 
@@ -249,10 +250,11 @@ body {
     text-align: left;
     color: #333333; 
     margin: 0 auto;
+    border-top: 4px solid #2c3e50; /* DIUBAH: Garis pembatas atas jadi Biru Tua */
 }
 
 .box-title {
-    color: #E53935 !important; 
+    color: #2c3e50 !important; /* DIUBAH: Judul box teks jadi Biru Tua */
     font-size: 28px !important; 
     margin-bottom: 15px !important;
     text-align: center; 
@@ -262,7 +264,7 @@ body {
 .box-divider {
     border: 0; 
     height: 3px; 
-    background-color: #E53935; 
+    background-color: #2c3e50; /* DIUBAH: Garis dekorasi kecil jadi Biru Tua */
     width: 60px;
     margin: 0 auto 30px auto; 
     border-radius: 2px;
@@ -280,7 +282,7 @@ body {
     position: relative; 
     max-width: 900px; 
     margin: -80px auto 50px; 
-    background-color: #fff;
+    background-color: #fff; /* Dipertahankan */
     border-radius: 12px; 
     box-shadow: 0 10px 30px rgba(0,0,0,0.15); 
     z-index: 10; 
@@ -329,7 +331,7 @@ body {
     display: inline-block; 
     transition: 0.3s; 
 }
-.dot.aktif, .dot:hover { background-color: #E53935; }
+.dot.aktif, .dot:hover { background-color: #2c3e50; } /* DIUBAH: Indikator slider aktif jadi Biru Tua */
 
 /* ==========================================================================
    4. HALAMAN TRANSPARANSI KAS KEUANGAN & TRANSAKSI
@@ -340,18 +342,18 @@ body {
 .card-box h4 { font-size: 14px; color: #666; margin-bottom: 10px; font-weight: normal; }
 .card-box .amount { font-size: 22px; font-weight: 800; }
 .card-box.masuk .amount { color: #2e7d32; }
-.card-box.keluar .amount { color: #E53935; }
+.card-box.keluar .amount { color: #1a252f; } /* DIUBAH: Angka pengeluaran kas keuangan jadi Hitam Charcoal */
 .card-box.saldo .amount { color: #1565c0; }
 
 .filter-container { display: flex; gap: 15px; justify-content: flex-end; flex-wrap: wrap; margin-bottom: 20px; align-items: center; }
 .filter-box { padding: 10px 15px; border: 1px solid #ccc; border-radius: 8px; font-family: 'Poppins', sans-serif; font-size: 13px; outline: none; height: 40px; }
-.filter-box:focus { border-color: #E53935; }
+.filter-box:focus { border-color: #2c3e50; } /* DIUBAH: Garis luar input saat diklik */
 
 .btn-cetak-mutasi {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background-color: #E53935;
+    background-color: #2c3e50; /* Dipertahankan: Biru Tua */
     color: #ffffff !important;
     padding: 0 16px;
     font-size: 13px;
@@ -367,7 +369,7 @@ body {
 }
 
 .btn-cetak-mutasi:hover {
-    background-color: #c62828;
+    background-color: #1a252f; /* Dipertahankan: Hitam Charcoal */
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
     transform: translateY(-1px);
 }
@@ -379,7 +381,7 @@ body {
 
 .table-responsive { width: 100%; overflow-x: auto; }
 .finance-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
-.finance-table th { background-color: #E53935; color: white; padding: 12px 15px; white-space: nowrap; }
+.finance-table th { background-color: #2c3e50; color: white; padding: 12px 15px; white-space: nowrap; } /* Dipertahankan: Biru Tua */
 .finance-table td { padding: 12px 15px; border-bottom: 1px solid #eee; }
 .finance-table tr:nth-child(even) { background-color: #fafafa; }
 .finance-table tr:hover { background-color: #f1f1f1; }
@@ -395,13 +397,13 @@ body {
 .swiper-slide-active { opacity: 1; transform: scale(1.05); z-index: 10; }
 .team-card { background: #fff; padding: 30px 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; display: flex; flex-direction: column; align-items: center; border: 1px solid #eee; min-height: 280px; }
 .team-card img { width: 110px; height: 110px; border-radius: 50%; object-fit: cover; margin-bottom: 15px; border: 3px solid #ddd; }
-.team-card.ketua-card img { border-color: #E53935; width: 130px; height: 130px; }
+.team-card.ketua-card img { border-color: #2c3e50; width: 130px; height: 130px; } /* DIUBAH: Border foto ketua jadi Biru Tua */
 .team-card h4 { color: #333; font-size: 16px; margin-bottom: 5px; font-weight: bold; }
-.team-card p { color: #E53935; font-weight: 600; font-size: 13px; text-transform: uppercase; margin-bottom: 5px; }
+.team-card p { color: #2c3e50; font-weight: 600; font-size: 13px; text-transform: uppercase; margin-bottom: 5px; } /* DIUBAH: Nama jabatan */
 .nim-text { font-size: 11px !important; color: #888 !important; text-transform: none !important; font-weight: normal !important; margin-bottom: 15px !important; }
 .team-socials { display: flex; justify-content: center; gap: 15px; margin-top: auto; }
 .team-socials a { color: #555; font-size: 18px; transition: 0.3s; }
-.team-socials a:hover { color: #E53935; transform: scale(1.2); }
+.team-socials a:hover { color: #2c3e50; transform: scale(1.2); } /* DIUBAH: Hover icon tim medsos */
 
 /* ==========================================================================
    6. HALAMAN DOKUMENTASI (GOOGLE DRIVE EMBED & AUTOMATED TABLE)
@@ -428,7 +430,7 @@ body {
    ========================================================================== */
 @media screen and (max-width: 768px) {
     .top-header { 
-        background-color: #E53935 !important; 
+        background-color: #2c3e50 !important; /* Dipertahankan: Biru Tua */
         flex-direction: row !important; 
         padding: 12px 20px !important; 
         position: relative !important; 
@@ -438,7 +440,7 @@ body {
     .mini-logo { width: 34px !important; }
     
     .logo-wrapper { color: #ffffff !important; }
-    .brand-title { font-size: 14px !important; }
+    .brand-title { font-size: 14px !important; color: #fff !important; } 
     .brand-subtitle { font-size: 10px !important; color: rgba(255, 255, 255, 0.8) !important; }
     
     .top-header .header-right-stuff { 
@@ -451,14 +453,13 @@ body {
         color: #ffffff !important;
     }
   
-    .main-navbar { display: none; padding: 5px 0; width: 100%; flex-direction: column; align-items: stretch; background-color: #C62828; }
+    .main-navbar { display: none; padding: 5px 0; width: 100%; flex-direction: column; align-items: stretch; background-color: #1a252f; } /* Dipertahankan: Hitam Charcoal */
     .main-navbar.aktif { display: flex; }
     .nav-list { flex-direction: column; }
     .nav-item a { border-bottom: 1px solid rgba(255,255,255,0.06); padding: 12px 20px; font-size: 13px; }
     
-    .submenu { position: static; box-shadow: none; padding-left: 15px; background-color: #B71C1C; }
+    .submenu { position: static; box-shadow: none; padding-left: 15px; background-color: #2c3e50; } /* DIUBAH: Submenu seluler ke Biru Tua */
 
-    /* FIX: Menambahkan .login-page-wrapper agar elemen form login turun kebawah & tidak tumpang tindih di HP */
     .finance-page-wrapper, .structure-page-wrapper, .gallery-page-wrapper, .hero-container, .login-page-wrapper { 
         padding-top: 140px !important; 
     }
@@ -478,10 +479,10 @@ body {
 }
 
 /* ==========================================================================
-   9. INDEPENDENT SITE FOOTER DESIGN
+   9. INDEPENDENT SITE FOOTER DESIGN - VERSI ADMIN
    ========================================================================== */
 .site-footer {
-    background-color: #B71C1C; 
+    background-color: #1a252f; /* Dipertahankan: Hitam Charcoal */
     color: #ffffff;
     padding: 50px 0 0 0;
     font-family: 'Poppins', sans-serif;
@@ -505,7 +506,7 @@ body {
     position: relative;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    color: #FFD700; 
+    color: #fff; /* DIUBAH: Dipaksa ke putih agar tidak ada unsur frekuensi merah/kuning lama */
 }
 
 .footer-column h5::after {
@@ -544,7 +545,7 @@ body {
 
 .footer-text i {
     margin-right: 8px;
-    color: #FFD700;
+    color: #2c3e50; /* DIUBAH: Ikon info footer jadi Biru Tua */
 }
 
 .footer-text a {
@@ -554,7 +555,7 @@ body {
 }
 
 .footer-text a:hover {
-    color: #FFD700;
+    color: #2c3e50;
 }
 
 .footer-links {
@@ -583,7 +584,7 @@ body {
 }
 
 .footer-links a:hover {
-    color: #FFD700;
+    color: #2c3e50; /* DIUBAH: Hover link footer */
     padding-left: 5px; 
 }
 
@@ -609,7 +610,7 @@ body {
 
 .footer-social-icons a:hover {
     background-color: #ffffff;
-    color: #B71C1C;
+    color: #1a252f; 
     transform: translateY(-3px);
 }
 
@@ -696,7 +697,7 @@ body {
 }
 
 .close-modal-mms:hover { 
-    color: #E53935; 
+    color: #2c3e50; /* DIUBAH: Tombol close modal hover jadi Biru Tua */
 }
 
 /* ==========================================================================
@@ -715,20 +716,20 @@ body {
     align-items: center;
     gap: 12px;
     padding: 15px 32px;
-    background-color: #673ab7; 
+    background-color: #2c3e50; /* DIUBAH: Tombol eksternal diubah ke warna pondasi Biru Tua */
     color: white;
     text-decoration: none;
     font-family: sans-serif;
     font-size: 16px;
     font-weight: bold;
     border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(103, 58, 183, 0.3);
+    box-shadow: 0 4px 10px rgba(44, 62, 80, 0.3);
     transition: all 0.3s ease;
 }
 
 .btn-google-form:hover {
-    background-color: #512da8;
-    box-shadow: 0 6px 15px rgba(81, 45, 168, 0.4);
+    background-color: #1a252f; /* DIUBAH: Hover tombol form jadi Hitam Charcoal */
+    box-shadow: 0 6px 15px rgba(26, 37, 47, 0.4);
     transform: translateY(-2px);
     color: white; 
 }
@@ -738,7 +739,7 @@ body {
 }
 
 /* ==========================================================================
-   12. PORTAL LOGIN GATEWAY ADMIN KUSTOM & FIX LAYOUT HEADER (LOGO CENTERING)
+   12. PORTAL LOGIN GATEWAY ADMIN KUSTOM & FIX LAYOUT HEADER
    ========================================================================== */
 .login-page-wrapper {
     flex: 1;
@@ -757,7 +758,7 @@ body {
     border-radius: 12px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.08);
     text-align: center;
-    border-top: 6px solid #E53935 !important; 
+    border-top: 6px solid #2c3e50 !important; /* DIUBAH: Garis pembatas atas box login jadi Biru Tua */
     margin: auto;
 }
 
@@ -787,15 +788,15 @@ body {
 }
 
 .login-input:focus {
-    border-color: #E53935;
+    border-color: #2c3e50; /* DIUBAH: Fokus garis input login */
     background-color: #fff;
-    box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.1);
+    box-shadow: 0 0 0 3px rgba(44, 62, 80, 0.1);
 }
 
 .btn-login {
     width: 100%;
     padding: 14px;
-    background-color: #E53935;
+    background-color: #2c3e50; /* Dipertahankan: Biru Tua */
     color: white;
     border: none;
     border-radius: 8px;
@@ -806,13 +807,13 @@ body {
     align-items: center;
     justify-content: center;
     gap: 10px;
-    box-shadow: 0 4px 10px rgba(229, 57, 53, 0.2);
+    box-shadow: 0 4px 10px rgba(44, 62, 80, 0.2);
     transition: all 0.3s ease;
 }
 
 .btn-login:hover {
-    background-color: #c62828;
-    box-shadow: 0 6px 15px rgba(198, 40, 40, 0.3);
+    background-color: #1a252f; /* Dipertahankan: Hitam Charcoal */
+    box-shadow: 0 6px 15px rgba(26, 37, 47, 0.3);
     transform: translateY(-1px);
 }
 
@@ -830,7 +831,7 @@ body {
     width: 100%;
 }
 
-/* â ATURAN KHUSUS GATEWAY LOGIN (DIISOLASI DENGAN EXPLICIT BODY CLASS) */
+/* â ATURAN KHUSUS GATEWAY LOGIN (FIX RESPONSIVE WARNA HEADER) */
 body.login-page-body .main-navbar,
 body.login-page-body .header-right-stuff,
 body.login-page-body .header-secure-badge {
@@ -838,15 +839,16 @@ body.login-page-body .header-secure-badge {
 }
 
 body.login-page-body .site-header {
-    position: fixed !important;
+    position: relative !important; 
     height: auto !important;
     min-height: unset !important;
-    background-color: #ffffff !important;
-    border-bottom: 4px solid #E53935 !important; 
+    background-color: #2c3e50 !important; /* DIUBAH: Menjadi Biru Tua/Gelap agar menyatu dengan background atas */
+    border-bottom: 4px solid #1a252f !important; 
+    width: 100%;
 }
 
 body.login-page-body .top-header {
-    background-color: #ffffff !important;
+    background-color: #2c3e50 !important; /* DIUBAH: Mengikuti warna dasar Biru Tua (Bukan Putih lagi) */
     justify-content: center !important; 
     padding: 20px 20px !important; 
     box-shadow: none !important; 
@@ -860,38 +862,43 @@ body.login-page-body .header-logo-area {
 body.login-page-body .logo-wrapper {
     flex-direction: column !important; 
     text-align: center !important;
-    gap: 6px !important;
+    gap: 8px !important;
 }
 
 body.login-page-body .mini-logo {
     width: 55px !important; 
     height: auto !important;
-    margin-top: 5px !important;    
+    margin-top: 0px !important;    
     margin-bottom: 0px !important;
 }
 
-body.login-page-body .brand-title {
-    font-size: 18px !important;
+/* MENYESUAIKAN WARNA TEKS DENGAN BACKGROUND BARU */
+body.login-page-body .logo-wrapper .brand-title {
+    font-size: 15px !important; 
+    color: #ffffff !important; /* DIUBAH: Menjadi Putih agar terbaca jelas di atas background Biru Tua */
 }
 
 body.login-page-body .brand-subtitle {
     display: block !important;
     visibility: visible !important;
     opacity: 1 !important;
-    color: #666 !important; 
-    font-size: 12px !important;
-    margin-bottom: 5px !important; 
+    color: rgba(255, 255, 255, 0.8) !important; /* DIUBAH: Menjadi Putih Transparan (Sama persis seperti versi resmi di HP) */
+    font-size: 11px !important;
+    margin-bottom: 0px !important; 
 }
 
-body.login-page-body .box-subtitle {
-    margin-bottom: 35px !important; 
+/* JARAK CONTAINER LOGIN DI HP */
+body.login-page-body .login-page-wrapper {
+    padding-top: 40px !important; 
+    min-height: calc(100vh - 120px) !important;
 }
+
 
 /* DESIGN TEKS ERROR SALAH PASSWORD */
 .error-text {
     display: none; 
-    color: #D32F2F; 
-    background-color: #FFEBEE; 
+    color: #ffffff; /* DIUBAH: teks putih di dalam bubble hitam */
+    background-color: #1a252f; /* DIUBAH: Bubble notifikasi error diubah menjadi Hitam Charcoal */
     font-size: 13px;
     font-weight: 600;
     padding: 10px;
@@ -899,7 +906,7 @@ body.login-page-body .box-subtitle {
     margin-top: -10px; 
     margin-bottom: 20px; 
     text-align: center;
-    border: 1px solid #FFCDD2;
+    border: 1px solid #2c3e50; /* DIUBAH: Border bubble error jadi Biru Tua */
     animation: shakeEffect 0.3s ease-in-out; 
 }
 
@@ -916,17 +923,17 @@ body.login-page-body .box-subtitle {
     display: none; 
     position: fixed; 
     font-family: sans-serif; 
-    background-color: #ffffff; 
+    background-color: #ffffff; /* Dipertahankan: Putih */
     box-shadow: 0 4px 24px rgba(0,0,0,0.25); 
     border-radius: 12px; 
     padding: 16px; 
     z-index: 999999 !important; 
-    border-left: 5px solid #E53935; 
+    border-left: 5px solid #2c3e50; /* DIUBAH: Aksen garis samping bubble chat/popup PWA menjadi Biru Tua */
     box-sizing: border-box;
     transition: all 0.3s ease-in-out;
 }
 
-/* ð± FIX FIXED POSITION: Dipaksa mengunci absolut di bawah layar HP agar tidak terdorong layout atas */
+/* FIX FIXED POSITION HP */
 @media (max-width: 767px) {
     #pwa-install-popup {
         position: fixed !important;
@@ -939,7 +946,7 @@ body.login-page-body .box-subtitle {
     }
 }
 
-/* ð» SETTINGAN UNTUK LAPTOP / DESKTOP */
+/* SETTINGAN UNTUK LAPTOP / DESKTOP */
 @media (min-width: 768px) {
     #pwa-install-popup {
         top: 90px !important; 
@@ -1004,7 +1011,7 @@ body.login-page-body .box-subtitle {
 }
 
 .pwa-mms-btn-install {
-    background-color: #E53935 !important; 
+    background-color: #2c3e50 !important; /* DIUBAH: Tombol aksi install di bubble chat PWA menjadi Biru Tua */
     border: none !important; 
     color: white !important; 
     font-weight: bold !important; 
@@ -1012,10 +1019,10 @@ body.login-page-body .box-subtitle {
     border-radius: 6px; 
     cursor: pointer; 
     font-size: 13px; 
-    box-shadow: 0 2px 5px rgba(229,57,53,0.3);
+    box-shadow: 0 2px 5px rgba(44, 62, 80, 0.3);
     transition: background-color 0.2s;
 }
 
 .pwa-mms-btn-install:hover {
-    background-color: #d32f2f !important;
+    background-color: #1a252f !important; /* DIUBAH: Hover tombol aksi PWA menjadi Hitam Charcoal */
 }
