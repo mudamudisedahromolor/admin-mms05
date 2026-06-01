@@ -862,7 +862,9 @@ body.login-page-body .top-header {
 }
 
 body.login-page-body .header-logo-area {
+    display: flex !important;      /* Mengaktifkan flexbox bawaan awal */
     justify-content: center !important;
+    align-items: center !important;
     width: 100%;
 }
 
@@ -870,6 +872,7 @@ body.login-page-body .logo-wrapper {
     flex-direction: column !important; 
     text-align: center !important;
     gap: 8px !important;
+    display: flex !important;     /* Memastikan flexbox logo menyala normal */
 }
 
 body.login-page-body .mini-logo {
