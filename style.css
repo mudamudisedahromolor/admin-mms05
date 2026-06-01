@@ -422,12 +422,14 @@ body {
 @media screen and (min-width: 769px) {
     .submenu-item:hover > .sub-submenu-dalam { display: block; }
     .sub-submenu-dalam { position: absolute; top: 0; left: 100%; min-width: 200px; box-shadow: 2px 4px 6px rgba(0,0,0,0.15); }
-    .sub-submenu-dalam li a { padding-left: 20px !/* ==========================================================================
+    .sub-submenu-dalam li a { padding-left: 20px !
+       
+/* ==========================================================================
    8. MEDIA QUERIES SATU PINTU KHUSUS MOBILE (HP)
    ========================================================================== */
 @media screen and (max-width: 768px) {
-    /* PERBAIKAN: Memastikan pembungkus utama header tetap fixed di paling atas layar */
-    .site-header {
+    /* 1. Halaman Normal (Bukan Login) -> Buat Header Menjadi Fixed & Lebar Penuh */
+    body:not(.login-page-body) .site-header {
         position: fixed !important;
         top: 0 !important;
         left: 0 !important;
@@ -435,14 +437,22 @@ body {
         z-index: 1000 !important;
     }
 
+    /* 2. Pengaturan Dasar Top Header untuk Mobile */
     .top-header { 
-        background-color: #2c3e50 !important; /* Biru Navy / Tua */
+        background-color: #2c3e50 !important; /* Biru Navy */
         flex-direction: row !important; 
         padding: 12px 20px !important; 
-        position: relative !important; 
-        width: 100% !important; /* PERBAIKAN: Memaksa lebar penuh */
+        width: 100% !important;
     }
     
+    /* 3. Khusus Halaman Login -> Paksa Tetap Relative Agar Konten Tidak Amblas ke Atas */
+    body.login-page-body .site-header {
+        position: relative !important;
+        top: auto !important;
+        left: auto !important;
+        width: 100% !important;
+    }
+
     .header-logo-area { margin-bottom: 0 !important; }
     .mini-logo { width: 34px !important; }
     
@@ -467,9 +477,18 @@ body {
     
     .submenu { position: static; box-shadow: none; padding-left: 15px; background-color: #2c3e50; } 
 
-    /* PERBAIKAN: Menyesuaikan ulang padding-top halaman agar konten tidak tertutup header yang di-fixed */
-    .finance-page-wrapper, .structure-page-wrapper, .gallery-page-wrapper, .hero-container, .login-page-wrapper { 
-        padding-top: 100px !important; 
+    /* 4. Berikan Jarak Atas Hanya untuk Halaman Biasa yang Headernya Melayang */
+    body:not(.login-page-body) .finance-page-wrapper, 
+    body:not(.login-page-body) .structure-page-wrapper, 
+    body:not(.login-page-body) .gallery-page-wrapper, 
+    body:not(.login-page-body) .hero-container { 
+        padding-top: 140px !important; 
+    }
+
+    /* 5. Jarak Atas untuk Halaman Login (Karena headernya relative, tidak butuh padding besar) */
+    body.login-page-body .login-page-wrapper {
+        padding-top: 30px !important; 
+        min-height: calc(100vh - 120px) !important;
     }
 
     .content-box, .content-box-structure, .content-box-gallery { padding: 20px; width: 95%; }
