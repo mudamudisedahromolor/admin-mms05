@@ -831,11 +831,7 @@ body {
     width: 100%;
 }
 
-/* ❌ ATURAN KHUSUS GATEWAY LOGIN */
-body.login-page-body {
-    background-color: #1a252f !important; /* DIUBAH: Seluruh background portal login dipaksa Hitam Charcoal agar kontras penuh sejak awal buka */
-}
-
+/* ❌ ATURAN KHUSUS GATEWAY LOGIN (FIXED LOGO TERPOTONG DI HP) */
 body.login-page-body .main-navbar,
 body.login-page-body .header-right-stuff,
 body.login-page-body .header-secure-badge {
@@ -843,17 +839,18 @@ body.login-page-body .header-secure-badge {
 }
 
 body.login-page-body .site-header {
-    position: fixed !important;
+    position: relative !important; /* DIUBAH: Menggunakan relative agar posisinya fleksibel dan mendorong konten di bawahnya */
     height: auto !important;
     min-height: unset !important;
     background-color: #ffffff !important;
-    border-bottom: 4px solid #2c3e50 !important; /* DIUBAH: Border bawah header login */
+    border-bottom: 4px solid #2c3e50 !important; 
+    width: 100%;
 }
 
 body.login-page-body .top-header {
     background-color: #ffffff !important;
     justify-content: center !important; 
-    padding: 20px 20px !important; 
+    padding: 15px 20px !important; /* DIUBAH: Padding disesuaikan agar logo tidak terlalu mepet ke atas layar */
     box-shadow: none !important; 
 }
 
@@ -865,18 +862,19 @@ body.login-page-body .header-logo-area {
 body.login-page-body .logo-wrapper {
     flex-direction: column !important; 
     text-align: center !important;
-    gap: 6px !important;
+    gap: 8px !important; /* DIUBAH: Jarak antara logo dan tulisan teks nama organisasi */
 }
 
 body.login-page-body .mini-logo {
     width: 55px !important; 
     height: auto !important;
-    margin-top: 5px !important;    
+    margin-top: 0px !important;    
     margin-bottom: 0px !important;
 }
 
 body.login-page-body .brand-title {
-    font-size: 18px !important;
+    font-size: 15px !important; /* DIUBAH: Sedikit diperkecil untuk resolusi HP agar tidak meluber keluar area putih */
+    color: #2c3e50 !important;
 }
 
 body.login-page-body .brand-subtitle {
@@ -884,12 +882,14 @@ body.login-page-body .brand-subtitle {
     visibility: visible !important;
     opacity: 1 !important;
     color: #666 !important; 
-    font-size: 12px !important;
-    margin-bottom: 5px !important; 
+    font-size: 11px !important;
+    margin-bottom: 0px !important; 
 }
 
-body.login-page-body .box-subtitle {
-    margin-bottom: 35px !important; 
+/* FIX LAYOUT CONTAINER LOGIN DI HP */
+body.login-page-body .login-page-wrapper {
+    padding-top: 40px !important; /* DIUBAH: Jarak atas form login diturunkan secara normal tanpa tumpang tindih */
+    min-height: calc(100vh - 120px) !important;
 }
 
 /* DESIGN TEKS ERROR SALAH PASSWORD */
