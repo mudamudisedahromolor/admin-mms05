@@ -738,27 +738,99 @@ body {
 }
 
 /* ==========================================================================
-   12. PORTAL LOGIN GATEWAY ADMIN KUSTOM & FIX LAYOUT HEADER (LOGO CENTERING)
+   12. PORTAL LOGIN GATEWAY ADMIN KUSTOM & FIX LAYOUT HEADER
    ========================================================================== */
-.login-page-wrapper {
+
+/* 1. MENGUBAH UTUH BACKGROUND BASE PORTAL MENJADI NAVY */
+body.login-page-body {
+    background-color: #2c3e50 !important; /* Base halaman diubah menjadi Navy pekat */
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 2. MENGATUR POSISI KOTAK PORTAL AGAR NAIK KE ATAS */
+body.login-page-body .login-page-wrapper {
     flex: 1;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start; /* Mengunci kotak di atas, bukan di tengah */
     padding: 20px;
+    padding-top: 30px !important; /* Tuas pengatur tinggi kotak dari bawah header */
     min-height: calc(100vh - 140px);
 }
 
+/* 3. MENYESUAIKAN HEADER PORTAL SUPAYA FULL NAVY DAN MENYATU */
+body.login-page-body .site-header {
+    position: relative !important;
+    height: auto !important;
+    min-height: unset !important;
+    background-color: #2c3e50 !important; /* Menutup area atas dengan Navy */
+    border-bottom: 4px solid #1a252f !important; /* Garis batas bawah gelap pekat */
+    width: 100%;
+}
+
+body.login-page-body .top-header {
+    background-color: transparent !important; /* Transparan agar menyatu dengan warna dasar */
+    justify-content: center !important; 
+    padding: 20px 20px 10px 20px !important; 
+    box-shadow: none !important; 
+}
+
+body.login-page-body .header-logo-area {
+    justify-content: center !important;
+    width: 100%;
+}
+
+body.login-page-body .logo-wrapper {
+    flex-direction: column !important; 
+    text-align: center !important;
+    gap: 8px !important;
+}
+
+body.login-page-body .mini-logo {
+    width: 55px !important; 
+    height: auto !important;
+    margin-top: 0px !important;    
+    margin-bottom: 0px !important;
+}
+
+/* MENGUBAH TEKS HEADER JADI PUTIH AGAR KONTRAS DI ATAS NAVY */
+body.login-page-body .brand-title {
+    font-size: 16px !important;
+    color: #ffffff !important;
+    text-align: center;
+}
+
+body.login-page-body .brand-subtitle {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    color: rgba(255, 255, 255, 0.8) !important;
+    font-size: 11px !important;
+    margin-bottom: 0px !important; 
+    text-align: center;
+}
+
+/* 4. MENYESUAIKAN KOTAK UTAMA LOGIN (DENGAN AKSEN NAVY) */
 .login-content-box {
-    background: #ffffff;
+    background: #ffffff !important;
     width: 100%;
     max-width: 420px !important;  
     padding: 40px 35px !important; 
     border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
     text-align: center;
-    border-top: 6px solid #E53935 !important; 
+    border-top: 6px solid #2c3e50 !important; /* Garis atas kotak diubah ke Navy */
     margin: auto;
+}
+
+body.login-page-body .box-title {
+    color: #2c3e50 !important; /* Judul dalam kotak diubah ke Navy */
+}
+
+body.login-page-body .box-divider {
+    background-color: #2c3e50 !important; /* Garis kecil di bawah judul diubah ke Navy */
 }
 
 .input-wrapper {
@@ -787,15 +859,16 @@ body {
 }
 
 .login-input:focus {
-    border-color: #E53935;
+    border-color: #2c3e50;
     background-color: #fff;
-    box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.1);
+    box-shadow: 0 0 0 3px rgba(44, 62, 80, 0.1);
 }
 
+/* TOMBOL MASUK SISTEM DIUBAH KE NAVY */
 .btn-login {
     width: 100%;
     padding: 14px;
-    background-color: #E53935;
+    background-color: #2c3e50; 
     color: white;
     border: none;
     border-radius: 8px;
@@ -806,13 +879,13 @@ body {
     align-items: center;
     justify-content: center;
     gap: 10px;
-    box-shadow: 0 4px 10px rgba(229, 57, 53, 0.2);
+    box-shadow: 0 4px 10px rgba(44, 62, 80, 0.2);
     transition: all 0.3s ease;
 }
 
 .btn-login:hover {
-    background-color: #c62828;
-    box-shadow: 0 6px 15px rgba(198, 40, 40, 0.3);
+    background-color: #1a252f; /* Hover tombol menjadi Hitam Charcoal */
+    box-shadow: 0 6px 15px rgba(26, 37, 47, 0.3);
     transform: translateY(-1px);
 }
 
@@ -820,78 +893,33 @@ body {
     transform: translateY(0);
 }
 
+/* FOOTER IKUT ATURAN GELAP */
 .portal-footer {
     text-align: center;
     padding: 15px;
     font-size: 12px;
-    color: #888;
-    border-top: 1px solid #eee;
-    background-color: #ffffff;
+    color: rgba(255, 255, 255, 0.4);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    background-color: #1a252f;
     width: 100%;
-}
-
-/* â ATURAN KHUSUS GATEWAY LOGIN (DIISOLASI DENGAN EXPLICIT BODY CLASS) */
-body.login-page-body .main-navbar,
-body.login-page-body .header-right-stuff,
-body.login-page-body .header-secure-badge {
-    display: none !important;
-}
-
-body.login-page-body .site-header {
-    position: fixed !important;
-    height: auto !important;
-    min-height: unset !important;
-    background-color: #ffffff !important;
-    border-bottom: 4px solid #E53935 !important; 
-}
-
-body.login-page-body .top-header {
-    background-color: #ffffff !important;
-    justify-content: center !important; 
-    padding: 20px 20px !important; 
-    box-shadow: none !important; 
-}
-
-body.login-page-body .header-logo-area {
-    justify-content: center !important;
-    width: 100%;
-}
-
-body.login-page-body .logo-wrapper {
-    flex-direction: column !important; 
-    text-align: center !important;
-    gap: 6px !important;
-}
-
-body.login-page-body .mini-logo {
-    width: 55px !important; 
-    height: auto !important;
-    margin-top: 5px !important;    
-    margin-bottom: 0px !important;
-}
-
-body.login-page-body .brand-title {
-    font-size: 18px !important;
-}
-
-body.login-page-body .brand-subtitle {
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    color: #666 !important; 
-    font-size: 12px !important;
-    margin-bottom: 5px !important; 
 }
 
 body.login-page-body .box-subtitle {
     margin-bottom: 35px !important; 
 }
 
-/* DESIGN TEKS ERROR SALAH PASSWORD */
+/* SEMBUNYIKAN ELEMEN YANG TIDAK DIPERLUKAN DI HALAMAN LOGIN */
+body.login-page-body .main-navbar,
+body.login-page-body .header-right-stuff,
+body.login-page-body .header-secure-badge {
+    display: none !important;
+}
+
+/* DESIGN TEKS ERROR */
 .error-text {
     display: none; 
-    color: #D32F2F; 
-    background-color: #FFEBEE; 
+    color: #ffffff; 
+    background-color: #1a252f; 
     font-size: 13px;
     font-weight: 600;
     padding: 10px;
@@ -899,9 +927,10 @@ body.login-page-body .box-subtitle {
     margin-top: -10px; 
     margin-bottom: 20px; 
     text-align: center;
-    border: 1px solid #FFCDD2;
+    border: 1px solid #2c3e50;
     animation: shakeEffect 0.3s ease-in-out; 
 }
+
 
 @keyframes shakeEffect {
     0%, 100% { transform: translateX(0); }
