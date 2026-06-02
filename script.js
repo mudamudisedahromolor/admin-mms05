@@ -4,7 +4,7 @@
    ========================================================================== */
 
 const namaBulanIndo = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-let pemicuInstal = null; 
+let pemicuInstal = null;
 
 /* ==========================================================================
    1. SISTEM INISIALISASI UTAMA
@@ -866,7 +866,7 @@ window.muatBaganLombaVisual = function() {
                             ${disableInput ? 'disabled' : ''}
                             onchange="window.simpanSkorPertandingan('${match.matchId}', 2, this.value)">
                     </div>
-                `;
+                `
                 elemenRonde.appendChild(elemenMatch);
             });
             container.appendChild(elemenRonde);
