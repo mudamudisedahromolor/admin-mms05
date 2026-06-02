@@ -974,3 +974,34 @@ window.simpanSkorPertandingan = function(matchId, nomorPlayer, nilaiSkor) {
         console.error("Koneksi gagal saat update skor:", err);
     });
 };
+
+
+// Fungsi memicu majunya pemenang ke ronde berikutnya di Google Sheets
+window.triggerLanjutBabakRonde = function() {
+    const usia = document.getElementById('filter-usia').value;
+    const gender = document.getElementById('filter-gender').value;
+    const kategori = document.getElementById('filter-kategori').value;
+    const identitasFilter = `${usia}_${gender}_${kategori}`;
+
+    const konfirmasi = confirm(`Apakah seluruh skor Ronde saat ini sudah selesai diinput?\n\nKlik OK untuk menaikkan para pemenang ke babak berikutnya secara otomatis.`);
+    if (!konfirmasi) return;
+
+    const bodiPesan = {
+        aksi: "lanjutRondeBerikutnya",
+        identitasFilter: identitasFilter
+    };
+
+    fetch(URL_ENGINE_TURNAMEN, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify(bodiPesan)
+    })
+    .then(res => res.json())
+    .then(respon => {
+        alert(respon.pesan);
+        window.muatBaganLombaVisual(); // Refresh visual biar kolom Ronde 2 otomatis muncul!
+    })
+    .catch(err => {
+        console.error("Gagal melaju ke ronde berikutnya:", err);
+    });
+};
