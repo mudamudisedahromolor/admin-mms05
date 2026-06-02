@@ -781,6 +781,7 @@ window.muatBaganLombaVisual = function() {
             container.innerHTML = `<p style="text-align: center; color: #999; width: 100%; padding: 20px;">Belum ada draf bagan pertandingan untuk kelompok ini.<br>Silakan klik tombol "Kunci & Acak Grup" untuk membuatnya.</p>`;
             return;
         }
+    }
 
         container.innerHTML = ""; 
 
