@@ -802,7 +802,7 @@ window.muatBaganLombaVisual = function() {
     if (!container) return;
     container.innerHTML = `<p style="text-align: center; color: #666; width: 100%;"><i class="fa-solid fa-circle-notch fa-spin"></i> Loading data...</p>`;
 
-    // // Logika pembentukan identitas filter yang pas dengan nama di Apps Script (VERSI FIX TANGGAL)
+    // Logika pembentukan identitas filter yang pas dengan nama di Apps Script
     const hariIni = new Date();
     const tanggalKunci = String(hariIni.getDate()).padStart(2, '0') + 
                          String(hariIni.getMonth() + 1).padStart(2, '0') + 
@@ -816,66 +816,50 @@ window.muatBaganLombaVisual = function() {
 
     fetch(`${URL_ENGINE_TURNAMEN}?aksi=ambilBagan&identitasFilter=${encodeURIComponent(identitasFilter)}`)
     .then(res => res.json())
+    .then(data => {
+        if (!data || data.length === 0) {
+            container.innerHTML = `<p style="text-align: center; color: #999; width: 100%; padding: 20px;">Belum ada draf bagan pertandingan untuk kelompok ini.<br>Silakan klik tombol "Kunci & Acak Grup" untuk membuatnya.</p>`;
+            return;
+        }
 
         container.innerHTML = ""; 
 
-        const rondeGrup = {};
+        // Proses pengelompokan berdasarkan ronde
+        const rondeMap = {};
         data.forEach(match => {
-            if (!rondeGrup[match.ronde]) rondeGrup[match.ronde] = [];
-            rondeGrup[match.ronde].push(match);
+            if (!rondeMap[match.ronde]) {
+                rondeMap[match.ronde] = [];
+            }
+            rondeMap[match.ronde].push(match);
         });
 
-        for (const namaRonde in rondeGrup) {
+        // Gambar kotak bracket ke HTML
+        Object.keys(rondeMap).forEach(namaRonde => {
             const elemenRonde = document.createElement('div');
-            elemenRonde.className = 'bracket-round';
+            elemenRonde.className = 'ronde-kolom';
             
-            const judulRonde = document.createElement('h4');
-            judulRonde.style = "text-align: center; margin: 0 0 10px 0; color: #2c3e50; font-size: 14px; border-bottom: 2px solid #2c3e50; padding-bottom: 5px; font-weight: bold;";
-            judulRonde.innerText = namaRonde.toUpperCase();
+            const judulRonde = document.createElement('h3');
+            judulRonde.innerText = namaRonde;
             elemenRonde.appendChild(judulRonde);
 
-            rondeGrup[namaRonde].forEach(match => {
-                const isP1Menang = match.pemenang.trim().toLowerCase() === match.p1.trim().toLowerCase() && match.p1 !== "";
-                const isP2Menang = match.pemenang.trim().toLowerCase() === match.p2.trim().toLowerCase() && match.p2 !== "";
-
-                let displaySkor1 = match.skor1 !== undefined ? match.skor1 : 0;
-                let displaySkor2 = match.skor2 !== undefined ? match.skor2 : 0;
-                
-                let disableInput = false;
-                if (match.p2.includes("BYE") || match.p2.includes("KOSONG")) {
-                    displaySkor1 = 1; 
-                    disableInput = true;
-                }
-
+            rondeMap[namaRonde].forEach(match => {
                 const elemenMatch = document.createElement('div');
-                elemenMatch.className = 'bracket-match';
-                
+                elemenMatch.className = 'match-box';
                 elemenMatch.innerHTML = `
-                    <div class="bracket-match-id">${match.matchId.split('-')[1] || match.matchId}</div>
-                    <div class="bracket-team-row ${isP1Menang ? 'team-menang' : ''}">
-                        <span class="bracket-team-name"><i class="fa-solid fa-user-group" style="font-size:10px; margin-right:5px; color:#2c3e50;"></i> ${match.p1}</span>
-                        <input type="number" class="bracket-team-score" value="${displaySkor1}" min="0" max="99" 
-                            style="width: 38px; text-align: center; border: 1px solid #ccc; border-radius: 4px; font-weight: bold; padding: 2px 0;"
-                            ${disableInput ? 'disabled' : ''}
-                            onchange="window.simpanSkorPertandingan('${match.matchId}', 1, this.value)">
-                    </div>
-                    <div class="bracket-team-row ${isP2Menang ? 'team-menang' : ''}">
-                        <span class="bracket-team-name"><i class="fa-solid fa-user-group" style="font-size:10px; margin-right:5px; color:#2c3e50;"></i> ${match.p2}</span>
-                        <input type="number" class="bracket-team-score" value="${displaySkor2}" min="0" max="99" 
-                            style="width: 38px; text-align: center; border: 1px solid #ccc; border-radius: 4px; font-weight: bold; padding: 2px 0;"
-                            ${disableInput ? 'disabled' : ''}
-                            onchange="window.simpanSkorPertandingan('${match.matchId}', 2, this.value)">
-                    </div>
+                    <div class="player">${match.p1} <span class="score">${match.skor1}</span></div>
+                    <div class="player">${match.p2} <span class="score">${match.skor2}</span></div>
                 `;
                 elemenRonde.appendChild(elemenMatch);
             });
-            container.appendChild(elemenRonde);
-        }
-    };
-    .catch(err => {
-        container.innerHTML = `<p style="text-align: center; color: #e53935; width: 100%; font-weight: bold;"><i class="fa-solid fa-triangle-exclamation"></i> Gagal terhubung ke server robot. Pastikan deployment Apps Script benar.</p>`;
-    });
 
+            container.appendChild(elemenRonde);
+        });
+    })
+    .catch(err => {
+        console.error("Error:", err);
+        container.innerHTML = `<p style="text-align: center; color: #e53935; width: 100%; font-weight: bold;">Gagal memuat data pertandingan!</p>`;
+    });
+};
 
 // C. Fungsi Toggle Reset Robot Total (POST)
 window.triggerResetRobotTotal = function() {
