@@ -831,25 +831,36 @@ window.muatBaganLombaVisual = function() {
                 const isP1Menang = match.pemenang.trim().toLowerCase() === match.p1.trim().toLowerCase() && match.p1 !== "";
                 const isP2Menang = match.pemenang.trim().toLowerCase() === match.p2.trim().toLowerCase() && match.p2 !== "";
 
-                let displaySkor1 = match.pemenang ? (isP1Menang ? 1 : 0) : 0;
-                let displaySkor2 = match.pemenang ? (isP2Menang ? 1 : 0) : 0;
+                // Ambil skor asli dari database spreadsheet robot
+                let displaySkor1 = match.skor1 || 0;
+                let displaySkor2 = match.skor2 || 0;
                 
+                // Kunci otomatis jika lawannya kosong/BYE
+                let disableInput = false;
                 if (match.p2.includes("BYE") || match.p2.includes("KOSONG")) {
                     displaySkor1 = 1; 
+                    disableInput = true;
                 }
 
                 const elemenMatch = document.createElement('div');
                 elemenMatch.className = 'bracket-match';
                 
+                // DIROMBAK: Mengubah span skor menjadi input number interaktif yang memicu fungsi simpan otomatis
                 elemenMatch.innerHTML = `
                     <div class="bracket-match-id">${match.matchId.split('-')[1] || match.matchId}</div>
                     <div class="bracket-team-row ${isP1Menang ? 'team-menang' : ''}">
                         <span class="bracket-team-name"><i class="fa-solid fa-user-group" style="font-size:10px; margin-right:5px; color:#2c3e50;"></i> ${match.p1}</span>
-                        <span class="bracket-team-score">${displaySkor1}</span>
+                        <input type="number" class="bracket-team-score" value="${displaySkor1}" min="0" max="99" 
+                            style="width: 38px; text-align: center; border: 1px solid #ccc; border-radius: 4px; font-weight: bold; padding: 2px 0;"
+                            ${disableInput ? 'disabled' : ''}
+                            onchange="window.simpanSkorPertandingan('${match.matchId}', 1, this.value)">
                     </div>
                     <div class="bracket-team-row ${isP2Menang ? 'team-menang' : ''}">
                         <span class="bracket-team-name"><i class="fa-solid fa-user-group" style="font-size:10px; margin-right:5px; color:#2c3e50;"></i> ${match.p2}</span>
-                        <span class="bracket-team-score">${displaySkor2}</span>
+                        <input type="number" class="bracket-team-score" value="${displaySkor2}" min="0" max="99" 
+                            style="width: 38px; text-align: center; border: 1px solid #ccc; border-radius: 4px; font-weight: bold; padding: 2px 0;"
+                            ${disableInput ? 'disabled' : ''}
+                            onchange="window.simpanSkorPertandingan('${match.matchId}', 2, this.value)">
                     </div>
                 `;
                 elemenRonde.appendChild(elemenMatch);
@@ -900,9 +911,7 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// ==========================================================================
-// FUNGSI BARU: KIRIM DATA KE DATABASE UTAMA & AUTO-RESET BAGAN
-// ==========================================================================
+// D. Fungsi Kirim Data ke Database Utama & Auto-Reset Bagan
 window.arsipDanAutoResetBagan = function() {
     const usia = document.getElementById('filter-usia').value;
     const gender = document.getElementById('filter-gender').value;
@@ -934,5 +943,35 @@ window.arsipDanAutoResetBagan = function() {
         console.error(err);
         alert("Proses arsip selesai! Mengosongkan bagan aktif...");
         window.muatBaganLombaVisual();
+    });
+};
+
+// E. BARU: Fungsi Pengiriman Update Skor Real-Time ke Google Sheets Saat Angka Diubah
+window.simpanSkorPertandingan = function(matchId, nomorPlayer, nilaiSkor) {
+    console.log(`Mengirim update skor: ${matchId} | Player ${nomorPlayer} -> Skor: ${nilaiSkor}`);
+    
+    const bodiPesan = {
+        aksi: "updateSkorMatch",
+        matchId: matchId,
+        playerKe: nomorPlayer,
+        skorBaru: parseInt(nilaiSkor) || 0
+    };
+
+    fetch(URL_ENGINE_TURNAMEN, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify(bodiPesan)
+    })
+    .then(res => res.json())
+    .then(respon => {
+        if (respon.status === "sukses") {
+            console.log("Skor sukses disimpan!");
+            window.muatBaganLombaVisual(); // Gambar ulang untuk memperbarui highlight warna hijau pemenang
+        } else {
+            alert("Gagal memperbarui skor: " + respon.pesan);
+        }
+    })
+    .catch(err => {
+        console.error("Koneksi gagal saat update skor:", err);
     });
 };
