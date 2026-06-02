@@ -753,44 +753,79 @@ window.addEventListener('DOMContentLoaded', () => {
 const URL_ENGINE_TURNAMEN = "https://script.google.com/macros/s/AKfycbxxdT597ae8mNFxb_MU4elx-CWKZ9kWDt6kzhsemCz8zHj4A_MZZGW0kTVRxKrYeo-e/exec"; 
 
 // A. Fungsi Mengacak Bagan (POST)
-window.triggerAcakBaganOtomatis = function() {
-    const usiaRaw = document.getElementById('filter-usia').value;
-    const genderRaw = document.getElementById('filter-gender').value;
-    const kategori = document.getElementById('filter-kategori').value;
-
-    // Standarisasi value untuk dikirim ke Apps Script robot
-    const usia = usiaRaw.trim();
-    const gender = genderRaw.trim().toLowerCase() === "semua" ? "semua" : genderRaw.trim();
-
-    const konfirmasi = confirm(`Kunci data pendaftaran & acak bagan eliminasi murni untuk kelompok:\n\n» Usia: ${usia}\n» Gender: ${genderRaw}\n» Kategori: ${kategori}\n\nLanjutkan proses pengundian acak?`);
-    if (!konfirmasi) return;
-
-    const bodiPesan = {
-        aksi: "generateBagan",
-        targetUsia: usia,
-        targetGender: gender, // Mengirim "semua", "Laki-laki", atau "Perempuan"
-        targetKategori: kategori
-    };
-};
+window.muatBaganLombaVisual = function() {
+    const usia = document.getElementById('filter-usia').value.trim();
+    const genderRaw = document.getElementById('filter-gender').value.trim();
+    const kategori = document.getElementById('filter-kategori').value.trim();
     const container = document.getElementById('bracket-container');
-    container.innerHTML = `<p style="text-align: center; color: #2c3e50; width: 100%; font-weight: bold;"><i class="fa-solid fa-spinner fa-spin"></i> Sedahromo Engine sedang mengacak urutan pendaftar...</p>`;
 
-    fetch(URL_ENGINE_TURNAMEN, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify(bodiPesan)
-    })
+    if (!container) return;
+    container.innerHTML = `<p style="text-align: center; color: #666; width: 100%;"><i class="fa-solid fa-circle-notch fa-spin"></i> Loading data...</p>`;
+
+    // Logika pembentukan identitas filter yang pas dengan nama di Apps Script
+    const hariIni = new Date();
+    const tanggalKunci = String(hariIni.getDate()).padStart(2, '0') + 
+                         String(hariIni.getMonth() + 1).padStart(2, '0') + 
+                         hariIni.getFullYear();
+
+    const genderFix = (genderRaw.toLowerCase() === "semua") ? "SEMUA" : genderRaw.toUpperCase();
+    const usiaFix = usia.toUpperCase();
+    const kategoriFix = kategori.toUpperCase();
+
+    const identitasFilter = `${tanggalKunci}_${usiaFix}_${genderFix}_${kategoriFix}`;
+
+    fetch(`${URL_ENGINE_TURNAMEN}?aksi=ambilBagan&identitasFilter=${encodeURIComponent(identitasFilter)}`)
     .then(res => res.json())
-    .then(respon => {
-        alert(respon.pesan);
-        window.muatBaganLombaVisual(); 
+    .then(data => {
+        if (!data || data.length === 0) {
+            container.innerHTML = `<p style="text-align: center; color: #999; width: 100%; padding: 20px;">Belum ada draf bagan pertandingan untuk kelompok ini.<br>Silakan klik tombol "Kunci & Acak Grup" untuk membuatnya.</p>`;
+            return;
+        }
+
+        container.innerHTML = ""; 
+
+        let currentRonde = "";
+        let rondeDiv = null;
+
+        data.forEach(match => {
+            if (match.ronde !== currentRonde) {
+                currentRonde = match.ronde;
+                rondeDiv = document.createElement('div');
+                rondeDiv.className = 'ronde-column';
+                
+                const header = document.createElement('h3');
+                header.innerText = currentRonde;
+                rondeDiv.appendChild(header);
+                container.appendChild(rondeDiv);
+            }
+
+            const matchDiv = document.createElement('div');
+            matchDiv.className = 'match-card';
+            
+            const p1Class = (match.pemenang && match.pemenang === match.p1) ? 'player winner' : 'player';
+            const p2Class = (match.pemenang && match.pemenang === match.p2) ? 'player winner' : 'player';
+
+            matchDiv.innerHTML = `
+                <div class="match-id" style="font-size: 10px; color: #aaa;">${match.matchId}</div>
+                <div class="${p1Class}" onclick="window.triggerUpdateSkorBagan('${match.matchId}', 1)">
+                    <span class="name">${match.p1}</span>
+                    <span class="score-display">${match.skor1}</span>
+                </div>
+                <div class="${p2Class}" onclick="window.triggerUpdateSkorBagan('${match.matchId}', 2)">
+                    <span class="name">${match.p2}</span>
+                    <span class="score-display">${match.skor2}</span>
+                </div>
+            `;
+            if (rondeDiv) {
+                rondeDiv.appendChild(matchDiv);
+            }
+        });
     })
     .catch(err => {
-        console.error(err);
-        alert("Bagan sukses diproses! Memuat ulang visual...");
-        window.muatBaganLombaVisual();
+        console.error("Error:", err);
+        container.innerHTML = `<p style="text-align: center; color: #e53935; width: 100%; font-weight: bold;">Gagal memuat data pertandingan!</p>`;
     });
-
+};
 
 // B. Fungsi Mengambil & Menggambar Pohon Turnamen (GET)
 window.muatBaganLombaVisual = function() {
