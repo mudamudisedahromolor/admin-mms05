@@ -34,6 +34,11 @@
         .danger-title { color: #c62828; font-weight: bold; font-size: 15px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
         .btn-reset-robot { background-color: #e53935 !important; box-shadow: 0 4px 10px rgba(229, 57, 53, 0.3); }
         .btn-reset-robot:hover { background-color: #c62828 !important; }
+        
+        /* Style Tambahan Box Google Form */
+        .gform-section-box { background: #fff; border: 1px solid #e3e8ee; border-radius: 8px; padding: 20px; margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+        .gform-title { font-size: 16px; font-weight: bold; color: #1a237e; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+        .gform-iframe-wrapper { position: relative; width: 100%; height: 480px; border-radius: 6px; overflow: hidden; border: 1px solid #ddd; margin-top: 12px; }
     </style>
 </head>
 <body> 
@@ -54,130 +59,4 @@
                     <a href="#" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
                     <a href="#" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
                     <a href="#" title="Facebook"><i class="fa-brands fa-facebook"></i></a>
-                    <a href="https://www.tiktok.com/@mudamudisedahromolor05" title="TikTok"><i class="fa-brands fa-tiktok"></i></a>
-                </div>
-            </div>
-            <button class="menu-toggle" id="mobile-menu-btn"><i class="fa-solid fa-bars"></i></button>
-        </div> 
-
-        <nav class="main-navbar">
-            <ul class="nav-list">
-                <li class="nav-item"><a href="admin.html">BERANDA</a></li>
-                <li class="nav-item">
-                    <a href="#">BENDAHARA</a>
-                    <ul class="submenu">
-                        <li class="submenu-item"><a href="catat-cashflow.html">  - INPUT CASHFLOW</a></li>
-                        <li class="submenu-item"><a href="input-kas.html">  - INPUT KAS BULANAN</a></li>
-                    </ul>
-                </li>
-                <li class="nav-item">
-                    <a href="#">SEKRETARIS</a>
-                    <ul class="submenu">
-                        <li class="submenu-item"><a href="form-hasilrapat">  - INPUT NOTULEN</a></li>
-                        <li class="submenu-item"><a href="form-anggota.html">  - INPUT BIODATA</a></li>
-                    </ul>
-                </li>
-                <li class="nav-item">
-                    <a href="#">MEDIA & HUMAS</a>
-                    <ul class="submenu">
-                        <li class="submenu-item"><a href="upload-dokumentasi.html">  - INPUT DOKUMENTASI</a></li>
-                        <li class="submenu-item"><a href="#">  - INPUT UNDANGAN</a></li>
-                    </ul>
-                </li>
-            </ul>
-        </nav>
-    </header>
-
-    <div class="finance-page-wrapper">
-        <div class="content-box" style="max-width: 1100px; width: 100%;">
-            <h2 class="box-title">PANEL KENDALI ELIMINASI MURNI <br> (MANAJEMEN BAGAN TURNAMEN)</h2>
-            <hr class="box-divider">
-            <p style="text-align: center; margin-bottom: 25px;">Pilih filter kategori lomba di bawah ini, kemudian klik <strong>Kunci & Acak Grup</strong> untuk memproses draf bagan pertandingan baru.</p>
-
-            <div class="filter-container" style="justify-content: center; background: #fafafa; padding: 15px; border-radius: 8px; border: 1px solid #eee; margin-bottom: 15px;">
-                <select id="filter-usia" class="filter-box" onchange="window.muatBaganLombaVisual()">
-                    <option value="Kelas 1 - 3 SD">Kelas 1 - 3 SD</option>
-                    <option value="Kelas 4 SD - SMP">Kelas 4 SD - SMP</option>
-                    <option value="Dewasa">Dewasa / Umum</option>
-                </select>
-
-                <select id="filter-gender" class="filter-box" onchange="window.muatBaganLombaVisual()">
-    <option value="Semua">Semua (Prioritas Sejenis)</option>
-    <option value="Laki-laki">Laki-laki</option>
-    <option value="Perempuan">Perempuan</option>
-</select>
-
-                <select id="filter-kategori" class="filter-box" onchange="window.muatBaganLombaVisual()">
-                    <option value="Individu">Individu</option>
-                    <option value="Kelompok">Kelompok</option>
-                </select>
-
-                <button class="btn-cetak-mutasi" onclick="window.triggerAcakBaganOtomatis()">
-                    <i class="fa-solid fa-shuffle"></i> Kunci & Acak Grup
-                </button>
-            </div>
-
-            <div style="text-align: center; margin-bottom: 20px;">
-                <button class="btn-cetak-mutasi" onclick="window.arsipDanAutoResetBagan()" style="background-color: #2e7d32 !important; box-shadow: 0 4px 10px rgba(46, 125, 50, 0.3);">
-                    <i class="fa-solid fa-cloud-arrow-up"></i> Selesai & Arsipkan Match
-                </button>
-                
-                <button class="btn-cetak-mutasi" onclick="window.triggerLanjutBabakRonde()" style="background-color: #1a237e !important; box-shadow: 0 4px 10px rgba(26, 35, 126, 0.3); margin-left: 10px;">
-                    <i class="fa-solid fa-circle-chevron-right"></i> Lanjut Babak Berikutnya
-                </button>
-            </div>
-
-            <div class="bracket-scroll-container">
-                <div class="bracket-wrapper" id="bracket-container">
-                    <p style="text-align: center; color: #888; width: 100%; padding: 20px;">Silakan pilih opsi filter di atas untuk melihat bagan pertandingan.</p>
-                </div>
-            </div>
-
-            <div class="danger-zone-box">
-                <div class="danger-title"><i class="fa-solid fa-triangle-exclamation"></i> ZONA BERBAHAYA (RESET SYSTEM)</div>
-                <p style="font-size: 13px; color: #666; margin: 0 0 15px 0; line-height: 1.5;">Tombol di bawah ini akan mengosongkan seluruh baris pendaftar aktif dan draf pertandingan pada spreadsheet robot pengolah data. Pastikan hasil juara ronde akhir sudah dipindahkan.</p>
-                <button class="btn-cetak-mutasi btn-reset-robot" onclick="window.triggerResetRobotTotal()">
-                    <i class="fa-solid fa-trash-can"></i> Kosongkan Data Robot
-                </button>
-            </div>
-
-        </div> 
-    </div> 
-
-    <footer class="site-footer">
-        <div class="footer-container">
-            <div class="footer-column info-col">
-                <div class="footer-brand">
-                    <img src="images/mms.png" alt="Logo MMS" class="footer-logo">
-                    <h4>Muda Mudi Sedahromo Lor</h4>
-                </div>
-                <p class="footer-text"><i class="fa-solid fa-location-dot"></i> Jl. Sedahromo Lor, RT.05 / RW.06, Kel. Kartasura, Kec. Kartasura, Sukoharjo, Jawa Tengah 57167</p>
-                <p class="footer-text"><i class="fa-solid fa-envelope"></i> <a href="mailto:mudamudisedahromolor@gmail.com">mudamudisedahromolor05@gmail.com</a></p>
-            </div>
-            <div class="footer-column links-col">
-                <h5>Sitemap</h5>
-                <ul class="footer-links">
-                    <li><a href="index.html"><i class="fa-solid fa-chevron-right"></i> Beranda</a></li>
-                    <li><a href="struktur.html"><i class="fa-solid fa-chevron-right"></i> Struktur Organisasi</a></li>
-                    <li><a href="daftar-anggota.html"><i class="fa-solid fa-chevron-right"></i> Daftar Anggota</a></li>
-                    <li><a href="laporan-keuangan.html"><i class="fa-solid fa-chevron-right"></i> Transparansi Kas</a></li>
-                </ul>
-            </div>
-            <div class="footer-column social-col">
-                <h5>Media Sosial</h5>
-                <div class="footer-social-icons">
-                    <a href="#" title="Instagram" target="_blank"><i class="fa-brands fa-instagram"></i></a>
-                    <a href="#" title="YouTube" target="_blank"><i class="fa-brands fa-youtube"></i></a>
-                    <a href="#" title="Facebook" target="_blank"><i class="fa-brands fa-facebook"></i></a>
-                    <a href="https://www.tiktok.com/@mudamudisedahromolor05" title="TikTok" target="_blank"><i class="fa-brands fa-tiktok"></i></a>
-                </div>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>Copyright &copy; 2026 Organisasi Muda Mudi Sedahromo Lor 05. All Rights Reserved.</p>
-        </div>
-    </footer>
-
-    <script src="script.js?v=4"></script>
-</body>
-</html>
+                    <a href="https://www.tiktok.com/@mudamudisedahromolor05" title="TikTok"><i class="fa-brands fa-tiktok
