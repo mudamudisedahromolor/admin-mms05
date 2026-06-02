@@ -979,32 +979,51 @@ window.simpanSkorPertandingan = function(matchId, nomorPlayer, nilaiSkor) {
     });
 };
 
-// F. Fungsi memicu majunya pemenang ke ronde berikutnya
+// ==========================================================================
+// F. Fungsi memicu majunya pemenang ke ronde berikutnya (VERSI PERBAIKAN TOTAL)
+// ==========================================================================
 window.triggerLanjutBabakRonde = function() {
     let usiaRaw = document.getElementById('filter-usia').value.trim();
     let genderRaw = document.getElementById('filter-gender').value.trim();
     let kategoriRaw = document.getElementById('filter-kategori').value.trim();
 
-    // =============== BLOK SINKRONISASI CODES (TAMBAHKAN INI) ===============
-    // Ubah "Kelas 1 - 3 SD" menjadi "3 SD" agar cocok dengan database bagan
+    // =============== SINKRONISASI FORMAT DATABASE ===============
     if (usiaRaw === "Kelas 1 - 3 SD") {
         usiaRaw = "3 SD";
     } else if (usiaRaw === "Kelas 4 SD - SMP") {
-        usiaRaw = "4 SD - SMP"; // Sesuaikan dengan penulisan ringkas di sheet Anda
+        usiaRaw = "4 SD - SMP";
     }
     
     const usia = usiaRaw.toUpperCase();
     const gender = genderRaw.toUpperCase();
     const kategori = kategoriRaw.toUpperCase();
     
-    // Gabungkan menjadi ID besar: "3 SD_SEMUA_INDIVIDU"
     const identitasFilter = `${usia}_${gender}_${kategori}`;
-    // =======================================================================
+    // =============================================================
 
-    // Setelah itu, pastikan variabel 'identitasFilter' ini yang dikirim 
-    // ke dalam parameter fetch Web App Apps Script Anda.
-    
-    // Contoh kelanjutan kodingannya biasanya seperti ini:
-    if (!confirm(`Apakah Anda yakin ingin melanjutkan kategori ${identitasFilter} ke babak berikutnya?`)) return;
-    
-    // fetch(url + "?aksi=lanjutBabak&identitas=" + encodeURIComponent(identitasFilter))...
+    const konfirmasi = confirm(`Apakah seluruh skor Ronde saat ini sudah selesai diinput?\n\nKlik OK untuk menaikkan para pemenang kelompok ${identitasFilter} ke babak berikutnya secara otomatis.`);
+    if (!konfirmasi) return;
+
+    const bodiPesan = {
+        aksi: "lanjutRondeBerikutnya",
+        identitasFilter: identitasFilter
+    };
+
+    // Menggunakan URL_ENGINE_TURNAMEN sesuai variabel global Anda
+    fetch(URL_ENGINE_TURNAMEN, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify(bodiPesan)
+    })
+    .then(res => res.json())
+    .then(respon => {
+        alert(respon.pesan);
+        if (typeof window.muatBaganLombaVisual === "function") {
+            window.muatBaganLombaVisual(); // Refresh visual biar kolom Ronde baru muncul
+        }
+    })
+    .catch(err => {
+        console.error("Gagal melaju ke ronde berikutnya:", err);
+        alert("Terjadi kesalahan koneksi saat menghubungi server robot.");
+    });
+};
