@@ -750,7 +750,7 @@ window.addEventListener('DOMContentLoaded', () => {
 /* ==========================================================================
    12. SISTEM MANAJEMEN ELIMINASI TURNAMEN (INTEGRASI GOOGLE APPS SCRIPT)
    ========================================================================== */
-const URL_ENGINE_TURNAMEN = "https://script.google.com/macros/s/AKfycbxxdT597ae8mNFxb_MU4elx-CWKZ9kWDt6kzhsemCz8zHj4A_MZZGW0kTVRxKrYeo-e/exec"; 
+const URL_ENGINE_TURNAMEN = "https://script.google.com/macros/s/AKfycbx9JjuYPXPVkac1h-W8I-aGap0p2smP7Qokk102yiekkZnqo0er86VrYtF904rEG0oK/exec"; 
 
 // A. Fungsi Mengacak Bagan (POST)
 window.triggerAcakBaganOtomatis = function() {
