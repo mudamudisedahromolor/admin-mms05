@@ -871,7 +871,7 @@ window.muatBaganLombaVisual = function() {
             });
             container.appendChild(elemenRonde);
         }
-    })
+    };
     .catch(err => {
         container.innerHTML = `<p style="text-align: center; color: #e53935; width: 100%; font-weight: bold;"><i class="fa-solid fa-triangle-exclamation"></i> Gagal terhubung ke server robot. Pastikan deployment Apps Script benar.</p>`;
     });
