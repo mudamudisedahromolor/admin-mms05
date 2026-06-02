@@ -796,23 +796,26 @@ window.triggerAcakBaganOtomatis = function() {
 window.muatBaganLombaVisual = function() {
     const usia = document.getElementById('filter-usia').value.trim();
     const genderRaw = document.getElementById('filter-gender').value.trim();
-    const kategori = document.getElementById('filter-kategori').value.trim().toLowerCase();
+    const kategori = document.getElementById('filter-kategori').value.trim();
     const container = document.getElementById('bracket-container');
-    
-    if (!container) return;
-    container.innerHTML = `<p style="text-align: center; color: #666; width: 100%;"><i class="fa-solid fa-circle-notch fa-spin"></i> Mengambil draf pertandingan dari lembar kerja...</p>`;
 
-    // Logika pembentukan identitas filter yang pas dengan nama di Apps Script
-    const gender = genderRaw.toLowerCase() === "semua" ? "semua" : genderRaw;
-    const identitasFilter = `${usia}_${gender}_${kategori}`;
+    if (!container) return;
+    container.innerHTML = `<p style="text-align: center; color: #666; width: 100%;"><i class="fa-solid fa-circle-notch fa-spin"></i> Loading data...</p>`;
+
+    // // Logika pembentukan identitas filter yang pas dengan nama di Apps Script (VERSI FIX TANGGAL)
+    const hariIni = new Date();
+    const tanggalKunci = String(hariIni.getDate()).padStart(2, '0') + 
+                         String(hariIni.getMonth() + 1).padStart(2, '0') + 
+                         hariIni.getFullYear();
+
+    const genderFix = (genderRaw.toLowerCase() === "semua") ? "SEMUA" : genderRaw.toUpperCase();
+    const usiaFix = usia.toUpperCase();
+    const kategoriFix = kategori.toUpperCase();
+
+    const identitasFilter = `${tanggalKunci}_${usiaFix}_${genderFix}_${kategoriFix}`;
 
     fetch(`${URL_ENGINE_TURNAMEN}?aksi=ambilBagan&identitasFilter=${encodeURIComponent(identitasFilter)}`)
     .then(res => res.json())
-    .then(data => {
-        if (!data || data.length === 0) {
-            container.innerHTML = `<p style="text-align: center; color: #999; width: 100%; padding: 20px;">Belum ada draf bagan pertandingan untuk kelompok ini.<br>Silakan klik tombol "Kunci & Acak Grup" untuk membuatnya.</p>`;
-            return;
-        }
 
         container.innerHTML = ""; 
 
