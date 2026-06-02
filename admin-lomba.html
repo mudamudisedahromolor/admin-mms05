@@ -94,7 +94,13 @@
             <hr class="box-divider">
             <p style="text-align: center; margin-bottom: 25px;">Pilih filter kategori lomba di bawah ini, kemudian klik <strong>Kunci & Acak Grup</strong> untuk memproses draf bagan pertandingan baru.</p>
 
-            <div class="filter-container" style="justify-content: center; background: #fafafa; padding: 15px; border-radius: 8px; border: 1px solid #eee; margin-bottom: 15px;">
+            <div class="filter-container" style="justify-content: center; background: #fafafa; padding: 15px; border-radius: 8px; border: 1px solid #eee; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+                <select id="filter-lomba" class="filter-box" onchange="window.muatBaganLombaVisual()">
+                    <option value="Push Bike Race">Push Bike Race</option>
+                    <option value="BMX Freestyle">BMX Freestyle</option>
+                    <option value="Scooter Race">Scooter Race</option>
+                </select>
+
                 <select id="filter-usia" class="filter-box" onchange="window.muatBaganLombaVisual()">
                     <option value="Kelas 1 - 3 SD">Kelas 1 - 3 SD</option>
                     <option value="Kelas 4 SD - SMP">Kelas 4 SD - SMP</option>
@@ -102,10 +108,10 @@
                 </select>
 
                 <select id="filter-gender" class="filter-box" onchange="window.muatBaganLombaVisual()">
-    <option value="Semua">Semua (Prioritas Sejenis)</option>
-    <option value="Laki-laki">Laki-laki</option>
-    <option value="Perempuan">Perempuan</option>
-</select>
+                    <option value="Semua">Semua (Prioritas Sejenis)</option>
+                    <option value="Laki-laki">Laki-laki</option>
+                    <option value="Perempuan">Perempuan</option>
+                </select>
 
                 <select id="filter-kategori" class="filter-box" onchange="window.muatBaganLombaVisual()">
                     <option value="Individu">Individu</option>
@@ -178,6 +184,88 @@
         </div>
     </footer>
 
+    <script>
+        // MASUKKAN URL WEB APP DEPLOYMENT APPS SCRIPT ANDA DI SINI
+        const URL_WEB_APP = "https://script.google.com/macros/s/AKfycbx9JjuYPXPVkac1h-W8I-aGap0p2smP7Qokk102yiekkZnqo0er86VrYtF904rEG0oK/exec";
+
+        // Fungsi pembantu membuat format ID Sesi unik di sisi Client (HTML)
+        function buatIdentitasSesiKunci() {
+            const lomba = document.getElementById("filter-lomba").value.toUpperCase().replace(/\s+/g, "");
+            const usia = document.getElementById("filter-usia").value.toUpperCase();
+            const gender = document.getElementById("filter-gender").value.toUpperCase();
+            const kategori = document.getElementById("filter-kategori").value.toUpperCase();
+            
+            const hariIni = new Date();
+            const tgl = String(hariIni.getDate()).padStart(2, '0');
+            const bln = String(hariIni.getMonth() + 1).padStart(2, '0');
+            const thn = hariIni.getFullYear();
+            const tanggalKunci = tgl + bln + thn;
+
+            return `${tanggalKunci}_${usia}_${gender}_${kategori}_${lomba}`;
+        }
+
+        // 1. AKSI: Kunci & Acak Grup (Babak 1)
+        window.triggerAcakBaganOtomatis = function() {
+            const targetLomba = document.getElementById("filter-lomba").value;
+            const targetUsia = document.getElementById("filter-usia").value;
+            const targetGender = document.getElementById("filter-gender").value;
+            const targetKategori = document.getElementById("filter-kategori").value;
+
+            if(!confirm(`Konfirmasi Acak Bagan untuk Lomba: ${targetLomba}?`)) return;
+
+            const payload = {
+                aksi: "generateBaganSuper",
+                targetLomba: targetLomba,
+                targetUsia: targetUsia,
+                targetGender: targetGender,
+                targetKategori: targetKategori
+            };
+
+            fetch(URL_WEB_APP, {
+                method: "POST",
+                body: JSON.stringify(payload)
+            })
+            .then(res => res.json())
+            .then(data => {
+                alert(data.pesan);
+                if(data.status === "sukses") window.muatBaganLombaVisual();
+            })
+            .catch(err => alert("Terjadi gangguan koneksi: " + err));
+        };
+
+        // 2. AKSI: Lanjut Babak Berikutnya
+        window.triggerLanjutBabakRonde = function() {
+            const identitasFilter = buatIdentitasSesiKunci();
+            
+            if(!confirm("Pastikan seluruh pemenang ronde teraktif saat ini sudah diinput datanya! Lanjutkan ronde baru?")) return;
+
+            const payload = {
+                aksi: "lanjutRondeBerikutnya",
+                identitasFilter: identitasFilter
+            };
+
+            fetch(URL_WEB_APP, {
+                method: "POST",
+                body: JSON.stringify(payload)
+            })
+            .then(res => res.json())
+            .then(data => {
+                alert(data.pesan);
+                if(data.status === "sukses") window.muatBaganLombaVisual();
+            })
+            .catch(err => alert("Terjadi kesalahan: " + err));
+        };
+
+        // Placeholder Visual Loader (Sesuaikan dengan script.js visual render Anda)
+        window.muatBaganLombaVisual = function() {
+            console.log("Memuat visual untuk sesi kunci: " + buatIdentitasSesiKunci());
+            // Logika render fetch data bagan untuk ditampilkan ke id="bracket-container" ditaruh di sini
+        };
+
+        // Sisa tombol aksi dummy pendukung
+        window.arsipDanAutoResetBagan = function() { alert("Fitur Arsipkan Match sukses dipicu!"); };
+        window.triggerResetRobotTotal = function() { if(confirm("PERINGATAN! Anda yakin ingin mengosongkan seluruh data robot?")) alert("Data robot berhasil dikosongkan!"); };
+    </script>
     <script src="script.js?v=8"></script>
 </body>
 </html>
