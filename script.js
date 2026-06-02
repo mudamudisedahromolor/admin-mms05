@@ -754,17 +754,21 @@ const URL_ENGINE_TURNAMEN = "https://script.google.com/macros/s/AKfycbxxdT597ae8
 
 // A. Fungsi Mengacak Bagan (POST)
 window.triggerAcakBaganOtomatis = function() {
-    const usia = document.getElementById('filter-usia').value;
-    const gender = document.getElementById('filter-gender').value;
+    const usiaRaw = document.getElementById('filter-usia').value;
+    const genderRaw = document.getElementById('filter-gender').value;
     const kategori = document.getElementById('filter-kategori').value;
 
-    const konfirmasi = confirm(`Kunci data pendaftaran & acak bagan eliminasi murni untuk kelompok:\n\n» Usia: ${usia}\n» Gender: ${gender}\n» Kategori: ${kategori}\n\nLanjutkan proses pengundian acak?`);
+    // Standarisasi value untuk dikirim ke Apps Script robot
+    const usia = usiaRaw.trim();
+    const gender = genderRaw.trim().toLowerCase() === "semua" ? "semua" : genderRaw.trim();
+
+    const konfirmasi = confirm(`Kunci data pendaftaran & acak bagan eliminasi murni untuk kelompok:\n\n» Usia: ${usia}\n» Gender: ${genderRaw}\n» Kategori: ${kategori}\n\nLanjutkan proses pengundian acak?`);
     if (!konfirmasi) return;
 
     const bodiPesan = {
         aksi: "generateBagan",
         targetUsia: usia,
-        targetGender: gender,
+        targetGender: gender, // Mengirim "semua", "Laki-laki", atau "Perempuan"
         targetKategori: kategori
     };
 
@@ -779,7 +783,7 @@ window.triggerAcakBaganOtomatis = function() {
     .then(res => res.json())
     .then(respon => {
         alert(respon.pesan);
-        window.muatBaganLombaVisual(); // Gambar ulang bagan secara real-time
+        window.muatBaganLombaVisual(); 
     })
     .catch(err => {
         console.error(err);
@@ -790,14 +794,16 @@ window.triggerAcakBaganOtomatis = function() {
 
 // B. Fungsi Mengambil & Menggambar Pohon Turnamen (GET)
 window.muatBaganLombaVisual = function() {
-    const usia = document.getElementById('filter-usia').value;
-    const gender = document.getElementById('filter-gender').value;
-    const kategori = document.getElementById('filter-kategori').value;
+    const usia = document.getElementById('filter-usia').value.trim();
+    const genderRaw = document.getElementById('filter-gender').value.trim();
+    const kategori = document.getElementById('filter-kategori').value.trim();
     const container = document.getElementById('bracket-container');
     
     if (!container) return;
     container.innerHTML = `<p style="text-align: center; color: #666; width: 100%;"><i class="fa-solid fa-circle-notch fa-spin"></i> Mengambil draf pertandingan dari lembar kerja...</p>`;
 
+    // Logika pembentukan identitas filter yang pas dengan nama di Apps Script
+    const gender = genderRaw.toLowerCase() === "semua" ? "semua" : genderRaw;
     const identitasFilter = `${usia}_${gender}_${kategori}`;
 
     fetch(`${URL_ENGINE_TURNAMEN}?aksi=ambilBagan&identitasFilter=${encodeURIComponent(identitasFilter)}`)
@@ -808,16 +814,14 @@ window.muatBaganLombaVisual = function() {
             return;
         }
 
-        container.innerHTML = ""; // Bersihkan pesan loading
+        container.innerHTML = ""; 
 
-        // Mengelompokkan pertandingan berdasarkan judul babak/ronde
         const rondeGrup = {};
         data.forEach(match => {
             if (!rondeGrup[match.ronde]) rondeGrup[match.ronde] = [];
             rondeGrup[match.ronde].push(match);
         });
 
-        // Gambar visual kolom per babak ronde pertandingan
         for (const namaRonde in rondeGrup) {
             const elemenRonde = document.createElement('div');
             elemenRonde.className = 'bracket-round';
@@ -831,11 +835,9 @@ window.muatBaganLombaVisual = function() {
                 const isP1Menang = match.pemenang.trim().toLowerCase() === match.p1.trim().toLowerCase() && match.p1 !== "";
                 const isP2Menang = match.pemenang.trim().toLowerCase() === match.p2.trim().toLowerCase() && match.p2 !== "";
 
-                // FIX VISUAL: Membaca nilai asli skor dari data Spreadsheet Robot
                 let displaySkor1 = match.skor1 !== undefined ? match.skor1 : 0;
                 let displaySkor2 = match.skor2 !== undefined ? match.skor2 : 0;
                 
-                // Kunci otomatis jika lawannya kosong/BYE
                 let disableInput = false;
                 if (match.p2.includes("BYE") || match.p2.includes("KOSONG")) {
                     displaySkor1 = 1; 
@@ -912,12 +914,14 @@ window.addEventListener('DOMContentLoaded', () => {
 
 // D. Fungsi Kirim Data ke Database Utama & Auto-Reset Bagan
 window.arsipDanAutoResetBagan = function() {
-    const usia = document.getElementById('filter-usia').value;
-    const gender = document.getElementById('filter-gender').value;
-    const kategori = document.getElementById('filter-kategori').value;
+    const usia = document.getElementById('filter-usia').value.trim();
+    const genderRaw = document.getElementById('filter-gender').value.trim();
+    const kategori = document.getElementById('filter-kategori').value.trim();
+    
+    const gender = genderRaw.toLowerCase() === "semua" ? "semua" : genderRaw;
     const identitasFilter = `${usia}_${gender}_${kategori}`;
 
-    const konfirmasi = confirm(`Apakah turnamen untuk kelompok:\n» ${usia} (${gender} - ${kategori})\nsudah selesai total dan didapatkan Juara 1?\n\nJika YA, seluruh data pertandingan akan dikirim ke DATABASE UTAMA dan bagan aktif di robot akan langsung dibersihkan.`);
+    const konfirmasi = confirm(`Apakah turnamen untuk kelompok:\n» ${usia} (${genderRaw} - ${kategori})\nsudah selesai total dan didapatkan Juara 1?\n\nJika YA, seluruh data pertandingan akan dikirim ke DATABASE UTAMA dan bagan aktif di robot akan langsung dibersihkan.`);
     if (!konfirmasi) return;
 
     const bodiPesan = {
@@ -936,7 +940,7 @@ window.arsipDanAutoResetBagan = function() {
     .then(res => res.json())
     .then(respon => {
         alert(respon.pesan);
-        window.muatBaganLombaVisual(); // Reload visual bagan (sekarang harusnya kosong karena sudah di-reset)
+        window.muatBaganLombaVisual(); 
     })
     .catch(err => {
         console.error(err);
@@ -945,7 +949,7 @@ window.arsipDanAutoResetBagan = function() {
     });
 };
 
-// E. BARU: Fungsi Pengiriman Update Skor Real-Time ke Google Sheets Saat Angka Diubah
+// E. Fungsi Pengiriman Update Skor Real-Time
 window.simpanSkorPertandingan = function(matchId, nomorPlayer, nilaiSkor) {
     console.log(`Mengirim update skor: ${matchId} | Player ${nomorPlayer} -> Skor: ${nilaiSkor}`);
     
@@ -965,7 +969,7 @@ window.simpanSkorPertandingan = function(matchId, nomorPlayer, nilaiSkor) {
     .then(respon => {
         if (respon.status === "sukses") {
             console.log("Skor sukses disimpan!");
-            window.muatBaganLombaVisual(); // Gambar ulang untuk memperbarui highlight warna hijau pemenang
+            window.muatBaganLombaVisual(); 
         } else {
             alert("Gagal memperbarui skor: " + respon.pesan);
         }
@@ -975,12 +979,13 @@ window.simpanSkorPertandingan = function(matchId, nomorPlayer, nilaiSkor) {
     });
 };
 
-
-// Fungsi memicu majunya pemenang ke ronde berikutnya di Google Sheets
+// F. Fungsi memicu majunya pemenang ke ronde berikutnya
 window.triggerLanjutBabakRonde = function() {
-    const usia = document.getElementById('filter-usia').value;
-    const gender = document.getElementById('filter-gender').value;
-    const kategori = document.getElementById('filter-kategori').value;
+    const usia = document.getElementById('filter-usia').value.trim();
+    const genderRaw = document.getElementById('filter-gender').value.trim();
+    const kategori = document.getElementById('filter-kategori').value.trim();
+    
+    const gender = genderRaw.toLowerCase() === "semua" ? "semua" : genderRaw;
     const identitasFilter = `${usia}_${gender}_${kategori}`;
 
     const konfirmasi = confirm(`Apakah seluruh skor Ronde saat ini sudah selesai diinput?\n\nKlik OK untuk menaikkan para pemenang ke babak berikutnya secara otomatis.`);
@@ -999,7 +1004,7 @@ window.triggerLanjutBabakRonde = function() {
     .then(res => res.json())
     .then(respon => {
         alert(respon.pesan);
-        window.muatBaganLombaVisual(); // Refresh visual biar kolom Ronde 2 otomatis muncul!
+        window.muatBaganLombaVisual(); 
     })
     .catch(err => {
         console.error("Gagal melaju ke ronde berikutnya:", err);
