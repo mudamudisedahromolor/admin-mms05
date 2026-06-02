@@ -831,9 +831,9 @@ window.muatBaganLombaVisual = function() {
                 const isP1Menang = match.pemenang.trim().toLowerCase() === match.p1.trim().toLowerCase() && match.p1 !== "";
                 const isP2Menang = match.pemenang.trim().toLowerCase() === match.p2.trim().toLowerCase() && match.p2 !== "";
 
-                // Ambil skor asli dari database spreadsheet robot
-                let displaySkor1 = match.skor1 || 0;
-                let displaySkor2 = match.skor2 || 0;
+                // FIX VISUAL: Membaca nilai asli skor dari data Spreadsheet Robot
+                let displaySkor1 = match.skor1 !== undefined ? match.skor1 : 0;
+                let displaySkor2 = match.skor2 !== undefined ? match.skor2 : 0;
                 
                 // Kunci otomatis jika lawannya kosong/BYE
                 let disableInput = false;
@@ -845,7 +845,6 @@ window.muatBaganLombaVisual = function() {
                 const elemenMatch = document.createElement('div');
                 elemenMatch.className = 'bracket-match';
                 
-                // DIROMBAK: Mengubah span skor menjadi input number interaktif yang memicu fungsi simpan otomatis
                 elemenMatch.innerHTML = `
                     <div class="bracket-match-id">${match.matchId.split('-')[1] || match.matchId}</div>
                     <div class="bracket-team-row ${isP1Menang ? 'team-menang' : ''}">
