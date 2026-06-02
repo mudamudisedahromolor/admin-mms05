@@ -790,7 +790,7 @@ window.triggerAcakBaganOtomatis = function() {
         alert("Bagan sukses diproses! Memuat ulang visual...");
         window.muatBaganLombaVisual();
     });
-};
+
 
 // B. Fungsi Mengambil & Menggambar Pohon Turnamen (GET)
 window.muatBaganLombaVisual = function() {
