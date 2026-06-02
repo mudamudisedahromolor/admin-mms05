@@ -8,8 +8,8 @@
     
     <title>Manajemen Eliminasi Turnamen - MMS 05</title>
     
-    <link rel="icon" href="images/logo.png" type="image/png">
-    <link rel="icon" type="image/png" sizes="192x192" href="images/mms.png">
+    <link class="icon" href="images/logo.png" type="image/png">
+    <link class="icon" type="image/png" sizes="192x192" href="images/mms.png">
     <link rel="apple-touch-icon" sizes="192x192" href="images/mms.png">
     <link rel="apple-touch-icon" sizes="512x512" href="images/mms.png">
     
@@ -94,7 +94,7 @@
             <hr class="box-divider">
             <p style="text-align: center; margin-bottom: 25px;">Pilih filter kategori lomba di bawah ini, kemudian klik <strong>Kunci & Acak Grup</strong> untuk memproses draf bagan pertandingan baru.</p>
 
-            <div class="filter-container" style="justify-content: center; background: #fafafa; padding: 15px; border-radius: 8px; border: 1px solid #eee;">
+            <div class="filter-container" style="justify-content: center; background: #fafafa; padding: 15px; border-radius: 8px; border: 1px solid #eee; margin-bottom: 15px;">
                 <select id="filter-usia" class="filter-box" onchange="window.muatBaganLombaVisual()">
                     <option value="Kelas 1 - 3 SD">Kelas 1 - 3 SD</option>
                     <option value="Kelas 4 SD - SMP">Kelas 4 SD - SMP</option>
@@ -116,11 +116,15 @@
                 </button>
             </div>
 
-
-                <button class="btn-cetak-mutasi" onclick="window.arsipDanAutoResetBagan()" style="background-color: #2e7d32 !important; box-shadow: 0 4px 10px rgba(46, 125, 50, 0.3); margin-left: 10px;">
-                <i class="fa-solid fa-cloud-arrow-up"></i> Selesai & Arsipkan Match
+            <div style="text-align: center; margin-bottom: 20px;">
+                <button class="btn-cetak-mutasi" onclick="window.arsipDanAutoResetBagan()" style="background-color: #2e7d32 !important; box-shadow: 0 4px 10px rgba(46, 125, 50, 0.3);">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> Selesai & Arsipkan Match
                 </button>
-
+                
+                <button class="btn-cetak-mutasi" onclick="window.triggerLanjutBabakRonde()" style="background-color: #1a237e !important; box-shadow: 0 4px 10px rgba(26, 35, 126, 0.3); margin-left: 10px;">
+                    <i class="fa-solid fa-circle-chevron-right"></i> Lanjut Babak Berikutnya
+                </button>
+            </div>
 
             <div class="bracket-scroll-container">
                 <div class="bracket-wrapper" id="bracket-container">
