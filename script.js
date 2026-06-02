@@ -4,7 +4,7 @@
    ========================================================================== */
 
 const namaBulanIndo = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-let pemicuInstal = null;
+let pemicuInstal = null; 
 
 /* ==========================================================================
    1. SISTEM INISIALISASI UTAMA
@@ -753,78 +753,42 @@ window.addEventListener('DOMContentLoaded', () => {
 const URL_ENGINE_TURNAMEN = "https://script.google.com/macros/s/AKfycbxxdT597ae8mNFxb_MU4elx-CWKZ9kWDt6kzhsemCz8zHj4A_MZZGW0kTVRxKrYeo-e/exec"; 
 
 // A. Fungsi Mengacak Bagan (POST)
-window.muatBaganLombaVisual = function() {
-    const usia = document.getElementById('filter-usia').value.trim();
-    const genderRaw = document.getElementById('filter-gender').value.trim();
-    const kategori = document.getElementById('filter-kategori').value.trim();
+window.triggerAcakBaganOtomatis = function() {
+    const usiaRaw = document.getElementById('filter-usia').value;
+    const genderRaw = document.getElementById('filter-gender').value;
+    const kategori = document.getElementById('filter-kategori').value;
+
+    // Standarisasi value untuk dikirim ke Apps Script robot
+    const usia = usiaRaw.trim();
+    const gender = genderRaw.trim().toLowerCase() === "semua" ? "semua" : genderRaw.trim();
+
+    const konfirmasi = confirm(`Kunci data pendaftaran & acak bagan eliminasi murni untuk kelompok:\n\n» Usia: ${usia}\n» Gender: ${genderRaw}\n» Kategori: ${kategori}\n\nLanjutkan proses pengundian acak?`);
+    if (!konfirmasi) return;
+
+    const bodiPesan = {
+        aksi: "generateBagan",
+        targetUsia: usia,
+        targetGender: gender, // Mengirim "semua", "Laki-laki", atau "Perempuan"
+        targetKategori: kategori
+    };
+
     const container = document.getElementById('bracket-container');
+    container.innerHTML = `<p style="text-align: center; color: #2c3e50; width: 100%; font-weight: bold;"><i class="fa-solid fa-spinner fa-spin"></i> Sedahromo Engine sedang mengacak urutan pendaftar...</p>`;
 
-    if (!container) return;
-    container.innerHTML = `<p style="text-align: center; color: #666; width: 100%;"><i class="fa-solid fa-circle-notch fa-spin"></i> Loading data...</p>`;
-
-    // Logika pembentukan identitas filter yang pas dengan nama di Apps Script
-    const hariIni = new Date();
-    const tanggalKunci = String(hariIni.getDate()).padStart(2, '0') + 
-                         String(hariIni.getMonth() + 1).padStart(2, '0') + 
-                         hariIni.getFullYear();
-
-    const genderFix = (genderRaw.toLowerCase() === "semua") ? "SEMUA" : genderRaw.toUpperCase();
-    const usiaFix = usia.toUpperCase();
-    const kategoriFix = kategori.toUpperCase();
-
-    const identitasFilter = `${tanggalKunci}_${usiaFix}_${genderFix}_${kategoriFix}`;
-
-    fetch(`${URL_ENGINE_TURNAMEN}?aksi=ambilBagan&identitasFilter=${encodeURIComponent(identitasFilter)}`)
+    fetch(URL_ENGINE_TURNAMEN, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify(bodiPesan)
+    })
     .then(res => res.json())
-    .then(data => {
-        if (!data || data.length === 0) {
-            container.innerHTML = `<p style="text-align: center; color: #999; width: 100%; padding: 20px;">Belum ada draf bagan pertandingan untuk kelompok ini.<br>Silakan klik tombol "Kunci & Acak Grup" untuk membuatnya.</p>`;
-            return;
-        }
-    }
-
-        container.innerHTML = ""; 
-
-        let currentRonde = "";
-        let rondeDiv = null;
-
-        data.forEach(match => {
-            if (match.ronde !== currentRonde) {
-                currentRonde = match.ronde;
-                rondeDiv = document.createElement('div');
-                rondeDiv.className = 'ronde-column';
-                
-                const header = document.createElement('h3');
-                header.innerText = currentRonde;
-                rondeDiv.appendChild(header);
-                container.appendChild(rondeDiv);
-            }
-
-            const matchDiv = document.createElement('div');
-            matchDiv.className = 'match-card';
-            
-            const p1Class = (match.pemenang && match.pemenang === match.p1) ? 'player winner' : 'player';
-            const p2Class = (match.pemenang && match.pemenang === match.p2) ? 'player winner' : 'player';
-
-            matchDiv.innerHTML = `
-                <div class="match-id" style="font-size: 10px; color: #aaa;">${match.matchId}</div>
-                <div class="${p1Class}" onclick="window.triggerUpdateSkorBagan('${match.matchId}', 1)">
-                    <span class="name">${match.p1}</span>
-                    <span class="score-display">${match.skor1}</span>
-                </div>
-                <div class="${p2Class}" onclick="window.triggerUpdateSkorBagan('${match.matchId}', 2)">
-                    <span class="name">${match.p2}</span>
-                    <span class="score-display">${match.skor2}</span>
-                </div>
-            `;
-            if (rondeDiv) {
-                rondeDiv.appendChild(matchDiv);
-            }
-        });
+    .then(respon => {
+        alert(respon.pesan);
+        window.muatBaganLombaVisual(); 
     })
     .catch(err => {
-        console.error("Error:", err);
-        container.innerHTML = `<p style="text-align: center; color: #e53935; width: 100%; font-weight: bold;">Gagal memuat data pertandingan!</p>`;
+        console.error(err);
+        alert("Bagan sukses diproses! Memuat ulang visual...");
+        window.muatBaganLombaVisual();
     });
 };
 
@@ -834,23 +798,14 @@ window.muatBaganLombaVisual = function() {
     const genderRaw = document.getElementById('filter-gender').value.trim();
     const kategori = document.getElementById('filter-kategori').value.trim();
     const container = document.getElementById('bracket-container');
-
+    
     if (!container) return;
-    container.innerHTML = `<p style="text-align: center; color: #666; width: 100%;"><i class="fa-solid fa-circle-notch fa-spin"></i> Loading data...</p>`;
+    container.innerHTML = `<p style="text-align: center; color: #666; width: 100%;"><i class="fa-solid fa-circle-notch fa-spin"></i> Mengambil draf pertandingan dari lembar kerja...</p>`;
 
-    // 1. LOGIKA GENERATE TANGGAL (SINKRONISASI BACKEND)
-    const hariIni = new Date();
-    const tanggalKunci = String(hariIni.getDate()).padStart(2, '0') + 
-                         String(hariIni.getMonth() + 1).padStart(2, '0') + 
-                         hariIni.getFullYear();
+    // Logika pembentukan identitas filter yang pas dengan nama di Apps Script
+    const gender = genderRaw.toLowerCase() === "semua" ? "semua" : genderRaw;
+    const identitasFilter = `${usia}_${gender}_${kategori}`;
 
-    const genderFix = (genderRaw.toLowerCase() === "semua") ? "SEMUA" : genderRaw.toUpperCase();
-    const usiaFix = usia.toUpperCase();
-    const kategoriFix = kategori.toUpperCase();
-
-    const identitasFilter = `${tanggalKunci}_${usiaFix}_${genderFix}_${kategoriFix}`;
-
-    // 2. TEMBAK DATA KE APPS SCRIPT
     fetch(`${URL_ENGINE_TURNAMEN}?aksi=ambilBagan&identitasFilter=${encodeURIComponent(identitasFilter)}`)
     .then(res => res.json())
     .then(data => {
@@ -861,48 +816,61 @@ window.muatBaganLombaVisual = function() {
 
         container.innerHTML = ""; 
 
-        // 3. KEMBALI KE STRUKTUR VISUAL ASLI BAWAAN SCRIPT.JS LO YANG LULUS TEST
-        let currentRonde = "";
-        let rondeDiv = null;
-
+        const rondeGrup = {};
         data.forEach(match => {
-            if (match.ronde !== currentRonde) {
-                currentRonde = match.ronde;
-                rondeDiv = document.createElement('div');
-                rondeDiv.className = 'ronde-column'; // Mengembalikan susunan flex/grid asli lo
-                
-                const header = document.createElement('h3');
-                header.innerText = currentRonde;
-                rondeDiv.appendChild(header);
-                container.appendChild(rondeDiv);
-            }
-
-            const matchDiv = document.createElement('div');
-            matchDiv.className = 'match-card'; // Mengembalikan desain kotak tanding asli lo
-            
-            // Logika pendeteksi highlight pemenang warna hijau dari data sheets
-            const p1Class = (match.pemenang && match.pemenang === match.p1) ? 'player winner' : 'player';
-            const p2Class = (match.pemenang && match.pemenang === match.p2) ? 'player winner' : 'player';
-
-            matchDiv.innerHTML = `
-                <div class="match-id" style="font-size: 10px; color: #aaa;">${match.matchId}</div>
-                <div class="${p1Class}" onclick="window.triggerUpdateSkorBagan('${match.matchId}', 1)">
-                    <span class="name">${match.p1}</span>
-                    <span class="score-display">${match.skor1}</span>
-                </div>
-                <div class="${p2Class}" onclick="window.triggerUpdateSkorBagan('${match.matchId}', 2)">
-                    <span class="name">${match.p2}</span>
-                    <span class="score-display">${match.skor2}</span>
-                </div>
-            `;
-            if (rondeDiv) {
-                rondeDiv.appendChild(matchDiv);
-            }
+            if (!rondeGrup[match.ronde]) rondeGrup[match.ronde] = [];
+            rondeGrup[match.ronde].push(match);
         });
+
+        for (const namaRonde in rondeGrup) {
+            const elemenRonde = document.createElement('div');
+            elemenRonde.className = 'bracket-round';
+            
+            const judulRonde = document.createElement('h4');
+            judulRonde.style = "text-align: center; margin: 0 0 10px 0; color: #2c3e50; font-size: 14px; border-bottom: 2px solid #2c3e50; padding-bottom: 5px; font-weight: bold;";
+            judulRonde.innerText = namaRonde.toUpperCase();
+            elemenRonde.appendChild(judulRonde);
+
+            rondeGrup[namaRonde].forEach(match => {
+                const isP1Menang = match.pemenang.trim().toLowerCase() === match.p1.trim().toLowerCase() && match.p1 !== "";
+                const isP2Menang = match.pemenang.trim().toLowerCase() === match.p2.trim().toLowerCase() && match.p2 !== "";
+
+                let displaySkor1 = match.skor1 !== undefined ? match.skor1 : 0;
+                let displaySkor2 = match.skor2 !== undefined ? match.skor2 : 0;
+                
+                let disableInput = false;
+                if (match.p2.includes("BYE") || match.p2.includes("KOSONG")) {
+                    displaySkor1 = 1; 
+                    disableInput = true;
+                }
+
+                const elemenMatch = document.createElement('div');
+                elemenMatch.className = 'bracket-match';
+                
+                elemenMatch.innerHTML = `
+                    <div class="bracket-match-id">${match.matchId.split('-')[1] || match.matchId}</div>
+                    <div class="bracket-team-row ${isP1Menang ? 'team-menang' : ''}">
+                        <span class="bracket-team-name"><i class="fa-solid fa-user-group" style="font-size:10px; margin-right:5px; color:#2c3e50;"></i> ${match.p1}</span>
+                        <input type="number" class="bracket-team-score" value="${displaySkor1}" min="0" max="99" 
+                            style="width: 38px; text-align: center; border: 1px solid #ccc; border-radius: 4px; font-weight: bold; padding: 2px 0;"
+                            ${disableInput ? 'disabled' : ''}
+                            onchange="window.simpanSkorPertandingan('${match.matchId}', 1, this.value)">
+                    </div>
+                    <div class="bracket-team-row ${isP2Menang ? 'team-menang' : ''}">
+                        <span class="bracket-team-name"><i class="fa-solid fa-user-group" style="font-size:10px; margin-right:5px; color:#2c3e50;"></i> ${match.p2}</span>
+                        <input type="number" class="bracket-team-score" value="${displaySkor2}" min="0" max="99" 
+                            style="width: 38px; text-align: center; border: 1px solid #ccc; border-radius: 4px; font-weight: bold; padding: 2px 0;"
+                            ${disableInput ? 'disabled' : ''}
+                            onchange="window.simpanSkorPertandingan('${match.matchId}', 2, this.value)">
+                    </div>
+                `;
+                elemenRonde.appendChild(elemenMatch);
+            });
+            container.appendChild(elemenRonde);
+        }
     })
     .catch(err => {
-        console.error("Error:", err);
-        container.innerHTML = `<p style="text-align: center; color: #e53935; width: 100%; font-weight: bold;">Gagal memuat data pertandingan!</p>`;
+        container.innerHTML = `<p style="text-align: center; color: #e53935; width: 100%; font-weight: bold;"><i class="fa-solid fa-triangle-exclamation"></i> Gagal terhubung ke server robot. Pastikan deployment Apps Script benar.</p>`;
     });
 };
 
@@ -1011,36 +979,16 @@ window.simpanSkorPertandingan = function(matchId, nomorPlayer, nilaiSkor) {
     });
 };
 
-// ==========================================================================
-// F. Fungsi memicu majunya pemenang ke ronde berikutnya (VERSI PERBAIKAN TOTAL)
-// ==========================================================================
+// F. Fungsi memicu majunya pemenang ke ronde berikutnya
 window.triggerLanjutBabakRonde = function() {
-    let usiaRaw = document.getElementById('filter-usia').value.trim();
-    let genderRaw = document.getElementById('filter-gender').value.trim();
-    let kategoriRaw = document.getElementById('filter-kategori').value.trim();
-
-    // =============== SINKRONISASI FORMAT DATABASE ===============
-    if (usiaRaw === "Kelas 1 - 3 SD") {
-        usiaRaw = "3 SD";
-    } else if (usiaRaw === "Kelas 4 SD - SMP") {
-        usiaRaw = "4 SD - SMP";
-    }
+    const usia = document.getElementById('filter-usia').value.trim();
+    const genderRaw = document.getElementById('filter-gender').value.trim();
+    const kategori = document.getElementById('filter-kategori').value.trim();
     
-    const usia = usiaRaw.toUpperCase();
-    const gender = genderRaw.toUpperCase();
-    const kategori = kategoriRaw.toUpperCase();
-    
-    // 3. MEMBUAT KUNCI TANGGAL (Wajib agar klop dengan hasil test backend Apps Script kita tadi)
-const hariIni = new Date();
-const tanggalKunci = String(hariIni.getDate()).padStart(2, '0') + 
-                     String(hariIni.getMonth() + 1).padStart(2, '0') + 
-                     hariIni.getFullYear();
+    const gender = genderRaw.toLowerCase() === "semua" ? "semua" : genderRaw;
+    const identitasFilter = `${usia}_${gender}_${kategori}`;
 
-// 4. INI VARIABEL PENGGANTI YANG BENAR DAN AMAN:
-const identitasFilter = `${tanggalKunci}_${usia}_${gender}_${kategori}`;
-    // =============================================================
-
-    const konfirmasi = confirm(`Apakah seluruh skor Ronde saat ini sudah selesai diinput?\n\nKlik OK untuk menaikkan para pemenang kelompok ${identitasFilter} ke babak berikutnya secara otomatis.`);
+    const konfirmasi = confirm(`Apakah seluruh skor Ronde saat ini sudah selesai diinput?\n\nKlik OK untuk menaikkan para pemenang ke babak berikutnya secara otomatis.`);
     if (!konfirmasi) return;
 
     const bodiPesan = {
@@ -1048,7 +996,6 @@ const identitasFilter = `${tanggalKunci}_${usia}_${gender}_${kategori}`;
         identitasFilter: identitasFilter
     };
 
-    // Menggunakan URL_ENGINE_TURNAMEN sesuai variabel global Anda
     fetch(URL_ENGINE_TURNAMEN, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain' },
@@ -1057,12 +1004,9 @@ const identitasFilter = `${tanggalKunci}_${usia}_${gender}_${kategori}`;
     .then(res => res.json())
     .then(respon => {
         alert(respon.pesan);
-        if (typeof window.muatBaganLombaVisual === "function") {
-            window.muatBaganLombaVisual(); // Refresh visual biar kolom Ronde baru muncul
-        }
+        window.muatBaganLombaVisual(); 
     })
     .catch(err => {
         console.error("Gagal melaju ke ronde berikutnya:", err);
-        alert("Terjadi kesalahan koneksi saat menghubungi server robot.");
     });
 };
