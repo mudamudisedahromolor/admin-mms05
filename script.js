@@ -802,7 +802,7 @@ window.muatBaganLombaVisual = function() {
     if (!container) return;
     container.innerHTML = `<p style="text-align: center; color: #666; width: 100%;"><i class="fa-solid fa-circle-notch fa-spin"></i> Loading data...</p>`;
 
-    // Logika pembentukan identitas filter yang pas dengan nama di Apps Script
+    // 1. LOGIKA GENERATE TANGGAL (SINKRONISASI BACKEND)
     const hariIni = new Date();
     const tanggalKunci = String(hariIni.getDate()).padStart(2, '0') + 
                          String(hariIni.getMonth() + 1).padStart(2, '0') + 
@@ -814,6 +814,7 @@ window.muatBaganLombaVisual = function() {
 
     const identitasFilter = `${tanggalKunci}_${usiaFix}_${genderFix}_${kategoriFix}`;
 
+    // 2. TEMBAK DATA KE APPS SCRIPT
     fetch(`${URL_ENGINE_TURNAMEN}?aksi=ambilBagan&identitasFilter=${encodeURIComponent(identitasFilter)}`)
     .then(res => res.json())
     .then(data => {
@@ -824,35 +825,43 @@ window.muatBaganLombaVisual = function() {
 
         container.innerHTML = ""; 
 
-        // Proses pengelompokan berdasarkan ronde
-        const rondeMap = {};
+        // 3. KEMBALI KE STRUKTUR VISUAL ASLI BAWAAN SCRIPT.JS LO YANG LULUS TEST
+        let currentRonde = "";
+        let rondeDiv = null;
+
         data.forEach(match => {
-            if (!rondeMap[match.ronde]) {
-                rondeMap[match.ronde] = [];
+            if (match.ronde !== currentRonde) {
+                currentRonde = match.ronde;
+                rondeDiv = document.createElement('div');
+                rondeDiv.className = 'ronde-column'; // Mengembalikan susunan flex/grid asli lo
+                
+                const header = document.createElement('h3');
+                header.innerText = currentRonde;
+                rondeDiv.appendChild(header);
+                container.appendChild(rondeDiv);
             }
-            rondeMap[match.ronde].push(match);
-        });
 
-        // Gambar kotak bracket ke HTML
-        Object.keys(rondeMap).forEach(namaRonde => {
-            const elemenRonde = document.createElement('div');
-            elemenRonde.className = 'ronde-kolom';
+            const matchDiv = document.createElement('div');
+            matchDiv.className = 'match-card'; // Mengembalikan desain kotak tanding asli lo
             
-            const judulRonde = document.createElement('h3');
-            judulRonde.innerText = namaRonde;
-            elemenRonde.appendChild(judulRonde);
+            // Logika pendeteksi highlight pemenang warna hijau dari data sheets
+            const p1Class = (match.pemenang && match.pemenang === match.p1) ? 'player winner' : 'player';
+            const p2Class = (match.pemenang && match.pemenang === match.p2) ? 'player winner' : 'player';
 
-            rondeMap[namaRonde].forEach(match => {
-                const elemenMatch = document.createElement('div');
-                elemenMatch.className = 'match-box';
-                elemenMatch.innerHTML = `
-                    <div class="player">${match.p1} <span class="score">${match.skor1}</span></div>
-                    <div class="player">${match.p2} <span class="score">${match.skor2}</span></div>
-                `;
-                elemenRonde.appendChild(elemenMatch);
-            });
-
-            container.appendChild(elemenRonde);
+            matchDiv.innerHTML = `
+                <div class="match-id" style="font-size: 10px; color: #aaa;">${match.matchId}</div>
+                <div class="${p1Class}" onclick="window.triggerUpdateSkorBagan('${match.matchId}', 1)">
+                    <span class="name">${match.p1}</span>
+                    <span class="score-display">${match.skor1}</span>
+                </div>
+                <div class="${p2Class}" onclick="window.triggerUpdateSkorBagan('${match.matchId}', 2)">
+                    <span class="name">${match.p2}</span>
+                    <span class="score-display">${match.skor2}</span>
+                </div>
+            `;
+            if (rondeDiv) {
+                rondeDiv.appendChild(matchDiv);
+            }
         });
     })
     .catch(err => {
