@@ -771,7 +771,7 @@ window.triggerAcakBaganOtomatis = function() {
         targetGender: gender, // Mengirim "semua", "Laki-laki", atau "Perempuan"
         targetKategori: kategori
     };
-
+};
     const container = document.getElementById('bracket-container');
     container.innerHTML = `<p style="text-align: center; color: #2c3e50; width: 100%; font-weight: bold;"><i class="fa-solid fa-spinner fa-spin"></i> Sedahromo Engine sedang mengacak urutan pendaftar...</p>`;
 
