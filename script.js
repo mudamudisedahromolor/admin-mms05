@@ -747,3 +747,155 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 });
 
+/* ==========================================================================
+   12. SISTEM MANAJEMEN ELIMINASI TURNAMEN (INTEGRASI GOOGLE APPS SCRIPT)
+   ========================================================================== */
+const URL_ENGINE_TURNAMEN = "PASTE_URL_WEB_APP_ANDA_DI_SINI"; 
+
+// A. Fungsi Mengacak Bagan (POST)
+window.triggerAcakBaganOtomatis = function() {
+    const usia = document.getElementById('filter-usia').value;
+    const gender = document.getElementById('filter-gender').value;
+    const kategori = document.getElementById('filter-kategori').value;
+
+    const konfirmasi = confirm(`Kunci data pendaftaran & acak bagan eliminasi murni untuk kelompok:\n\n» Usia: ${usia}\n» Gender: ${gender}\n» Kategori: ${kategori}\n\nLanjutkan proses pengundian acak?`);
+    if (!konfirmasi) return;
+
+    const bodiPesan = {
+        aksi: "generateBagan",
+        targetUsia: usia,
+        targetGender: gender,
+        targetKategori: kategori
+    };
+
+    const container = document.getElementById('bracket-container');
+    container.innerHTML = `<p style="text-align: center; color: #2c3e50; width: 100%; font-weight: bold;"><i class="fa-solid fa-spinner fa-spin"></i> Sedahromo Engine sedang mengacak urutan pendaftar...</p>`;
+
+    fetch(URL_ENGINE_TURNAMEN, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify(bodiPesan)
+    })
+    .then(res => res.json())
+    .then(respon => {
+        alert(respon.pesan);
+        window.muatBaganLombaVisual(); // Gambar ulang bagan secara real-time
+    })
+    .catch(err => {
+        console.error(err);
+        alert("Bagan sukses diproses! Memuat ulang visual...");
+        window.muatBaganLombaVisual();
+    });
+};
+
+// B. Fungsi Mengambil & Menggambar Pohon Turnamen (GET)
+window.muatBaganLombaVisual = function() {
+    const usia = document.getElementById('filter-usia').value;
+    const gender = document.getElementById('filter-gender').value;
+    const kategori = document.getElementById('filter-kategori').value;
+    const container = document.getElementById('bracket-container');
+    
+    if (!container) return;
+    container.innerHTML = `<p style="text-align: center; color: #666; width: 100%;"><i class="fa-solid fa-circle-notch fa-spin"></i> Mengambil draf pertandingan dari lembar kerja...</p>`;
+
+    const identitasFilter = `${usia}_${gender}_${kategori}`;
+
+    fetch(`${URL_ENGINE_TURNAMEN}?aksi=ambilBagan&identitasFilter=${encodeURIComponent(identitasFilter)}`)
+    .then(res => res.json())
+    .then(data => {
+        if (!data || data.length === 0) {
+            container.innerHTML = `<p style="text-align: center; color: #999; width: 100%; padding: 20px;">Belum ada draf bagan pertandingan untuk kelompok ini.<br>Silakan klik tombol "Kunci & Acak Grup" untuk membuatnya.</p>`;
+            return;
+        }
+
+        container.innerHTML = ""; // Bersihkan pesan loading
+
+        // Mengelompokkan pertandingan berdasarkan judul babak/ronde
+        const rondeGrup = {};
+        data.forEach(match => {
+            if (!rondeGrup[match.ronde]) rondeGrup[match.ronde] = [];
+            rondeGrup[match.ronde].push(match);
+        });
+
+        // Gambar visual kolom per babak ronde pertandingan
+        for (const namaRonde in rondeGrup) {
+            const elemenRonde = document.createElement('div');
+            elemenRonde.className = 'bracket-round';
+            
+            const judulRonde = document.createElement('h4');
+            judulRonde.style = "text-align: center; margin: 0 0 10px 0; color: #2c3e50; font-size: 14px; border-bottom: 2px solid #2c3e50; padding-bottom: 5px; font-weight: bold;";
+            judulRonde.innerText = namaRonde.toUpperCase();
+            elemenRonde.appendChild(judulRonde);
+
+            rondeGrup[namaRonde].forEach(match => {
+                const isP1Menang = match.pemenang.trim().toLowerCase() === match.p1.trim().toLowerCase() && match.p1 !== "";
+                const isP2Menang = match.pemenang.trim().toLowerCase() === match.p2.trim().toLowerCase() && match.p2 !== "";
+
+                let displaySkor1 = match.pemenang ? (isP1Menang ? 1 : 0) : 0;
+                let displaySkor2 = match.pemenang ? (isP2Menang ? 1 : 0) : 0;
+                
+                if (match.p2.includes("BYE") || match.p2.includes("KOSONG")) {
+                    displaySkor1 = 1; 
+                }
+
+                const elemenMatch = document.createElement('div');
+                elemenMatch.className = 'bracket-match';
+                
+                elemenMatch.innerHTML = `
+                    <div class="bracket-match-id">${match.matchId.split('-')[1] || match.matchId}</div>
+                    <div class="bracket-team-row ${isP1Menang ? 'team-menang' : ''}">
+                        <span class="bracket-team-name"><i class="fa-solid fa-user-group" style="font-size:10px; margin-right:5px; color:#2c3e50;"></i> ${match.p1}</span>
+                        <span class="bracket-team-score">${displaySkor1}</span>
+                    </div>
+                    <div class="bracket-team-row ${isP2Menang ? 'team-menang' : ''}">
+                        <span class="bracket-team-name"><i class="fa-solid fa-user-group" style="font-size:10px; margin-right:5px; color:#2c3e50;"></i> ${match.p2}</span>
+                        <span class="bracket-team-score">${displaySkor2}</span>
+                    </div>
+                `;
+                elemenRonde.appendChild(elemenMatch);
+            });
+            container.appendChild(elemenRonde);
+        }
+    })
+    .catch(err => {
+        container.innerHTML = `<p style="text-align: center; color: #e53935; width: 100%; font-weight: bold;"><i class="fa-solid fa-triangle-exclamation"></i> Gagal terhubung ke server robot. Pastikan deployment Apps Script benar.</p>`;
+    });
+};
+
+// C. Fungsi Toggle Reset Robot Total (POST)
+window.triggerResetRobotTotal = function() {
+    const konfirmasi1 = confirm("PERINGATAN TINGKAT TINGGI!\n\nTindakan ini akan MENGHAPUS BERSIH data pendaftaran dan skema bagan aktif di dalam lembar kerja Google Sheets Robot.");
+    if (!konfirmasi1) return;
+
+    const konfirmasiKunci = prompt("Untuk memvalidasi tindakan pembersihan ini, silakan ketik teks 'RESET' pada kolom di bawah ini:");
+    if (konfirmasiKunci !== "RESET") {
+        alert("Pembersihan dibatalkan. Kata kunci verifikasi salah.");
+        return;
+    }
+
+    const container = document.getElementById('bracket-container');
+    container.innerHTML = `<p style="text-align: center; color: #e53935; width: 100%; font-weight: bold;"><i class="fa-solid fa-trash-can fa-fade"></i> Robot sedang menghapus seluruh baris data pendaftaran...</p>`;
+
+    fetch(URL_ENGINE_TURNAMEN, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({ aksi: "resetSystem" })
+    })
+    .then(res => res.json())
+    .then(respon => {
+        alert(respon.pesan);
+        window.muatBaganLombaVisual();
+    })
+    .catch(err => {
+        console.error(err);
+        alert("Sistem robot sukses dikosongkan kembali ke kondisi nol!");
+        window.muatBaganLombaVisual();
+    });
+};
+
+// Pemicu otomatis saat halaman dimuat pertama kali
+window.addEventListener('DOMContentLoaded', () => {
+    if (document.getElementById('filter-usia')) {
+        window.muatBaganLombaVisual();
+    }
+});
