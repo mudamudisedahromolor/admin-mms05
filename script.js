@@ -998,7 +998,14 @@ window.triggerLanjutBabakRonde = function() {
     const gender = genderRaw.toUpperCase();
     const kategori = kategoriRaw.toUpperCase();
     
-    const identitasFilter = `${usia}_${gender}_${kategori}`;
+    // 3. MEMBUAT KUNCI TANGGAL (Wajib agar klop dengan hasil test backend Apps Script kita tadi)
+const hariIni = new Date();
+const tanggalKunci = String(hariIni.getDate()).padStart(2, '0') + 
+                     String(hariIni.getMonth() + 1).padStart(2, '0') + 
+                     hariIni.getFullYear();
+
+// 4. INI VARIABEL PENGGANTI YANG BENAR DAN AMAN:
+const identitasFilter = `${tanggalKunci}_${usia}_${gender}_${kategori}`;
     // =============================================================
 
     const konfirmasi = confirm(`Apakah seluruh skor Ronde saat ini sudah selesai diinput?\n\nKlik OK untuk menaikkan para pemenang kelompok ${identitasFilter} ke babak berikutnya secara otomatis.`);
