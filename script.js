@@ -796,7 +796,7 @@ window.triggerAcakBaganOtomatis = function() {
 window.muatBaganLombaVisual = function() {
     const usia = document.getElementById('filter-usia').value.trim();
     const genderRaw = document.getElementById('filter-gender').value.trim();
-    const kategori = document.getElementById('filter-kategori').value.trim();
+    const kategori = document.getElementById('filter-kategori').value.trim().toLowerCase();
     const container = document.getElementById('bracket-container');
     
     if (!container) return;
