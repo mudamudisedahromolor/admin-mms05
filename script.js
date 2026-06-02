@@ -866,7 +866,7 @@ window.muatBaganLombaVisual = function() {
                             ${disableInput ? 'disabled' : ''}
                             onchange="window.simpanSkorPertandingan('${match.matchId}', 2, this.value)">
                     </div>
-                `;)
+                `;
                 elemenRonde.appendChild(elemenMatch);
             });
             container.appendChild(elemenRonde);
