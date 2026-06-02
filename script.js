@@ -899,3 +899,40 @@ window.addEventListener('DOMContentLoaded', () => {
         window.muatBaganLombaVisual();
     }
 });
+
+// ==========================================================================
+// FUNGSI BARU: KIRIM DATA KE DATABASE UTAMA & AUTO-RESET BAGAN
+// ==========================================================================
+window.arsipDanAutoResetBagan = function() {
+    const usia = document.getElementById('filter-usia').value;
+    const gender = document.getElementById('filter-gender').value;
+    const kategori = document.getElementById('filter-kategori').value;
+    const identitasFilter = `${usia}_${gender}_${kategori}`;
+
+    const konfirmasi = confirm(`Apakah turnamen untuk kelompok:\n» ${usia} (${gender} - ${kategori})\nsudah selesai total dan didapatkan Juara 1?\n\nJika YA, seluruh data pertandingan akan dikirim ke DATABASE UTAMA dan bagan aktif di robot akan langsung dibersihkan.`);
+    if (!konfirmasi) return;
+
+    const bodiPesan = {
+        aksi: "simpanKeDatabase",
+        identitasFilter: identitasFilter
+    };
+
+    const container = document.getElementById('bracket-container');
+    container.innerHTML = `<p style="text-align: center; color: #e53935; width: 100%; font-weight: bold;"><i class="fa-solid fa-cloud-arrow-up fa-fade"></i> Memindahkan riwayat pertandingan ke database eksternal...</p>`;
+
+    fetch(URL_ENGINE_TURNAMEN, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify(bodiPesan)
+    })
+    .then(res => res.json())
+    .then(respon => {
+        alert(respon.pesan);
+        window.muatBaganLombaVisual(); // Reload visual bagan (sekarang harusnya kosong karena sudah di-reset)
+    })
+    .catch(err => {
+        console.error(err);
+        alert("Proses arsip selesai! Mengosongkan bagan aktif...");
+        window.muatBaganLombaVisual();
+    });
+};
