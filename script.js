@@ -752,7 +752,6 @@ window.addEventListener('DOMContentLoaded', () => {
    ========================================================================== */
 const URL_ENGINE_TURNAMEN = "https://script.google.com/macros/s/AKfycbx9JjuYPXPVkac1h-W8I-aGap0p2smP7Qokk102yiekkZnqo0er86VrYtF904rEG0oK/exec"; 
 
-// Fungsi Pembentuk Identitas Sesi Filter yang Valid dan Seragam Huruf Besar
 function dapatkanIdentitasSesiKunci() {
     const usia = document.getElementById('filter-usia').value.trim().toUpperCase();
     const genderRaw = document.getElementById('filter-gender').value.trim();
@@ -772,7 +771,7 @@ window.triggerAcakBaganOtomatis = function() {
     const usia = usiaRaw.trim();
     const gender = genderRaw.trim().toLowerCase() === "semua" ? "semua" : genderRaw.trim();
 
-    const konfirmasi = confirm(`Kunci data pendaftaran & acak bagan kelompok:\n\n» Usia: ${usia}\n» Gender: ${genderRaw}\n» Kategori: ${kategori}\n» Kapasitas Lintasan: ${kapasitas} Peserta\n\nLanjutkan proses pengundian acak?`);
+    const konfirmasi = confirm(`Kunci data pendaftaran & acak bagan kelompok:\n\n» Usia: ${usia}\n» Gender: ${genderRaw}\n» Kategori: ${kategori}\n» Kapasitas: ${kapasitas} Peserta\n\nLanjutkan proses pengundian acak?`);
     if (!konfirmasi) return;
 
     const bodiPesan = {
@@ -803,14 +802,14 @@ window.triggerAcakBaganOtomatis = function() {
     });
 };
 
-// B. Fungsi Mengambil & Menggambar Pohon Turnamen Sesuai Seleksi Babak (GET)
+// B. Fungsi Mengambil & Menggambar Pohon Turnamen Dinamis & Fleksibel (GET)
 window.muatBaganLombaVisual = function() {
     const identitasFilter = dapatkanIdentitasSesiKunci();
     const babakAktifDropdown = document.getElementById('filter-babak').value;
     const container = document.getElementById('bracket-container');
     
     if (!container) return;
-    container.innerHTML = `<p style="text-align: center; color: #666; width: 100%;"><i class="fa-solid fa-circle-notch fa-spin"></i> Mengambil data pertandingan dari lembar kerja...</p>`;
+    container.innerHTML = `<p style="text-align: center; color: #666; width: 100%;"><i class="fa-solid fa-circle-notch fa-spin"></i> Mengambil data pertandingan...</p>`;
 
     fetch(`${URL_ENGINE_TURNAMEN}?aksi=ambilBagan&identitasFilter=${encodeURIComponent(identitasFilter)}`)
     .then(res => res.json())
@@ -818,7 +817,7 @@ window.muatBaganLombaVisual = function() {
         const dataTersaring = data.filter(match => match.ronde.trim().toLowerCase() === babakAktifDropdown.trim().toLowerCase());
 
         if (!dataTersaring || dataTersaring.length === 0) {
-            container.innerHTML = `<p style="text-align: center; color: #999; width: 100%; padding: 20px;">Belum ada data draf pertandingan untuk ${babakAktifDropdown} kelompok ini.<br>Silakan klik tombol "Kunci & Acak Grup" untuk membuatnya.</p>`;
+            container.innerHTML = `<p style="text-align: center; color: #999; width: 100%; padding: 20px;">Belum ada data draf pertandingan untuk ${babakAktifDropdown} kelompok ini.</p>`;
             return;
         }
 
@@ -838,37 +837,31 @@ window.muatBaganLombaVisual = function() {
             
             let htmlIsiKotak = `<div class="bracket-match-id">${match.matchId.split('-').pop()}</div>`;
 
-            // 1. Cari Skor Tertinggi di Kotak Ini untuk Highlight Indikator Hijau
+            // Gunakan payload dinamis untuk menghitung skor juara tertinggi berapapun isi lintasannya
             let skorTertinggi = -1;
-            match.skor.forEach((skorVal, idx) => {
-                const namaP = match.peserta[idx];
-                if (namaP && namaP !== "KOSONG" && namaP !== "") {
+            match.arraySkorDinamis.forEach((skorVal, idx) => {
+                const namaP = match.arrayPesertaDinamis[idx];
+                if (namaP && namaP !== "KOSONG" && namaP !== "" && !namaP.includes("BYE")) {
                     if (parseInt(skorVal) > skorTertinggi) {
                         skorTertinggi = parseInt(skorVal);
                     }
                 }
             });
 
-            // 2. Render Baris Peserta secara Fleksibel Berdasarkan Ukuran Array dari Server
-            match.peserta.forEach((namaPlayer, index) => {
-                // Lewati render jika lintasan kosong di index bawah (agar hemat tempat)
-                if (namaPlayer === "KOSONG" && index >= 2) {
-                    return;
-                }
+            // Gambar baris pendaftar secara tak terbatas (fleksibel mengikuti jumlah isi lintasan)
+            match.arrayPesertaDinamis.forEach((namaPlayer, index) => {
+                if (!namaPlayer || namaPlayer === "") return;
+                if (namaPlayer === "KOSONG" && index >= 2) return; // Hilangkan baris sisa kosong biar rapi
 
-                const currentSkor = match.skor[index] !== undefined ? parseInt(match.skor[index]) : 0;
-                
-                // Menyala hijau jika skor pendaftar ini adalah yang tertinggi dan tidak bernilai nol
-                const isMenang = namaPlayer && namaPlayer !== "KOSONG" && currentSkor === skorTertinggi && skorTertinggi > 0;
+                const currentSkor = match.arraySkorDinamis[index] !== undefined ? parseInt(match.arraySkorDinamis[index]) : 0;
+                const isMenang = namaPlayer !== "KOSONG" && currentSkor === skorTertinggi && skorTertinggi > 0;
                 
                 let disableInput = false;
-                if (namaPlayer && (namaPlayer.includes("BYE") || namaPlayer.includes("KOSONG"))) {
-                    disableInput = true;
-                }
+                if (namaPlayer.includes("BYE") || namaPlayer === "KOSONG") disableInput = true;
 
                 htmlIsiKotak += `
                     <div class="bracket-team-row ${isMenang ? 'team-menang' : ''}">
-                        <span class="bracket-team-name"><i class="fa-solid fa-user" style="font-size:10px; margin-right:5px; color:#2c3e50;"></i> ${namaPlayer || "-"}</span>
+                        <span class="bracket-team-name"><i class="fa-solid fa-user" style="font-size:10px; margin-right:5px; color:#2c3e50;"></i> ${namaPlayer}</span>
                         <input type="number" class="bracket-team-score" value="${currentSkor}" min="0" max="99" 
                             style="width: 38px; text-align: center; border: 1px solid #ccc; border-radius: 4px; font-weight: bold; padding: 2px 0;"
                             ${disableInput ? 'disabled' : ''}
@@ -883,6 +876,7 @@ window.muatBaganLombaVisual = function() {
         container.appendChild(elemenRonde);
     })
     .catch(err => {
+        console.error(err);
         container.innerHTML = `<p style="text-align: center; color: #e53935; width: 100%; font-weight: bold;"><i class="fa-solid fa-triangle-exclamation"></i> Gagal memuat visual bagan fleksibel.</p>`;
     });
 };
@@ -910,12 +904,44 @@ window.triggerResetRobotTotal = function() {
     });
 };
 
+// D. Fungsi Kirim Data ke Database Utama & Auto-Reset Bagan
+window.arsipDanAutoResetBagan = function() {
+    const identitasFilter = dapatkanIdentitasSesiKunci();
+
+    const konfirmasi = confirm(`Apakah turnamen untuk kelompok:\n» ${identitasFilter}\nsudah selesai total?\n\nJika YA, data akan diarsipkan.`);
+    if (!konfirmasi) return;
+
+    const bodiPesan = {
+        aksi: "simpanKeDatabase",
+        identitasFilter: identitasFilter
+    };
+
+    const container = document.getElementById('bracket-container');
+    container.innerHTML = `<p style="text-align: center; color: #e53935; width: 100%; font-weight: bold;"><i class="fa-solid fa-cloud-arrow-up fa-fade"></i> Mengarsipkan data...</p>`;
+
+    fetch(URL_ENGINE_TURNAMEN, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify(bodiPesan)
+    })
+    .then(res => res.json())
+    .then(respon => {
+        alert(respon.pesan);
+        window.muatBaganLombaVisual(); 
+    })
+    .catch(err => {
+        console.error(err);
+        alert("Proses arsip selesai!");
+        window.muatBaganLombaVisual();
+    });
+};
+
 // E. Fungsi Pengiriman Update Skor Real-Time
 window.simpanSkorPertandingan = function(matchId, nomorPlayer, nilaiSkor) {
     const bodiPesan = {
         aksi: "updateSkorMatch",
         matchId: matchId,
-        playerKe: nomorPlayer,
+        playerKe: parseInt(nomorPlayer),
         skorBaru: parseInt(nilaiSkor) || 0
     };
 
@@ -940,10 +966,9 @@ window.simpanSkorPertandingan = function(matchId, nomorPlayer, nilaiSkor) {
 // F. Fungsi memicu majunya pemenang ke ronde berikutnya
 window.triggerLanjutBabakRonde = function() {
     const identitasFilter = dapatkanIdentitasSesiKunci();
-    const babakSekarang = document.getElementById('filter-babak').value;
     const kapasitas = document.getElementById('filter-kapasitas') ? document.getElementById('filter-kapasitas').value : "4";
 
-    const konfirmasi = confirm(`Apakah seluruh skor ${babakSekarang} sudah final?\n\nKlik OK untuk menaikkan para pemenang ke babak berikutnya.`);
+    const konfirmasi = confirm(`Klik OK untuk menaikkan seluruh pemenang lintasan ke babak berikutnya secara otomatis.`);
     if (!konfirmasi) return;
 
     const bodiPesan = {
