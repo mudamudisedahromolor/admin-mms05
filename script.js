@@ -747,291 +747,229 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// ==========================================================================
-// BACKEND ENGINE: Code.gs (DYNAMIC HEAT CAPACITY CONFIGURATION)
-// ==========================================================================
+/* ==========================================================================
+   12. SISTEM MANAJEMEN ELIMINASI TURNAMEN (INTEGRASI GOOGLE APPS SCRIPT)
+   ========================================================================== */
+const URL_ENGINE_TURNAMEN = "https://script.google.com/macros/s/AKfycbx9JjuYPXPVkac1h-W8I-aGap0p2smP7Qokk102yiekkZnqo0er86VrYtF904rEG0oK/exec"; 
 
-function doPost(e) {
-  var postData = JSON.parse(e.postData.contents);
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  
-  // ------------------------------------------------------------------------
-  // AKSI 1: GENERATE & SHUFFLE BAGAN (OTOMATIS MENGIKUTI JUMLAH PESERTA DINAMIS)
-  // ------------------------------------------------------------------------
-  if (postData.aksi == "generateBagan") {
-    var sheetDaftar = ss.getSheetByName("Pendaftaran");
-    var sheetBagan = ss.getSheetByName("Bagan");
-    var dataDaftar = sheetDaftar.getDataRange().getValues();
-    var listPesertaFix = [];
+// Fungsi Pembentuk Identitas Sesi Filter yang Valid dan Seragam Huruf Besar
+function dapatkanIdentitasSesiKunci() {
+    const usia = document.getElementById('filter-usia').value.trim().toUpperCase();
+    const genderRaw = document.getElementById('filter-gender').value.trim();
+    const kategori = document.getElementById('filter-kategori').value.trim().toUpperCase();
+    const gender = genderRaw.toLowerCase() === "semua" ? "SEMUA" : genderRaw.trim().toUpperCase();
     
-    var targetUsia = postData.targetUsia ? postData.targetUsia.toString().trim().toLowerCase() : "";      
-    var targetGender = postData.targetGender ? postData.targetGender.toString().trim().toLowerCase() : "";  
-    var targetKategori = postData.targetKategori ? postData.targetKategori.toString().trim().toLowerCase() : ""; 
-    
-    for (var i = 1; i < dataDaftar.length; i++) {
-      var nama = dataDaftar[i][1] ? dataDaftar[i][1].toString().trim() : ""; 
-      var gender = dataDaftar[i][2] ? dataDaftar[i][2].toString().trim().toLowerCase() : ""; 
-      var usia = dataDaftar[i][3] ? dataDaftar[i][3].toString().trim().toLowerCase() : ""; 
-      var kategori = dataDaftar[i][4] ? dataDaftar[i][4].toString().trim().toLowerCase() : ""; 
-      
-      if (nama === "") continue;
-      if (usia.includes(targetUsia) && (gender === targetGender || targetGender === "semua") && kategori.includes(targetKategori)) {
-        listPesertaFix.push(nama);
-      }
-    }
-    
-    if (listPesertaFix.length === 0) {
-      return responJSON("gagal", "Tidak ada peserta yang cocok dengan filter tersebut!");
-    }
-    
-    listPesertaFix.sort(function() { return 0.5 - Math.random() });
-    
-    var identitas = postData.targetUsia.toString().trim().toUpperCase() + "_" + postData.targetGender.toString().trim().toUpperCase() + "_" + postData.targetKategori.toString().trim().toUpperCase();
-    
-    var dataBaganLama = sheetBagan.getDataRange().getValues();
-    for (var l = dataBaganLama.length - 1; l > 0; l--) {
-      if (dataBaganLama[l][9] === identitas) sheetBagan.deleteRow(l + 1); // Indeks J (Kolom 10) sebagai penampung ID Sesi
-    }
-    
-    // --- NILAI DIUBAH: MENANGKAP KAPASITAS INPUT DINAMIS DARI WEBSITE (2, 3, 4, 5, 6, dst) ---
-    var kapasitasPerHeat = postData.kapasitasMatch ? parseInt(postData.kapasitasMatch) : 4; 
-    
-    var matchCounter = 1;
-    for (var m = 0; m < listPesertaFix.length; m += kapasitasPerHeat) {
-      
-      // NILAI DIUBAH: Pengambilan segmen nama dimatangkan agar mengikuti indeks perulangan dinamis secara berurutan
-      var p1 = listPesertaFix[m] || "";
-      var p2 = listPesertaFix[m + 1] || (kapasitasPerHeat === 2 ? "KOSONG (BYE)" : "KOSONG");
-      
-      // Slot lintasan ke-3 dan ke-4 diisi murni berdasarkan ketersediaan data di dalam array pendaftaran aktif
-      var p3 = (kapasitasPerHeat >= 3 && listPesertaFix[m + 2]) ? listPesertaFix[m + 2] : "KOSONG";
-      var p4 = (kapasitasPerHeat >= 4 && listPesertaFix[m + 3]) ? listPesertaFix[m + 3] : "KOSONG";
-      
-      // Mengosongkan display string banyangan sisa jika user sengaja memilih opsi duel (2 orang) dari web
-      if (kapasitasPerHeat < 3) p3 = "";
-      if (kapasitasPerHeat < 4) p4 = "";
-      
-      var pemenangOtomatis = (p2.includes("BYE") || p2 === "KOSONG") ? p1 : "";
-      
-      // Struktur Pemetaan Baris Spreadsheet (Nama variabel tetap dipertahankan murni)
-      sheetBagan.appendRow([
-        identitas + "-M" + matchCounter, // Kolom A (0) -> Match ID
-        "Babak 1",                       // Kolom B (1) -> Ronde
-        p1,                              // Kolom C (2) -> P1
-        p2,                              // Kolom D (3) -> P2
-        p3,                              // Kolom E (4) -> P3
-        p4,                              // Kolom F (5) -> P4
-        0,                               // Kolom G (6) -> Skor 1 
-        0,                               // Kolom H (7) -> Skor 2 
-        pemenangOtomatis,                // Kolom I (8) -> Pemenang
-        identitas                        // Kolom J (9) -> Identitas Filter Sesi
-      ]);
-      matchCounter++;
-    }
-    
-    return responJSON("sukses", "Bagan " + identitas + " dengan kapasitas dinamis berhasil dibuat!");
-  }
-
-  // ------------------------------------------------------------------------
-  // AKSI 2: UPDATE SKOR REAL-TIME (KOMPATIBEL DENGAN MULTI-RACER INPUT)
-  // ------------------------------------------------------------------------
-  if (postData.aksi == "updateSkorMatch") {
-    var sheetBagan = ss.getSheetByName("Bagan");
-    var dataBagan = sheetBagan.getDataRange().getValues();
-    var matchIdTarget = postData.matchId;
-    var playerKe = postData.playerKe; 
-    var skorBaru = postData.skorBaru;
-    
-    for (var i = 1; i < dataBagan.length; i++) {
-      if (dataBagan[i][0] == matchIdTarget) {
-        
-        if (playerKe == 1) sheetBagan.getRange(i + 1, 7).setValue(skorBaru); // Kolom G
-        if (playerKe == 2) sheetBagan.getRange(i + 1, 8).setValue(skorBaru); // Kolom H
-        
-        var skor1Upt = sheetBagan.getRange(i + 1, 7).getValue();
-        var skor2Upt = sheetBagan.getRange(i + 1, 8).getValue();
-        var p1 = dataBagan[i][2];
-        var p2 = dataBagan[i][3];
-        
-        var pemenang = "";
-        if (skor1Upt > skor2Upt) {
-          pemenang = p1;
-        } else if (skor2Upt > skor1Upt) {
-          pemenang = p2;
-        }
-        
-        sheetBagan.getRange(i + 1, 9).setValue(pemenang); // Kolom I (Pemenang)
-        return responJSON("sukses", "Skor & pemenang sukses diperbarui!");
-      }
-    }
-    return responJSON("gagal", "Match ID tidak ditemukan!");
-  }
-
-  // ------------------------------------------------------------------------
-  // AKSI 3: GENERATE RONDE SELANJUTNYA (DINAMIS MENGIKUTI KONDISI BREAKDOWN JUMLAH)
-  // ------------------------------------------------------------------------
-  if (postData.aksi == "lanjutRondeBerikutnya") {
-    var sheetBagan = ss.getSheetByName("Bagan");
-    var dataBagan = sheetBagan.getDataRange().getValues();
-    var identitasFilter = postData.identitasFilter; 
-    
-    var pemenangRondeIni = [];
-    var rondeTerakhir = "";
-    
-    for (var i = 1; i < dataBagan.length; i++) {
-      if (dataBagan[i][9] === identitasFilter) {
-        rondeTerakhir = dataBagan[i][1]; 
-        
-        if (dataBagan[i][8] === "" && !dataBagan[i][3].toString().includes("KOSONG")) {
-          return responJSON("gagal", "Gagal lanjut! Masih ada pertandingan di " + rondeTerakhir + " yang belum diisi skornya.");
-        }
-        if (dataBagan[i][8] !== "") {
-          pemenangRondeIni.push(dataBagan[i][8]);
-        }
-      }
-    }
-    
-    if (pemenangRondeIni.length <= 1) {
-      return responJSON("sukses", "Turnamen selesai! Juara 1 sudah didapatkan. Silakan klik tombol Selesai & Arsipkan Lomba.");
-    }
-    
-    var angkaRonde = parseInt(rondeTerakhir.replace(/[^0-9]/g, '')) || 1;
-    var namaRondeBaru = "Babak " + (angkaRonde + 1);
-    
-    if(pemenangRondeIni.length <= 2) {
-      namaRondeBaru = "Grand Final";
-    } else if(pemenangRondeIni.length <= 4) {
-      namaRondeBaru = "Semifinal";
-    }
-    
-    pemenangRondeIni.sort(function() { return 0.5 - Math.random() });
-    
-    // --- NILAI DIUBAH: MENGIKUTI KAPASITAS YANG DIPILIH SAAT TOMBOL DIKLIK ---
-    var kapasitasBerikutnya = postData.kapasitasMatch ? parseInt(postData.kapasitasMatch) : 4; 
-    if (pemenangRondeIni.length < kapasitasBerikutnya) {
-      kapasitasBerikutnya = 2; 
-    }
-    
-    var matchCounter = 1;
-    for (var m = 0; m < pemenangRondeIni.length; m += kapasitasBerikutnya) {
-      var rP1 = pemenangRondeIni[m];
-      var rP2 = pemenangRondeIni[m + 1] || (kapasitasBerikutnya === 2 ? "KOSONG (BYE)" : "KOSONG");
-      var rP3 = (kapasitasBerikutnya >= 3 && pemenangRondeIni[m + 2]) ? pemenangRondeIni[m + 2] : "KOSONG";
-      var rP4 = (kapasitasBerikutnya >= 4 && pemenangRondeIni[m + 3]) ? pemenangRondeIni[m + 3] : "KOSONG";
-      
-      if (kapasitasBerikutnya < 3) rP3 = "";
-      if (kapasitasBerikutnya < 4) rP4 = ""; 
-      
-      var pemenangOtomatis = (rP2.includes("BYE") || rP2 === "KOSONG") ? rP1 : "";
-      
-      sheetBagan.appendRow([
-        identitasFilter + "-R" + (angkaRonde + 1) + "-M" + matchCounter,
-        namaRondeBaru,
-        rP1, rP2, rP3, rP4,
-        0, 0,
-        pemenangOtomatis,
-        identitasFilter
-      ]);
-      matchCounter++;
-    }
-    
-    return responJSON("sukses", "Berhasil melaju! Susunan pertandingan " + namaRondeBaru + " sukses dibuat.");
-  }
-
-  // ------------------------------------------------------------------------
-  // AKSI 4: SIMPAN KE DATABASE EKSTERNAL
-  // ------------------------------------------------------------------------
-  if (postData.aksi == "simpanKeDatabase") {
-    var sheetBagan = ss.getSheetByName("Bagan");
-    var dataBagan = sheetBagan.getDataRange().getValues();
-    var identitasFilter = postData.identitasFilter; 
-
-    if (dataBagan.length <= 1) {
-      return responJSON("gagal", "Tidak ada data pertandingan di dalam robot untuk diarsipkan!");
-    }
-
-    try {
-      var idDatabaseEksternal = "1a9bvPwHI16qlUKxJ2_vA1odZYEWQ_qekTn_7_W9J7Y4"; 
-      var ssDatabase = SpreadsheetApp.openById(idDatabaseEksternal);
-      var sheetDbArsip = ssDatabase.getSheetByName("Arsip_Bagan") || ssDatabase.getSheets()[0]; 
-
-      var dataArsipPilihan = [];
-      var timestamp = new Date();
-
-      for (var k = 1; k < dataBagan.length; k++) {
-        if (dataBagan[k][9] == identitasFilter) {
-          var barisBaru = [timestamp].concat(dataBagan[k]);
-          dataArsipPilihan.push(barisBaru);
-        }
-      }
-
-      if (dataArsipPilihan.length === 0) {
-        return responJSON("gagal", "Data aktif dengan kategori tersebut tidak ditemukan di sheet robot.");
-      }
-
-      sheetDbArsip.getRange(sheetDbArsip.getLastRow() + 1, 1, dataArsipPilihan.length, dataArsipPilihan[0].length).setValues(dataArsipPilihan);
-
-      for (var r = dataBagan.length - 1; r > 0; r--) {
-        if (dataBagan[r][9] === identitasFilter) {
-          sheetBagan.deleteRow(r + 1);
-        }
-      }
-      return responJSON("sukses", "Arsip sukses! Seluruh riwayat match kelompok ini berhasil dipindahkan ke database eksternal.");
-    } catch (err) {
-      return responJSON("gagal", "Koneksi database gagal: " + err.toString());
-    }
-  }
-
-  // ------------------------------------------------------------------------
-  // AKSI 5: RESET TOTAL SYSTEM
-  // ------------------------------------------------------------------------
-  if (postData.aksi == "resetSystem") {
-    var sPendaftaran = ss.getSheetByName("Pendaftaran");
-    var sBagan = ss.getSheetByName("Bagan");
-    try {
-      if (sPendaftaran.getLastRow() > 1) {
-        sPendaftaran.getRange(2, 1, sPendaftaran.getLastRow() - 1, sPendaftaran.getLastColumn()).clearContent();
-      }
-      if (sBagan.getLastRow() > 1) {
-        sBagan.getRange(2, 1, sBagan.getLastRow() - 1, sBagan.getLastColumn()).clearContent();
-      }
-      return responJSON("sukses", "Sistem Sukses Direset! Data Pendaftaran & seluruh draf Bagan telah dibersihkan otomatis, Bro!");
-    } catch (err) {
-      return responJSON("gagal", "Gagal melakukan reset otomatis: " + err.toString());
-    }
-  }
+    return `${usia}_${gender}_${kategori}`;
 }
 
-// ------------------------------------------------------------------------
-// WEB API GET: MENYALURKAN DATA LENGKAP SECARA VALID KE VISUALISASI HTML
-// ------------------------------------------------------------------------
-function doGet(e) {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var sheetBagan = ss.getSheetByName("Bagan");
-  
-  if (e.parameter.aksi == "ambilBagan") {
-    var dataBagan = sheetBagan.getDataRange().getValues();
-    var hasilFilter = [];
+// A. Fungsi Mengacak Bagan (POST)
+window.triggerAcakBaganOtomatis = function() {
+    const usiaRaw = document.getElementById('filter-usia').value;
+    const genderRaw = document.getElementById('filter-gender').value;
+    const kategori = document.getElementById('filter-kategori').value;
+    const kapasitas = document.getElementById('filter-kapasitas') ? document.getElementById('filter-kapasitas').value : "4";
+
+    const usia = usiaRaw.trim();
+    const gender = genderRaw.trim().toLowerCase() === "semua" ? "semua" : genderRaw.trim();
+
+    const konfirmasi = confirm(`Kunci data pendaftaran & acak bagan kelompok:\n\n» Usia: ${usia}\n» Gender: ${genderRaw}\n» Kategori: ${kategori}\n» Kapasitas Lintasan: ${kapasitas} Peserta\n\nLanjutkan proses pengundian acak?`);
+    if (!konfirmasi) return;
+
+    const bodiPesan = {
+        aksi: "generateBagan",
+        targetUsia: usia,
+        targetGender: gender, 
+        targetKategori: kategori,
+        kapasitasMatch: kapasitas
+    };
+
+    const container = document.getElementById('bracket-container');
+    container.innerHTML = `<p style="text-align: center; color: #2c3e50; width: 100%; font-weight: bold;"><i class="fa-solid fa-spinner fa-spin"></i> Sedahromo Engine sedang mengacak urutan pendaftar...</p>`;
+
+    fetch(URL_ENGINE_TURNAMEN, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify(bodiPesan)
+    })
+    .then(res => res.json())
+    .then(respon => {
+        alert(respon.pesan);
+        window.muatBaganLombaVisual(); 
+    })
+    .catch(err => {
+        console.error(err);
+        alert("Bagan sukses diproses! Memuat ulang visual...");
+        window.muatBaganLombaVisual();
+    });
+};
+
+// B. Fungsi Mengambil & Menggambar Pohon Turnamen Sesuai Seleksi Babak (GET)
+window.muatBaganLombaVisual = function() {
+    const identitasFilter = dapatkanIdentitasSesiKunci();
+    const babakAktifDropdown = document.getElementById('filter-babak').value;
+    const container = document.getElementById('bracket-container');
     
-    for (var i = 1; i < dataBagan.length; i++) {
-      if (dataBagan[i][9] == e.parameter.identitasFilter) {
-        hasilFilter.push({
-          "matchId": dataBagan[i][0] ? dataBagan[i][0].toString() : "",
-          "ronde": dataBagan[i][1] ? dataBagan[i][1].toString() : "",
-          "p1": dataBagan[i][2] ? dataBagan[i][2].toString() : "",
-          "p2": dataBagan[i][3] ? dataBagan[i][3].toString() : "",
-          "p3": dataBagan[i][4] ? dataBagan[i][4].toString() : "", 
-          "p4": dataBagan[i][5] ? dataBagan[i][5].toString() : "", 
-          "skor1": dataBagan[i][6] !== "" ? parseInt(dataBagan[i][6]) : 0,
-          "skor2": dataBagan[i][7] !== "" ? parseInt(dataBagan[i][7]) : 0,
-          "pemenang": dataBagan[i][8] ? dataBagan[i][8].toString() : ""
+    if (!container) return;
+    container.innerHTML = `<p style="text-align: center; color: #666; width: 100%;"><i class="fa-solid fa-circle-notch fa-spin"></i> Mengambil data pertandingan dari lembar kerja...</p>`;
+
+    fetch(`${URL_ENGINE_TURNAMEN}?aksi=ambilBagan&identitasFilter=${encodeURIComponent(identitasFilter)}`)
+    .then(res => res.json())
+    .then(data => {
+        const dataTersaring = data.filter(match => match.ronde.trim().toLowerCase() === babakAktifDropdown.trim().toLowerCase());
+
+        if (!dataTersaring || dataTersaring.length === 0) {
+            container.innerHTML = `<p style="text-align: center; color: #999; width: 100%; padding: 20px;">Belum ada data draf pertandingan untuk ${babakAktifDropdown} kelompok ini.<br>Silakan klik tombol "Kunci & Acak Grup" untuk membuatnya.</p>`;
+            return;
+        }
+
+        container.innerHTML = ""; 
+
+        const elemenRonde = document.createElement('div');
+        elemenRonde.className = 'bracket-round';
+        
+        const judulRonde = document.createElement('h4');
+        judulRonde.style = "text-align: center; margin: 0 0 10px 0; color: #2c3e50; font-size: 14px; border-bottom: 2px solid #2c3e50; padding-bottom: 5px; font-weight: bold;";
+        judulRonde.innerText = babakAktifDropdown.toUpperCase();
+        elemenRonde.appendChild(judulRonde);
+
+        dataTersaring.forEach(match => {
+            const elemenMatch = document.createElement('div');
+            elemenMatch.className = 'bracket-match';
+            
+            let htmlIsiKotak = `<div class="bracket-match-id">${match.matchId.split('-').pop()}</div>`;
+
+            // 1. Cari Skor Tertinggi di Kotak Ini untuk Highlight Indikator Hijau
+            let skorTertinggi = -1;
+            match.skor.forEach((skorVal, idx) => {
+                const namaP = match.peserta[idx];
+                if (namaP && namaP !== "KOSONG" && namaP !== "") {
+                    if (parseInt(skorVal) > skorTertinggi) {
+                        skorTertinggi = parseInt(skorVal);
+                    }
+                }
+            });
+
+            // 2. Render Baris Peserta secara Fleksibel Berdasarkan Ukuran Array dari Server
+            match.peserta.forEach((namaPlayer, index) => {
+                // Lewati render jika lintasan kosong di index bawah (agar hemat tempat)
+                if (namaPlayer === "KOSONG" && index >= 2) {
+                    return;
+                }
+
+                const currentSkor = match.skor[index] !== undefined ? parseInt(match.skor[index]) : 0;
+                
+                // Menyala hijau jika skor pendaftar ini adalah yang tertinggi dan tidak bernilai nol
+                const isMenang = namaPlayer && namaPlayer !== "KOSONG" && currentSkor === skorTertinggi && skorTertinggi > 0;
+                
+                let disableInput = false;
+                if (namaPlayer && (namaPlayer.includes("BYE") || namaPlayer.includes("KOSONG"))) {
+                    disableInput = true;
+                }
+
+                htmlIsiKotak += `
+                    <div class="bracket-team-row ${isMenang ? 'team-menang' : ''}">
+                        <span class="bracket-team-name"><i class="fa-solid fa-user" style="font-size:10px; margin-right:5px; color:#2c3e50;"></i> ${namaPlayer || "-"}</span>
+                        <input type="number" class="bracket-team-score" value="${currentSkor}" min="0" max="99" 
+                            style="width: 38px; text-align: center; border: 1px solid #ccc; border-radius: 4px; font-weight: bold; padding: 2px 0;"
+                            ${disableInput ? 'disabled' : ''}
+                            onchange="window.simpanSkorPertandingan('${match.matchId}', ${index + 1}, this.value)">
+                    </div>
+                `;
+            });
+
+            elemenMatch.innerHTML = htmlIsiKotak;
+            elemenRonde.appendChild(elemenMatch);
         });
-      }
-    }
-    return ContentService.createTextOutput(JSON.stringify(hasilFilter)).setMimeType(ContentService.MimeType.JSON);
-  }
-}
+        container.appendChild(elemenRonde);
+    })
+    .catch(err => {
+        container.innerHTML = `<p style="text-align: center; color: #e53935; width: 100%; font-weight: bold;"><i class="fa-solid fa-triangle-exclamation"></i> Gagal memuat visual bagan fleksibel.</p>`;
+    });
+};
 
-function responJSON(status, pesan) {
-  return ContentService.createTextOutput(JSON.stringify({"status": status, "pesan": pesan})).setMimeType(ContentService.MimeType.JSON);
-}
+// C. Fungsi Toggle Reset Robot Total (POST)
+window.triggerResetRobotTotal = function() {
+    const konfirmasi1 = confirm("PERINGATAN!\nTindakan ini akan mengosongkan seluruh bagan aktif.");
+    if (!konfirmasi1) return;
+
+    const konfirmasiKunci = prompt("Ketik teks 'RESET' untuk menyetujui:");
+    if (konfirmasiKunci !== "RESET") return;
+
+    const container = document.getElementById('bracket-container');
+    container.innerHTML = `<p style="text-align: center; color: #e53935; width: 100%; font-weight: bold;"><i class="fa-solid fa-trash-can fa-fade"></i> Menghapus bagan...</p>`;
+
+    fetch(URL_ENGINE_TURNAMEN, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({ aksi: "resetSystem" })
+    })
+    .then(res => res.json())
+    .then(respon => {
+        alert(respon.pesan);
+        window.muatBaganLombaVisual();
+    });
+};
+
+// E. Fungsi Pengiriman Update Skor Real-Time
+window.simpanSkorPertandingan = function(matchId, nomorPlayer, nilaiSkor) {
+    const bodiPesan = {
+        aksi: "updateSkorMatch",
+        matchId: matchId,
+        playerKe: nomorPlayer,
+        skorBaru: parseInt(nilaiSkor) || 0
+    };
+
+    fetch(URL_ENGINE_TURNAMEN, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify(bodiPesan)
+    })
+    .then(res => res.json())
+    .then(respon => {
+        if (respon.status === "sukses") {
+            window.muatBaganLombaVisual(); 
+        } else {
+            alert("Gagal memperbarui skor: " + respon.pesan);
+        }
+    })
+    .catch(err => {
+        console.error("Koneksi gagal:", err);
+    });
+};
+
+// F. Fungsi memicu majunya pemenang ke ronde berikutnya
+window.triggerLanjutBabakRonde = function() {
+    const identitasFilter = dapatkanIdentitasSesiKunci();
+    const babakSekarang = document.getElementById('filter-babak').value;
+    const kapasitas = document.getElementById('filter-kapasitas') ? document.getElementById('filter-kapasitas').value : "4";
+
+    const konfirmasi = confirm(`Apakah seluruh skor ${babakSekarang} sudah final?\n\nKlik OK untuk menaikkan para pemenang ke babak berikutnya.`);
+    if (!konfirmasi) return;
+
+    const bodiPesan = {
+        aksi: "lanjutRondeBerikutnya",
+        identitasFilter: identitasFilter,
+        kapasitasMatch: kapasitas
+    };
+
+    fetch(URL_ENGINE_TURNAMEN, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify(bodiPesan)
+    })
+    .then(res => res.json())
+    .then(respon => {
+        alert(respon.pesan);
+        window.muatBaganLombaVisual(); 
+    })
+    .catch(err => {
+        console.error("Gagal:", err);
+    });
+};
+
+// Pemicu otomatis saat halaman dimuat pertama kali
+window.addEventListener('DOMContentLoaded', () => {
+    if (document.getElementById('filter-usia')) {
+        window.muatBaganLombaVisual();
+    }
+});
