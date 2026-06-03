@@ -767,13 +767,12 @@ window.triggerAcakBaganOtomatis = function() {
     const usiaRaw = document.getElementById('filter-usia').value;
     const genderRaw = document.getElementById('filter-gender').value;
     const kategori = document.getElementById('filter-kategori').value;
-    
     const kapasitas = document.getElementById('filter-kapasitas') ? document.getElementById('filter-kapasitas').value : "4";
 
     const usia = usiaRaw.trim();
     const gender = genderRaw.trim().toLowerCase() === "semua" ? "semua" : genderRaw.trim();
 
-    const konfirmasi = confirm(`Kunci data pendaftaran & acak bagan eliminasi murni untuk kelompok:\n\n» Usia: ${usia}\n» Gender: ${genderRaw}\n» Kategori: ${kategori}\n» Kapasitas: ${kapasitas} Peserta\n\nLanjutkan proses pengundian acak?`);
+    const konfirmasi = confirm(`Kunci data pendaftaran & acak bagan kelompok:\n\n» Usia: ${usia}\n» Gender: ${genderRaw}\n» Kategori: ${kategori}\n» Kapasitas Lintasan: ${kapasitas} Peserta\n\nLanjutkan proses pengundian acak?`);
     if (!konfirmasi) return;
 
     const bodiPesan = {
@@ -811,7 +810,7 @@ window.muatBaganLombaVisual = function() {
     const container = document.getElementById('bracket-container');
     
     if (!container) return;
-    container.innerHTML = `<p style="text-align: center; color: #666; width: 100%;"><i class="fa-solid fa-circle-notch fa-spin"></i> Mengambil draf pertandingan dari lembar kerja...</p>`;
+    container.innerHTML = `<p style="text-align: center; color: #666; width: 100%;"><i class="fa-solid fa-circle-notch fa-spin"></i> Mengambil data pertandingan dari lembar kerja...</p>`;
 
     fetch(`${URL_ENGINE_TURNAMEN}?aksi=ambilBagan&identitasFilter=${encodeURIComponent(identitasFilter)}`)
     .then(res => res.json())
@@ -834,45 +833,49 @@ window.muatBaganLombaVisual = function() {
         elemenRonde.appendChild(judulRonde);
 
         dataTersaring.forEach(match => {
-            const pemenangValid = match.pemenang ? match.pemenang.trim().toLowerCase() : "";
-
             const elemenMatch = document.createElement('div');
             elemenMatch.className = 'bracket-match';
             
-            // Tampilkan Judul ID Match di bagian atas kotak
             let htmlIsiKotak = `<div class="bracket-match-id">${match.matchId.split('-').pop()}</div>`;
 
-            // --- NILAI DIUBAH: LOOPING DINAMIS AUTOMATIC COCOK UNTUK P2, P4, P6, P10, DST ---
-            let playerIndex = 1;
-            while (match[`p${playerIndex}`] !== undefined) {
-                const namaPlayer = match[`p${playerIndex}`];
-                
-                // Lewati penggambaran jika datanya kosong murni akibat dropdown kapasitas kecil
-                if (namaPlayer === "" && playerIndex > 2) {
-                    playerIndex++;
-                    continue;
+            // 1. Cari Skor Tertinggi di Kotak Ini untuk Highlight Indikator Hijau
+            let skorTertinggi = -1;
+            match.skor.forEach((skorVal, idx) => {
+                const namaP = match.peserta[idx];
+                if (namaP && namaP !== "KOSONG" && namaP !== "") {
+                    if (parseInt(skorVal) > skorTertinggi) {
+                        skorTertinggi = parseInt(skorVal);
+                    }
+                }
+            });
+
+            // 2. Render Baris Peserta secara Fleksibel Berdasarkan Ukuran Array dari Server
+            match.peserta.forEach((namaPlayer, index) => {
+                // Lewati render jika lintasan kosong di index bawah (agar hemat tempat)
+                if (namaPlayer === "KOSONG" && index >= 2) {
+                    return;
                 }
 
-                const isMenang = namaPlayer && pemenangValid === namaPlayer.trim().toLowerCase() && namaPlayer !== "" && namaPlayer !== "KOSONG";
-                const displaySkor = match[`skor${playerIndex}`] !== undefined ? match[`skor${playerIndex}`] : 0;
+                const currentSkor = match.skor[index] !== undefined ? parseInt(match.skor[index]) : 0;
+                
+                // Menyala hijau jika skor pendaftar ini adalah yang tertinggi dan tidak bernilai nol
+                const isMenang = namaPlayer && namaPlayer !== "KOSONG" && currentSkor === skorTertinggi && skorTertinggi > 0;
                 
                 let disableInput = false;
-                if (playerIndex === 2 && (namaPlayer.includes("BYE") || namaPlayer.includes("KOSONG"))) {
+                if (namaPlayer && (namaPlayer.includes("BYE") || namaPlayer.includes("KOSONG"))) {
                     disableInput = true;
                 }
 
-                // Append baris peserta secara estafet sebanyak properti p yang tersedia dari database
                 htmlIsiKotak += `
                     <div class="bracket-team-row ${isMenang ? 'team-menang' : ''}">
                         <span class="bracket-team-name"><i class="fa-solid fa-user" style="font-size:10px; margin-right:5px; color:#2c3e50;"></i> ${namaPlayer || "-"}</span>
-                        <input type="number" class="bracket-team-score" value="${displaySkor}" min="0" max="99" 
+                        <input type="number" class="bracket-team-score" value="${currentSkor}" min="0" max="99" 
                             style="width: 38px; text-align: center; border: 1px solid #ccc; border-radius: 4px; font-weight: bold; padding: 2px 0;"
                             ${disableInput ? 'disabled' : ''}
-                            onchange="window.simpanSkorPertandingan('${match.matchId}', ${playerIndex}, this.value)">
+                            onchange="window.simpanSkorPertandingan('${match.matchId}', ${index + 1}, this.value)">
                     </div>
                 `;
-                playerIndex++;
-            }
+            });
 
             elemenMatch.innerHTML = htmlIsiKotak;
             elemenRonde.appendChild(elemenMatch);
@@ -880,23 +883,20 @@ window.muatBaganLombaVisual = function() {
         container.appendChild(elemenRonde);
     })
     .catch(err => {
-        container.innerHTML = `<p style="text-align: center; color: #e53935; width: 100%; font-weight: bold;"><i class="fa-solid fa-triangle-exclamation"></i> Gagal terhubung ke server robot. Pastikan deployment Apps Script benar.</p>`;
+        container.innerHTML = `<p style="text-align: center; color: #e53935; width: 100%; font-weight: bold;"><i class="fa-solid fa-triangle-exclamation"></i> Gagal memuat visual bagan fleksibel.</p>`;
     });
 };
 
 // C. Fungsi Toggle Reset Robot Total (POST)
 window.triggerResetRobotTotal = function() {
-    const konfirmasi1 = confirm("PERINGATAN TINGKAT TINGGI!\n\nTindakan ini akan MENGHAPUS BERSIH data pendaftaran dan skema bagan aktif di dalam lembar kerja Google Sheets Robot.");
+    const konfirmasi1 = confirm("PERINGATAN!\nTindakan ini akan mengosongkan seluruh bagan aktif.");
     if (!konfirmasi1) return;
 
-    const konfirmasiKunci = prompt("Untuk memvalidasi tindakan pembersihan ini, silakan ketik teks 'RESET' pada kolom di bawah ini:");
-    if (konfirmasiKunci !== "RESET") {
-        alert("Pembersihan dibatalkan. Kata kunci verifikasi salah.");
-        return;
-    }
+    const konfirmasiKunci = prompt("Ketik teks 'RESET' untuk menyetujui:");
+    if (konfirmasiKunci !== "RESET") return;
 
     const container = document.getElementById('bracket-container');
-    container.innerHTML = `<p style="text-align: center; color: #e53935; width: 100%; font-weight: bold;"><i class="fa-solid fa-trash-can fa-fade"></i> Robot sedang menghapus seluruh baris data pendaftaran...</p>`;
+    container.innerHTML = `<p style="text-align: center; color: #e53935; width: 100%; font-weight: bold;"><i class="fa-solid fa-trash-can fa-fade"></i> Menghapus bagan...</p>`;
 
     fetch(URL_ENGINE_TURNAMEN, {
         method: 'POST',
@@ -907,50 +907,11 @@ window.triggerResetRobotTotal = function() {
     .then(respon => {
         alert(respon.pesan);
         window.muatBaganLombaVisual();
-    })
-    .catch(err => {
-        console.error(err);
-        alert("Sistem robot sukses dikosongkan kembali ke kondisi nol!");
-        window.muatBaganLombaVisual();
-    });
-};
-
-// D. Fungsi Kirim Data ke Database Utama & Auto-Reset Bagan
-window.arsipDanAutoResetBagan = function() {
-    const identitasFilter = dapatkanIdentitasSesiKunci();
-
-    const konfirmasi = confirm(`Apakah turnamen untuk kelompok:\n» ${identitasFilter}\nsudah selesai total dan didapatkan Juara 1?\n\nJika YA, seluruh data pertandingan akan dikirim ke DATABASE UTAMA dan bagan aktif di robot akan langsung dibersihkan.`);
-    if (!konfirmasi) return;
-
-    const bodiPesan = {
-        aksi: "simpanKeDatabase",
-        identitasFilter: identitasFilter
-    };
-
-    const container = document.getElementById('bracket-container');
-    container.innerHTML = `<p style="text-align: center; color: #e53935; width: 100%; font-weight: bold;"><i class="fa-solid fa-cloud-arrow-up fa-fade"></i> Memindahkan riwayat pertandingan ke database eksternal...</p>`;
-
-    fetch(URL_ENGINE_TURNAGMEN, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify(bodiPesan)
-    })
-    .then(res => res.json())
-    .then(respon => {
-        alert(respon.pesan);
-        window.muatBaganLombaVisual(); 
-    })
-    .catch(err => {
-        console.error(err);
-        alert("Proses arsip selesai! Mengosongkan bagan aktif...");
-        window.muatBaganLombaVisual();
     });
 };
 
 // E. Fungsi Pengiriman Update Skor Real-Time
 window.simpanSkorPertandingan = function(matchId, nomorPlayer, nilaiSkor) {
-    console.log(`Mengirim update skor: ${matchId} | Player ${nomorPlayer} -> Skor: ${nilaiSkor}`);
-    
     const bodiPesan = {
         aksi: "updateSkorMatch",
         matchId: matchId,
@@ -966,14 +927,13 @@ window.simpanSkorPertandingan = function(matchId, nomorPlayer, nilaiSkor) {
     .then(res => res.json())
     .then(respon => {
         if (respon.status === "sukses") {
-            console.log("Skor sukses disimpan!");
             window.muatBaganLombaVisual(); 
         } else {
             alert("Gagal memperbarui skor: " + respon.pesan);
         }
     })
     .catch(err => {
-        console.error("Koneksi gagal saat update skor:", err);
+        console.error("Koneksi gagal:", err);
     });
 };
 
@@ -981,14 +941,15 @@ window.simpanSkorPertandingan = function(matchId, nomorPlayer, nilaiSkor) {
 window.triggerLanjutBabakRonde = function() {
     const identitasFilter = dapatkanIdentitasSesiKunci();
     const babakSekarang = document.getElementById('filter-babak').value;
+    const kapasitas = document.getElementById('filter-kapasitas') ? document.getElementById('filter-kapasitas').value : "4";
 
-    const konfirmasi = confirm(`Apakah seluruh skor ${babakSekarang} saat ini sudah selesai diinput?\n\nKlik OK untuk menaikkan para pemenang ke babak berikutnya secara otomatis.`);
+    const konfirmasi = confirm(`Apakah seluruh skor ${babakSekarang} sudah final?\n\nKlik OK untuk menaikkan para pemenang ke babak berikutnya.`);
     if (!konfirmasi) return;
 
     const bodiPesan = {
         aksi: "lanjutRondeBerikutnya",
         identitasFilter: identitasFilter,
-        kapasitasMatch: document.getElementById('filter-kapasitas') ? document.getElementById('filter-kapasitas').value : "4"
+        kapasitasMatch: kapasitas
     };
 
     fetch(URL_ENGINE_TURNAMEN, {
@@ -1002,7 +963,7 @@ window.triggerLanjutBabakRonde = function() {
         window.muatBaganLombaVisual(); 
     })
     .catch(err => {
-        console.error("Gagal melaju ke ronde berikutnya:", err);
+        console.error("Gagal:", err);
     });
 };
 
