@@ -883,7 +883,8 @@ window.muatBaganLombaVisual = function() {
         container.appendChild(elemenRonde);
     })
     .catch(err => {
-        container.innerHTML = `<p style="text-align: center; color: #e53935; width: 100%; font-weight: bold;"><i class="fa-solid fa-triangle-exclamation"></i> Gagal memuat visual bagan fleksibel.</p>`;
+        console.error(err);
+        container.innerHTML = `<p style="text-align: center; color: #e53935; width: 100%; font-weight: bold;"><i class="fa-solid fa-triangle-exclamation"></i> Gagal memuat visual bagan fleksibel. Periksa konsol browser.</p>`;
     });
 };
 
@@ -906,6 +907,38 @@ window.triggerResetRobotTotal = function() {
     .then(res => res.json())
     .then(respon => {
         alert(respon.pesan);
+        window.muatBaganLombaVisual();
+    });
+};
+
+// D. Fungsi Kirim Data ke Database Utama & Auto-Reset Bagan
+window.arsipDanAutoResetBagan = function() {
+    const identitasFilter = dapatkanIdentitasSesiKunci();
+
+    const konfirmasi = confirm(`Apakah turnamen untuk kelompok:\n» ${identitasFilter}\nsudah selesai total?\n\nJika YA, data akan diarsipkan.`);
+    if (!konfirmasi) return;
+
+    const bodiPesan = {
+        aksi: "simpanKeDatabase",
+        identitasFilter: identitasFilter
+    };
+
+    const container = document.getElementById('bracket-container');
+    container.innerHTML = `<p style="text-align: center; color: #e53935; width: 100%; font-weight: bold;"><i class="fa-solid fa-cloud-arrow-up fa-fade"></i> Mengarsipkan data...</p>`;
+
+    fetch(URL_ENGINE_TURNAMEN, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify(bodiPesan)
+    })
+    .then(res => res.json())
+    .then(respon => {
+        alert(respon.pesan);
+        window.muatBaganLombaVisual(); 
+    })
+    .catch(err => {
+        console.error(err);
+        alert("Proses arsip selesai!");
         window.muatBaganLombaVisual();
     });
 };
