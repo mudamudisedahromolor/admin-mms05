@@ -813,3 +813,30 @@ window.muatBaganLombaVisual = function() {
     });
 };
 
+/* Tambahkan ini ke dalam script.js */
+window.triggerAcakBaganOtomatis = function() {
+    const identitasSesi = dapatkanIdentitasSesiKunci();
+    const kapasitasLintasan = document.getElementById('filter-kapasitas') ? document.getElementById('filter-kapasitas').value : "4";
+
+    const konfirmasi = confirm("Proses draf bagan baru? Pastikan filter kategori sudah benar.");
+    if (!konfirmasi) return;
+
+    const payload = {
+        aksi: "acakBaganBaru", // Sesuaikan dengan logika switch/case di Code.gs Anda
+        identitasFilter: identitasSesi,
+        kapasitasMatch: kapasitasLintasan
+    };
+
+    fetch(URL_ENGINE_TURNAMEN, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify(payload)
+    })
+    .then(res => res.json())
+    .then(data => {
+        alert(data.pesan);
+        window.muatBaganLombaVisual(); // Refresh tampilan setelah acak
+    })
+    .catch(err => console.error("Error saat mengacak bagan:", err));
+};
+
