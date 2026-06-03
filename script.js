@@ -768,7 +768,6 @@ window.triggerAcakBaganOtomatis = function() {
     const genderRaw = document.getElementById('filter-gender').value;
     const kategori = document.getElementById('filter-kategori').value;
     
-    // AMBIL NILAI: Mengambil angka pilihan dari dropdown kapasitas di HTML
     const kapasitas = document.getElementById('filter-kapasitas') ? document.getElementById('filter-kapasitas').value : "4";
 
     const usia = usiaRaw.trim();
@@ -777,7 +776,6 @@ window.triggerAcakBaganOtomatis = function() {
     const konfirmasi = confirm(`Kunci data pendaftaran & acak bagan eliminasi murni untuk kelompok:\n\n» Usia: ${usia}\n» Gender: ${genderRaw}\n» Kategori: ${kategori}\n» Kapasitas: ${kapasitas} Peserta\n\nLanjutkan proses pengundian acak?`);
     if (!konfirmasi) return;
 
-    // NILAI DIUBAH: Menyisipkan nilai kapasitasMatch agar dikirim ke doPost Apps Script
     const bodiPesan = {
         aksi: "generateBagan",
         targetUsia: usia,
@@ -818,7 +816,6 @@ window.muatBaganLombaVisual = function() {
     fetch(`${URL_ENGINE_TURNAMEN}?aksi=ambilBagan&identitasFilter=${encodeURIComponent(identitasFilter)}`)
     .then(res => res.json())
     .then(data => {
-        // Saring data di sisi client hanya untuk ronde yang terpilih di dropdown
         const dataTersaring = data.filter(match => match.ronde.trim().toLowerCase() === babakAktifDropdown.trim().toLowerCase());
 
         if (!dataTersaring || dataTersaring.length === 0) {
@@ -839,59 +836,45 @@ window.muatBaganLombaVisual = function() {
         dataTersaring.forEach(match => {
             const pemenangValid = match.pemenang ? match.pemenang.trim().toLowerCase() : "";
 
-            const isP1Menang = match.p1 && pemenangValid === match.p1.trim().toLowerCase() && match.p1 !== "";
-            const isP2Menang = match.p2 && pemenangValid === match.p2.trim().toLowerCase() && match.p2 !== "";
-            const isP3Menang = match.p3 && pemenangValid === match.p3.trim().toLowerCase() && match.p3 !== "" && match.p3 !== "KOSONG";
-            const isP4Menang = match.p4 && pemenangValid === match.p4.trim().toLowerCase() && match.p4 !== "" && match.p4 !== "KOSONG";
-
-            let displaySkor1 = match.skor1 !== undefined ? match.skor1 : 0;
-            let displaySkor2 = match.skor2 !== undefined ? match.skor2 : 0;
-            
-            let disableInput = false;
-            if (match.p2 && (match.p2.includes("BYE") || match.p2.includes("KOSONG"))) {
-                displaySkor1 = 1; 
-                disableInput = true;
-            }
-
-            // Logika sembunyikan baris sisa secara dinamis jika format kapasitas di sheet sedang berupa duel (2 orang)
-            const sembunyikanP3 = (!match.p3 || match.p3 === "KOSONG" || match.p3 === "") ? 'style="display:none;"' : '';
-            const sembunyikanP4 = (!match.p4 || match.p4 === "KOSONG" || match.p4 === "") ? 'style="display:none;"' : '';
-
             const elemenMatch = document.createElement('div');
             elemenMatch.className = 'bracket-match';
             
-            // NILAI DIUBAH: Merender display slot P1, P2, P3, dan P4 secara dinamis mengikuti data dari doGet Apps Script
-            elemenMatch.innerHTML = `
-                <div class="bracket-match-id">${match.matchId.split('-').pop()}</div>
-                
-                <div class="bracket-team-row ${isP1Menang ? 'team-menang' : ''}">
-                    <span class="bracket-team-name"><i class="fa-solid fa-user" style="font-size:10px; margin-right:5px; color:#2c3e50;"></i> ${match.p1 || "-"}</span>
-                    <input type="number" class="bracket-team-score" value="${displaySkor1}" min="0" max="99" 
-                        style="width: 38px; text-align: center; border: 1px solid #ccc; border-radius: 4px; font-weight: bold; padding: 2px 0;"
-                        ${disableInput ? 'disabled' : ''}
-                        onchange="window.simpanSkorPertandingan('${match.matchId}', 1, this.value)">
-                </div>
-                
-                <div class="bracket-team-row ${isP2Menang ? 'team-menang' : ''}">
-                    <span class="bracket-team-name"><i class="fa-solid fa-user" style="font-size:10px; margin-right:5px; color:#2c3e50;"></i> ${match.p2 || "-"}</span>
-                    <input type="number" class="bracket-team-score" value="${displaySkor2}" min="0" max="99" 
-                        style="width: 38px; text-align: center; border: 1px solid #ccc; border-radius: 4px; font-weight: bold; padding: 2px 0;"
-                        ${disableInput ? 'disabled' : ''}
-                        onchange="window.simpanSkorPertandingan('${match.matchId}', 2, this.value)">
-                </div>
+            // Tampilkan Judul ID Match di bagian atas kotak
+            let htmlIsiKotak = `<div class="bracket-match-id">${match.matchId.split('-').pop()}</div>`;
 
-                <div class="bracket-team-row ${isP3Menang ? 'team-menang' : ''}" ${sembunyikanP3}>
-                    <span class="bracket-team-name"><i class="fa-solid fa-user" style="font-size:10px; margin-right:5px; color:#2c3e50;"></i> ${match.p3 || "-"}</span>
-                    <input type="number" class="bracket-team-score" value="0" min="0" max="99" 
-                        style="width: 38px; text-align: center; border: 1px solid #ccc; border-radius: 4px; font-weight: bold; padding: 2px 0; visibility: hidden;">
-                </div>
+            // --- NILAI DIUBAH: LOOPING DINAMIS AUTOMATIC COCOK UNTUK P2, P4, P6, P10, DST ---
+            let playerIndex = 1;
+            while (match[`p${playerIndex}`] !== undefined) {
+                const namaPlayer = match[`p${playerIndex}`];
+                
+                // Lewati penggambaran jika datanya kosong murni akibat dropdown kapasitas kecil
+                if (namaPlayer === "" && playerIndex > 2) {
+                    playerIndex++;
+                    continue;
+                }
 
-                <div class="bracket-team-row ${isP4Menang ? 'team-menang' : ''}" ${sembunyikanP4}>
-                    <span class="bracket-team-name"><i class="fa-solid fa-user" style="font-size:10px; margin-right:5px; color:#2c3e50;"></i> ${match.p4 || "-"}</span>
-                    <input type="number" class="bracket-team-score" value="0" min="0" max="99" 
-                        style="width: 38px; text-align: center; border: 1px solid #ccc; border-radius: 4px; font-weight: bold; padding: 2px 0; visibility: hidden;">
-                </div>
-            `;
+                const isMenang = namaPlayer && pemenangValid === namaPlayer.trim().toLowerCase() && namaPlayer !== "" && namaPlayer !== "KOSONG";
+                const displaySkor = match[`skor${playerIndex}`] !== undefined ? match[`skor${playerIndex}`] : 0;
+                
+                let disableInput = false;
+                if (playerIndex === 2 && (namaPlayer.includes("BYE") || namaPlayer.includes("KOSONG"))) {
+                    disableInput = true;
+                }
+
+                // Append baris peserta secara estafet sebanyak properti p yang tersedia dari database
+                htmlIsiKotak += `
+                    <div class="bracket-team-row ${isMenang ? 'team-menang' : ''}">
+                        <span class="bracket-team-name"><i class="fa-solid fa-user" style="font-size:10px; margin-right:5px; color:#2c3e50;"></i> ${namaPlayer || "-"}</span>
+                        <input type="number" class="bracket-team-score" value="${displaySkor}" min="0" max="99" 
+                            style="width: 38px; text-align: center; border: 1px solid #ccc; border-radius: 4px; font-weight: bold; padding: 2px 0;"
+                            ${disableInput ? 'disabled' : ''}
+                            onchange="window.simpanSkorPertandingan('${match.matchId}', ${playerIndex}, this.value)">
+                    </div>
+                `;
+                playerIndex++;
+            }
+
+            elemenMatch.innerHTML = htmlIsiKotak;
             elemenRonde.appendChild(elemenMatch);
         });
         container.appendChild(elemenRonde);
@@ -947,7 +930,7 @@ window.arsipDanAutoResetBagan = function() {
     const container = document.getElementById('bracket-container');
     container.innerHTML = `<p style="text-align: center; color: #e53935; width: 100%; font-weight: bold;"><i class="fa-solid fa-cloud-arrow-up fa-fade"></i> Memindahkan riwayat pertandingan ke database eksternal...</p>`;
 
-    fetch(URL_ENGINE_TURNAMEN, {
+    fetch(URL_ENGINE_TURNAGMEN, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify(bodiPesan)
@@ -959,7 +942,7 @@ window.arsipDanAutoResetBagan = function() {
     })
     .catch(err => {
         console.error(err);
-        alert("Proses arsipselesai! Mengosongkan bagan aktif...");
+        alert("Proses arsip selesai! Mengosongkan bagan aktif...");
         window.muatBaganLombaVisual();
     });
 };
@@ -1002,7 +985,6 @@ window.triggerLanjutBabakRonde = function() {
     const konfirmasi = confirm(`Apakah seluruh skor ${babakSekarang} saat ini sudah selesai diinput?\n\nKlik OK untuk menaikkan para pemenang ke babak berikutnya secara otomatis.`);
     if (!konfirmasi) return;
 
-    // NILAI DIUBAH: Menambahkan variabel kapasitasMatch kiriman dropdown ke dalam Aksi 3 ronde lanjutan
     const bodiPesan = {
         aksi: "lanjutRondeBerikutnya",
         identitasFilter: identitasFilter,
