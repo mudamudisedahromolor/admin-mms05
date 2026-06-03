@@ -834,45 +834,34 @@ window.muatBaganLombaVisual = function() {
         elemenRonde.appendChild(judulRonde);
 
         dataTersaring.forEach(match => {
+            const pemenangValid = match.pemenang ? match.pemenang.trim().toLowerCase() : "";
+
             const elemenMatch = document.createElement('div');
             elemenMatch.className = 'bracket-match';
             
+            // Tampilkan Judul ID Match di bagian atas kotak
             let htmlIsiKotak = `<div class="bracket-match-id">${match.matchId.split('-').pop()}</div>`;
 
-            // 1. CARI SKOR TERTINGGI SECARA DINAMIS DI SISI CLIENT UNTUK HIGHLIGHT HIJAU MURNI
-            let skorTertinggi Sesi = -1;
-            let checkIdx = 1;
-            while (match[`p${checkIdx}`] !== undefined) {
-                const nilaiSkorCur = match[`skor${checkIdx}`] !== undefined ? parseInt(match[`skor${checkIdx}`]) : 0;
-                const namaRacerCur = match[`p${checkIdx}`];
-                
-                // Cari angka terbesar dari lintasan yang terisi nama valid
-                if (namaRacerCur && namaRacerCur !== "" && namaRacerCur !== "KOSONG" && nilaiSkorCur > skorTertinggiSesi) {
-                    skorTertinggiSesi = nilaiSkorCur;
-                }
-                checkIdx++;
-            }
-
-            // 2. RENDERING BARIS RACER DENGAN INDIKATOR HIJAU YANG AKURAT
+            // --- NILAI DIUBAH: LOOPING DINAMIS AUTOMATIC COCOK UNTUK P2, P4, P6, P10, DST ---
             let playerIndex = 1;
             while (match[`p${playerIndex}`] !== undefined) {
                 const namaPlayer = match[`p${playerIndex}`];
                 
+                // Lewati penggambaran jika datanya kosong murni akibat dropdown kapasitas kecil
                 if (namaPlayer === "" && playerIndex > 2) {
                     playerIndex++;
                     continue;
                 }
 
-                const displaySkor = match[`skor${playerIndex}`] !== undefined ? parseInt(match[`skor${playerIndex}`]) : 0;
-                
-                // Aturan Highlight Hijau: Menyala jika skornya adalah yang tertinggi di kotak tersebut (dan bukan 0)
-                const isMenang = namaPlayer && namaPlayer !== "" && namaPlayer !== "KOSONG" && displaySkor === skorTertinggiSesi && skorTertinggiSesi > 0;
+                const isMenang = namaPlayer && pemenangValid === namaPlayer.trim().toLowerCase() && namaPlayer !== "" && namaPlayer !== "KOSONG";
+                const displaySkor = match[`skor${playerIndex}`] !== undefined ? match[`skor${playerIndex}`] : 0;
                 
                 let disableInput = false;
                 if (playerIndex === 2 && (namaPlayer.includes("BYE") || namaPlayer.includes("KOSONG"))) {
                     disableInput = true;
                 }
 
+                // Append baris peserta secara estafet sebanyak properti p yang tersedia dari database
                 htmlIsiKotak += `
                     <div class="bracket-team-row ${isMenang ? 'team-menang' : ''}">
                         <span class="bracket-team-name"><i class="fa-solid fa-user" style="font-size:10px; margin-right:5px; color:#2c3e50;"></i> ${namaPlayer || "-"}</span>
@@ -941,7 +930,7 @@ window.arsipDanAutoResetBagan = function() {
     const container = document.getElementById('bracket-container');
     container.innerHTML = `<p style="text-align: center; color: #e53935; width: 100%; font-weight: bold;"><i class="fa-solid fa-cloud-arrow-up fa-fade"></i> Memindahkan riwayat pertandingan ke database eksternal...</p>`;
 
-    fetch(URL_ENGINE_TURNAMEN, {
+    fetch(URL_ENGINE_TURNAGMEN, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify(bodiPesan)
