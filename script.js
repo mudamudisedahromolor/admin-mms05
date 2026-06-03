@@ -748,95 +748,82 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 /* ==========================================================================
-   SISTEM MANAJEMEN TURNAMEN - DUAL SINKRONISASI (FRONTEND)
+   SISTEM MANAJEMEN TURNAMEN (FIXED VERSION)
    ========================================================================== */
-const URL_ENGINE_TURNAMEN = "https://script.google.com/macros/s/AKfycbx9JjuYPXPVkac1h-W8I-aGap0p2smP7Qokk102yiekkZnqo0er86VrYtF904rEG0oK/exec"; 
+const URL_ENGINE_TURNAMEN = "https://script.google.com/macros/s/AKfycbx9JjuYPXPVkac1h-W8I-aGap0p2smP7Qokk102yiekkZnqo0er86VrYtF904rEG0oK/exec";
 
-// Fungsi Helper untuk Identitas (Scope Lokal)
+// Helper untuk identitas kategori
 function dapatkanIdentitasSesiKunci() {
-    const filterUsia = document.getElementById('filter-usia').value.trim().toUpperCase();
-    const filterGenderRaw = document.getElementById('filter-gender').value.trim();
-    const filterKategori = document.getElementById('filter-kategori').value.trim().toUpperCase();
-    const filterGender = filterGenderRaw.toLowerCase() === "semua" ? "SEMUA" : filterGenderRaw.trim().toUpperCase();
-    return `${filterUsia}_${filterGender}_${filterKategori}`;
+    const u = document.getElementById('filter-usia').value.trim().toUpperCase();
+    const gRaw = document.getElementById('filter-gender').value.trim();
+    const k = document.getElementById('filter-kategori').value.trim().toUpperCase();
+    const g = gRaw.toLowerCase() === "semua" ? "SEMUA" : gRaw.trim().toUpperCase();
+    return `${u}_${g}_${k}`;
 }
 
-// F. Fungsi memicu majunya pemenang (Menggunakan parameter unik agar tidak konflik)
-window.triggerLanjutBabakRonde = function() {
-    const identitasSesi = dapatkanIdentitasSesiKunci();
-    const kapasitasLintasan = document.getElementById('filter-kapasitas') ? document.getElementById('filter-kapasitas').value : "4";
-
-    const konfirmasiLanjut = confirm("Klik OK untuk memproses pemenang ke babak berikutnya?");
-    if (!konfirmasiLanjut) return;
-
-    // Variabel bodiPesanLanjut unik untuk fungsi ini saja
-    const bodiPesanLanjut = {
-        aksi: "lanjutRondeBerikutnya",
-        identitasFilter: identitasSesi,
-        kapasitasMatch: kapasitasLintasan
-    };
+// 1. Fungsi Acak Bagan
+window.triggerAcakBaganOtomatis = function() {
+    const identitas = dapatkanIdentitasSesiKunci();
+    const kapasitas = document.getElementById('filter-kapasitas').value || "4";
+    
+    if(!confirm("Proses draf bagan baru?")) return;
 
     fetch(URL_ENGINE_TURNAMEN, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify(bodiPesanLanjut)
+        body: JSON.stringify({ aksi: "acakBaganBaru", identitasFilter: identitas, kapasitasMatch: kapasitas })
     })
-    .then(res => res.json())
-    .then(dataRespon => {
-        alert(dataRespon.pesan);
-        window.muatBaganLombaVisual(); 
-    })
-    .catch(err => console.error("Error lanjut babak:", err));
+    .then(r => r.json())
+    .then(d => { alert(d.pesan); window.muatBaganLombaVisual(); })
+    .catch(e => console.error("Error Acak:", e));
 };
 
-// B. Fungsi Mengambil Visual (Sinkron dengan aksi A dan F)
+// 2. Fungsi Lanjut Babak
+window.triggerLanjutBabakRonde = function() {
+    const identitas = dapatkanIdentitasSesiKunci();
+    const kapasitas = document.getElementById('filter-kapasitas').value || "4";
+    
+    if(!confirm("Proses pemenang ke babak berikutnya?")) return;
+
+    fetch(URL_ENGINE_TURNAMEN, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({ aksi: "lanjutRondeBerikutnya", identitasFilter: identitas, kapasitasMatch: kapasitas })
+    })
+    .then(r => r.json())
+    .then(d => { alert(d.pesan); window.muatBaganLombaVisual(); })
+    .catch(e => console.error("Error Lanjut:", e));
+};
+
+// 3. Fungsi Render Visual
 window.muatBaganLombaVisual = function() {
-    const identitasSesi = dapatkanIdentitasSesiKunci();
+    const identitas = dapatkanIdentitasSesiKunci();
     const babakAktif = document.getElementById('filter-babak').value;
     const container = document.getElementById('bracket-container');
     
-    fetch(`${URL_ENGINE_TURNAMEN}?aksi=ambilBagan&identitasFilter=${encodeURIComponent(identitasSesi)}`)
-    .then(res => res.json())
+    container.innerHTML = "Memuat data...";
+    
+    fetch(`${URL_ENGINE_TURNAMEN}?aksi=ambilBagan&identitasFilter=${encodeURIComponent(identitas)}`)
+    .then(r => r.json())
     .then(dataBagan => {
-        // Filter ronde yang SAMA dengan dropdown
-        const hasilFilterRonde = dataBagan.filter(match => match.ronde.trim() === babakAktif.trim());
         container.innerHTML = "";
+        const filtered = dataBagan.filter(m => m.ronde.trim() === babakAktif.trim());
         
-        if (hasilFilterRonde.length === 0) {
+        if (filtered.length === 0) {
             container.innerHTML = `<p style="text-align: center;">Belum ada pertandingan di ${babakAktif}.</p>`;
             return;
         }
 
-        hasilFilterRonde.forEach(match => {
-            // Render logic... (menggunakan data dari match.arrayPesertaDinamis)
+        filtered.forEach(m => {
+            container.innerHTML += `
+                <div class="bracket-match">
+                    <div class="bracket-match-id">MATCH</div>
+                    <div class="bracket-team-row"><span class="bracket-team-name">${m.peserta}</span></div>
+                </div>`;
         });
+    })
+    .catch(e => {
+        container.innerHTML = "Gagal memuat bagan. Cek koneksi.";
+        console.error(e);
     });
 };
-
-/* Tambahkan ini ke dalam script.js */
-window.triggerAcakBaganOtomatis = function() {
-    const identitasSesi = dapatkanIdentitasSesiKunci();
-    const kapasitasLintasan = document.getElementById('filter-kapasitas') ? document.getElementById('filter-kapasitas').value : "4";
-
-    const konfirmasi = confirm("Proses draf bagan baru? Pastikan filter kategori sudah benar.");
-    if (!konfirmasi) return;
-
-    const payload = {
-        aksi: "acakBaganBaru", // Sesuaikan dengan logika switch/case di Code.gs Anda
-        identitasFilter: identitasSesi,
-        kapasitasMatch: kapasitasLintasan
-    };
-
-    fetch(URL_ENGINE_TURNAMEN, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify(payload)
-    })
-    .then(res => res.json())
-    .then(data => {
-        alert(data.pesan);
-        window.muatBaganLombaVisual(); // Refresh tampilan setelah acak
-    })
-    .catch(err => console.error("Error saat mengacak bagan:", err));
-};
-
