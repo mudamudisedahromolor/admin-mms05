@@ -119,6 +119,14 @@
                     <option value="Grand Final">Grand Final</option>
                 </select>
 
+                <select id="filter-kapasitas" class="filter-box" onchange="window.muatBaganLombaVisual()">
+                    <option value="2">2 Peserta (Duel 1v1)</option>
+                    <option value="3">3 Peserta / Heat</option>
+                    <option value="4" selected>4 Peserta / Heat (Standard)</option>
+                    <option value="5">5 Peserta / Heat</option>
+                    <option value="6">6 Peserta / Heat</option>
+                </select>
+
                 <button class="btn-cetak-mutasi" onclick="window.triggerAcakBaganOtomatis()">
                     <i class="fa-solid fa-shuffle"></i> Kunci & Acak Grup
                 </button>
