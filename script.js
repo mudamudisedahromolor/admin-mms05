@@ -814,6 +814,7 @@ window.muatBaganLombaVisual = function() {
     fetch(`${URL_ENGINE_TURNAMEN}?aksi=ambilBagan&identitasFilter=${encodeURIComponent(identitasFilter)}`)
     .then(res => res.json())
     .then(data => {
+        // Melakukan filter presisi mencocokkan string ronde dinamis (Babak 1, Babak 2, Babak 3, dst.)
         const dataTersaring = data.filter(match => match.ronde.trim().toLowerCase() === babakAktifDropdown.trim().toLowerCase());
 
         if (!dataTersaring || dataTersaring.length === 0) {
@@ -837,7 +838,7 @@ window.muatBaganLombaVisual = function() {
             
             let htmlIsiKotak = `<div class="bracket-match-id">${match.matchId.split('-').pop()}</div>`;
 
-            // Gunakan payload dinamis untuk menghitung skor juara tertinggi berapapun isi lintasannya
+            // Mencari skor tertinggi lintas-pemain untuk trigger highlight warna hijau
             let skorTertinggi = -1;
             match.arraySkorDinamis.forEach((skorVal, idx) => {
                 const namaP = match.arrayPesertaDinamis[idx];
@@ -848,10 +849,9 @@ window.muatBaganLombaVisual = function() {
                 }
             });
 
-            // Gambar baris pendaftar secara tak terbatas (fleksibel mengikuti jumlah isi lintasan)
             match.arrayPesertaDinamis.forEach((namaPlayer, index) => {
                 if (!namaPlayer || namaPlayer === "") return;
-                if (namaPlayer === "KOSONG" && index >= 2) return; // Hilangkan baris sisa kosong biar rapi
+                if (namaPlayer === "KOSONG" && index >= 2) return; 
 
                 const currentSkor = match.arraySkorDinamis[index] !== undefined ? parseInt(match.arraySkorDinamis[index]) : 0;
                 const isMenang = namaPlayer !== "KOSONG" && currentSkor === skorTertinggi && skorTertinggi > 0;
@@ -992,7 +992,6 @@ window.triggerLanjutBabakRonde = function() {
     });
 };
 
-// Pemicu otomatis saat halaman dimuat pertama kali
 window.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('filter-usia')) {
         window.muatBaganLombaVisual();
