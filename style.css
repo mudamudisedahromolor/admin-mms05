@@ -1041,35 +1041,3 @@ body.login-page-body .login-page-wrapper {
     background-color: #1a252f !important; /* DIUBAH: Hover tombol aksi PWA menjadi Hitam Charcoal */
 }
 
-/* ==========================================================================
-   TAMBAHAN TATA LETAK TOMBOL UPLOAD (Tgl: 03-06-2026)
-   ========================================================================== */
-
-.upload-container {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    max-width: 600px;
-    margin: 20px auto;
-}
-
-.upload-row {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-}
-
-.upload-btn {
-    flex: 1;
-    /* Tambahkan style button Anda di sini jika belum ada */
-}
-
-@media (max-width: 600px) {
-    .upload-row {
-        flex-direction: column;
-    }
-}
-
-/* ==========================================================================
-   AKHIR TAMBAHAN 
-   ========================================================================== */
