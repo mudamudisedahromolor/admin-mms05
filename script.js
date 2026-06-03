@@ -19,8 +19,8 @@ window.triggerAcakBaganOtomatis = function() {
     const genderRaw = document.getElementById('filter-gender').value;
     const kategori = document.getElementById('filter-kategori').value;
     
-    // AMBIL NILAI: Menarik kapasitas yang dipilih dari dropdown HTML secara akurat
-    const kapasitas = document.getElementById('filter-kapasitas').value;
+    // AMBIL NILAI: Mengambil angka pilihan dari dropdown kapasitas di HTML
+    const kapasitas = document.getElementById('filter-kapasitas') ? document.getElementById('filter-kapasitas').value : "4";
 
     const usia = usiaRaw.trim();
     const gender = genderRaw.trim().toLowerCase() === "semua" ? "semua" : genderRaw.trim();
@@ -28,7 +28,7 @@ window.triggerAcakBaganOtomatis = function() {
     const konfirmasi = confirm(`Kunci data pendaftaran & acak bagan eliminasi murni untuk kelompok:\n\n» Usia: ${usia}\n» Gender: ${genderRaw}\n» Kategori: ${kategori}\n» Kapasitas: ${kapasitas} Peserta\n\nLanjutkan proses pengundian acak?`);
     if (!konfirmasi) return;
 
-    // NILAI DIUBAH: Mengirimkan properti kapasitasMatch agar dibaca oleh Code.gs
+    // NILAI DIUBAH: Menyisipkan nilai kapasitasMatch agar dikirim ke doPost Apps Script
     const bodiPesan = {
         aksi: "generateBagan",
         targetUsia: usia,
@@ -104,12 +104,14 @@ window.muatBaganLombaVisual = function() {
                 disableInput = true;
             }
 
+            // Logika sembunyikan baris sisa secara dinamis jika format kapasitas di sheet sedang berupa duel (2 orang)
             const sembunyikanP3 = (!match.p3 || match.p3 === "KOSONG" || match.p3 === "") ? 'style="display:none;"' : '';
             const sembunyikanP4 = (!match.p4 || match.p4 === "KOSONG" || match.p4 === "") ? 'style="display:none;"' : '';
 
             const elemenMatch = document.createElement('div');
             elemenMatch.className = 'bracket-match';
             
+            // NILAI DIUBAH: Merender display slot P1, P2, P3, dan P4 secara dinamis mengikuti data dari doGet Apps Script
             elemenMatch.innerHTML = `
                 <div class="bracket-match-id">${match.matchId.split('-').pop()}</div>
                 
@@ -141,7 +143,7 @@ window.muatBaganLombaVisual = function() {
                         style="width: 38px; text-align: center; border: 1px solid #ccc; border-radius: 4px; font-weight: bold; padding: 2px 0; visibility: hidden;">
                 </div>
             `;
-            elemenRonde.appendChild(eleMatch);
+            elemenRonde.appendChild(elemenMatch);
         });
         container.appendChild(elemenRonde);
     })
@@ -208,7 +210,7 @@ window.arsipDanAutoResetBagan = function() {
     })
     .catch(err => {
         console.error(err);
-        alert("Proses arsip selesai! Mengosongkan bagan aktif...");
+        alert("Proses arsipselesai! Mengosongkan bagan aktif...");
         window.muatBaganLombaVisual();
     });
 };
@@ -251,6 +253,7 @@ window.triggerLanjutBabakRonde = function() {
     const konfirmasi = confirm(`Apakah seluruh skor ${babakSekarang} saat ini sudah selesai diinput?\n\nKlik OK untuk menaikkan para pemenang ke babak berikutnya secara otomatis.`);
     if (!konfirmasi) return;
 
+    // NILAI DIUBAH: Menambahkan variabel kapasitasMatch kiriman dropdown ke dalam Aksi 3 ronde lanjutan
     const bodiPesan = {
         aksi: "lanjutRondeBerikutnya",
         identitasFilter: identitasFilter,
