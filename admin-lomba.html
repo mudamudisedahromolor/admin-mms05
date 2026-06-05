@@ -6,35 +6,16 @@
     
     <script src="auth-guard.js"></script>
     
-    <title>Manajemen Eliminasi Turnamen - MMS 05</title>
+    <title>Input Kas Muda Mudi Sedahromo Lor 05</title>
     
-    <link class="icon" href="images/logo.png" type="image/png">
-    <link class="icon" type="image/png" sizes="192x192" href="images/mms.png">
+    <link rel="icon" href="images/logo.png" type="image/png">
+    <link rel="icon" type="image/png" sizes="192x192" href="images/mms.png">
     <link rel="apple-touch-icon" sizes="192x192" href="images/mms.png">
     <link rel="apple-touch-icon" sizes="512x512" href="images/mms.png">
     
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="manifest" href="manifest.json">
-
-    <style>
-        .bracket-scroll-container { width: 100%; overflow-x: auto; padding: 20px 0; margin-top: 20px; }
-        .bracket-wrapper { display: flex; gap: 40px; align-items: center; min-width: max-content; padding: 10px; }
-        .bracket-round { display: flex; flex-direction: column; gap: 20px; justify-content: center; min-width: 220px; }
-        .bracket-match { background: #fafafa; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); overflow: hidden; position: relative; padding-top: 15px; }
-        .bracket-match-id { position: absolute; top: 2px; left: 6px; font-size: 9px; font-weight: bold; color: #888; text-transform: uppercase; }
-        .bracket-team-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; border-bottom: 1px solid #eee; font-size: 13px; color: #333; }
-        .bracket-team-row:last-child { border-bottom: none; }
-        .bracket-team-name { font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; }
-        .bracket-team-score { font-weight: bold; color: #666; background: #eaedf1; padding: 2px 6px; border-radius: 4px; font-size: 12px; }
-        .team-menang { background-color: #e8f5e9; }
-        .team-menang .bracket-team-name { color: #2e7d32; font-weight: bold; }
-        .team-menang .bracket-team-score { background: #2e7d32; color: white; }
-        .danger-zone-box { margin-top: 40px; padding: 20px; border: 2px dashed #e53935; border-radius: 8px; background-color: #fff5f5; }
-        .danger-title { color: #c62828; font-weight: bold; font-size: 15px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
-        .btn-reset-robot { background-color: #e53935 !important; box-shadow: 0 4px 10px rgba(229, 57, 53, 0.3); }
-        .btn-reset-robot:hover { background-color: #c62828 !important; }
-    </style>
 </head>
 <body> 
     
@@ -54,10 +35,12 @@
                     <a href="#" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
                     <a href="#" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
                     <a href="#" title="Facebook"><i class="fa-brands fa-facebook"></i></a>
-                    <a href="https://www.tiktok.com/@mudamudisedahromolor05" title="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+                    <a href="https://www.tiktok.com/@mudamudisedahromolor05?is_from_webapp=1&sender_device=pc" title="TikTok"><i class="fa-brands fa-tiktok"></i></a>
                 </div>
             </div>
-            <button class="menu-toggle" id="mobile-menu-btn"><i class="fa-solid fa-bars"></i></button>
+            <button class="menu-toggle" id="mobile-menu-btn">
+                <i class="fa-solid fa-bars"></i>
+            </button>
         </div> 
 
         <nav class="main-navbar">
@@ -81,84 +64,37 @@
                     <a href="#">MEDIA & HUMAS</a>
                     <ul class="submenu">
                         <li class="submenu-item"><a href="upload-dokumentasi.html">  - INPUT DOKUMENTASI</a></li>
-                        <li class="submenu-item"><a href="#">  - INPUT UNDANGAN</a></li>
+                        <li class="submenu-item"><a href="https://script.google.com/macros/library/d/1I6LEQGlm_weJMhjY4bj_5wdnMQQy_fYCsPOryUzADr4XWc8N5YxzVrtQ/2">  - INPUT UNDANGAN</a></li>
                     </ul>
                 </li>
+                
+               <li class="nav-item">
+                    <a href="#">TOOLS</a>
+                    <ul class="submenu">
+                        <li class="submenu-item"><a href="admin-lomba.html"> - Generator Bracket Lomba</a></li>
+                         
+                
             </ul>
         </nav>
     </header>
 
-    <div class="finance-page-wrapper">
-        <div class="content-box" style="max-width: 1100px; width: 100%;">
-            <h2 class="box-title">PANEL KENDALI ELIMINASI MURNI <br> (MANAJEMEN BAGAN TURNAMEN)</h2>
-            <hr class="box-divider">
-            <p style="text-align: center; margin-bottom: 25px;">Pilih filter kategori lomba di bawah ini, kemudian klik <strong>Kunci & Acak Grup</strong> untuk memproses draf bagan pertandingan baru.</p>
 
-            <div class="filter-container" style="justify-content: center; background: #fafafa; padding: 15px; border-radius: 8px; border: 1px solid #eee; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
-                <select id="filter-usia" class="filter-box" onchange="window.muatBaganLombaVisual()">
-                    <option value="TK - 2 SD">TK - 2 SD</option>
-                    <option value="3 - 5 SD">3 - 5 SD</option>
-                    <option value="6 - SMP">6 - SMP</option>
-                </select>
+    
+<div class="admin-content-body">
+  <h3 class="page-title">Sistem Kendali Turnamen (Sedahromo Engine)</h3>
+  <p>Gunakan dashboard di bawah untuk mengatur kategori, status keaktifan, dan mengacak heat.</p>
 
-                <select id="filter-gender" class="filter-box" onchange="window.muatBaganLombaVisual()">
-                    <option value="Semua">Semua (Prioritas Sejenis)</option>
-                    <option value="Laki-laki">Laki-laki</option>
-                    <option value="Perempuan">Perempuan</option>
-                </select>
+  <iframe 
+    src="https://script.google.com/macros/s/AKfycbzYRCtXMeG-VatE6xwfWUCL_IjFFdDJdKx-7CdURxaq4pteUHtU4odC7Nfd1l_oipFF/exec" 
+    style="width: 100%; height: 850px; border: none; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);"
+    allow="clipboard-write"
+    loading="lazy">
+  </iframe>
+</div>
 
-                <select id="filter-kategori" class="filter-box" onchange="window.muatBaganLombaVisual()">
-                    <option value="Individu">Individu</option>
-                    <option value="Kelompok">Kelompok</option>
-                </select>
 
-                <select id="filter-babak" class="filter-box" onchange="window.muatBaganLombaVisual()">
-                    <option value="Babak 1">Babak 1</option>
-                    <option value="Babak 2">Babak 2</option>
-                    <option value="Semifinal">Semifinal</option>
-                    <option value="Grand Final">Grand Final</option>
-                </select>
 
-                <select id="filter-kapasitas" class="filter-box" onchange="window.muatBaganLombaVisual()">
-                    <option value="2">2 Peserta (Duel 1v1)</option>
-                    <option value="3">3 Peserta / Heat</option>
-                    <option value="4" selected>4 Peserta / Heat (Standard)</option>
-                    <option value="5">5 Peserta / Heat</option>
-                    <option value="6">6 Peserta / Heat</option>
-                </select>
-
-                <button class="btn-cetak-mutasi" onclick="window.triggerAcakBaganOtomatis()">
-                    <i class="fa-solid fa-shuffle"></i> Kunci & Acak Grup
-                </button>
-            </div>
-
-            <div style="text-align: center; margin-bottom: 20px;">
-                <button class="btn-cetak-mutasi" onclick="window.arsipDanAutoResetBagan()" style="background-color: #2e7d32 !important; box-shadow: 0 4px 10px rgba(46, 125, 50, 0.3);">
-                    <i class="fa-solid fa-cloud-arrow-up"></i> Selesai & Arsipkan Match
-                </button>
-                
-                <button class="btn-cetak-mutasi" onclick="window.triggerLanjutBabakRonde()" style="background-color: #1a237e !important; box-shadow: 0 4px 10px rgba(26, 35, 126, 0.3); margin-left: 10px;">
-                    <i class="fa-solid fa-circle-chevron-right"></i> Lanjut Babak Berikutnya
-                </button>
-            </div>
-
-            <div class="bracket-scroll-container">
-                <div class="bracket-wrapper" id="bracket-container">
-                    <p style="text-align: center; color: #888; width: 100%; padding: 20px;">Silakan pilih opsi filter di atas untuk melihat bagan pertandingan.</p>
-                </div>
-            </div>
-
-            <div class="danger-zone-box">
-                <div class="danger-title"><i class="fa-solid fa-triangle-exclamation"></i> ZONA BERBAHAYA (RESET SYSTEM)</div>
-                <p style="font-size: 13px; color: #666; margin: 0 0 15px 0; line-height: 1.5;">Tombol di bawah ini akan mengosongkan seluruh baris pendaftar aktif dan draf pertandingan pada spreadsheet robot pengolah data. Pastikan hasil juara ronde akhir sudah dipindahkan.</p>
-                <button class="btn-cetak-mutasi btn-reset-robot" onclick="window.triggerResetRobotTotal()">
-                    <i class="fa-solid fa-trash-can"></i> Kosongkan Data Robot
-                </button>
-            </div>
-
-        </div> 
-    </div> 
-
+    
     <footer class="site-footer">
         <div class="footer-container">
             <div class="footer-column info-col">
@@ -166,9 +102,14 @@
                     <img src="images/mms.png" alt="Logo MMS" class="footer-logo">
                     <h4>Muda Mudi Sedahromo Lor</h4>
                 </div>
-                <p class="footer-text"><i class="fa-solid fa-location-dot"></i> Jl. Sedahromo Lor, RT.05 / RW.06, Kel. Kartasura, Kec. Kartasura, Sukoharjo, Jawa Tengah 57167</p>
-                <p class="footer-text"><i class="fa-solid fa-envelope"></i> <a href="mailto:mudamudisedahromolor@gmail.com">mudamudisedahromolor05@gmail.com</a></p>
+                <p class="footer-text">
+                    <i class="fa-solid fa-location-dot"></i> Jl. Sedahromo Lor, RT.05 / RW.06, Kel. Kartasura, Kec. Kartasura, Sukoharjo, Jawa Tengah 57167
+                </p>
+                <p class="footer-text">
+                    <i class="fa-solid fa-envelope"></i> <a href="mailto:mudamudisedahromolor@gmail.com">mudamudisedahromolor05@gmail.com</a>
+                </p>
             </div>
+
             <div class="footer-column links-col">
                 <h5>Sitemap</h5>
                 <ul class="footer-links">
@@ -176,10 +117,13 @@
                     <li><a href="struktur.html"><i class="fa-solid fa-chevron-right"></i> Struktur Organisasi</a></li>
                     <li><a href="daftar-anggota.html"><i class="fa-solid fa-chevron-right"></i> Daftar Anggota</a></li>
                     <li><a href="laporan-keuangan.html"><i class="fa-solid fa-chevron-right"></i> Transparansi Kas</a></li>
+                    <li><a href="dokumentasi-kegiatan.html"><i class="fa-solid fa-chevron-right"></i> Dokumentasi</a></li>
                 </ul>
             </div>
+
             <div class="footer-column social-col">
                 <h5>Media Sosial</h5>
+                <p class="footer-text">Ikuti linimasa kegiatan dan perkembangan pemuda kami melalui kanal resmi berikut:</p>
                 <div class="footer-social-icons">
                     <a href="#" title="Instagram" target="_blank"><i class="fa-brands fa-instagram"></i></a>
                     <a href="#" title="YouTube" target="_blank"><i class="fa-brands fa-youtube"></i></a>
@@ -188,11 +132,14 @@
                 </div>
             </div>
         </div>
+
         <div class="footer-bottom">
             <p>Copyright &copy; 2026 Organisasi Muda Mudi Sedahromo Lor 05. All Rights Reserved.</p>
         </div>
     </footer>
 
-    <script src="script.js?v=4"></script>
+
+    <script src="script.js?v=2"></script>
+ 
 </body>
 </html>
