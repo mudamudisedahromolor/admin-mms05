@@ -499,28 +499,20 @@ body {
         color: #ffffff !important;
     }
   
-        .main-navbar { display: none; padding: 5px 0; width: 100%; flex-direction: column; align-items: stretch; background-color: #1a252f; }
-    .main-navbar.aktif { display: flex; }
+    .main-navbar { display: none; padding: 5px 0; width: 100%; flex-direction: column; align-items: stretch; background-color: #1a252f; } 
+    .main-navbar.aktif { 
+        display: flex !important; 
+        flex-direction: column !important;
+        min-height: calc(100vh - 70px) !important; 
+    }
     .nav-list { flex-direction: column; }
     .nav-item a { border-bottom: 1px solid rgba(255,255,255,0.06); padding: 12px 20px; font-size: 13px; }
     
-    .submenu { position: static; box-shadow: none; padding-left: 15px; background-color: #2c3e50; }
+    .submenu { position: static; box-shadow: none; padding-left: 15px; background-color: #2c3e50; } 
 
-    .navbar-mobile-only { 
-        display: flex !important; 
-        flex-direction: column; 
-        padding: 15px 20px; 
-        background-color: #2c3e50; 
-        border-top: 1px solid rgba(255,255,255,0.1); 
-    }
-    .navbar-mobile-only .header-socials { justify-content: center; width: 100%; gap: 24px; }
-    .navbar-mobile-only .header-socials a { color: #ffffff !important; font-size: 18px; }
-
-    /* FIX PADDING GATEWAY: Menambahkan .login-page-wrapper agar elemen form login turun & tidak tertimbun */
     .finance-page-wrapper, .structure-page-wrapper, .gallery-page-wrapper, .hero-container, .login-page-wrapper { 
-        padding-top: 150px !important; 
+        padding-top: 140px !important; 
     }
-
 
     .content-box, .content-box-structure, .content-box-gallery { padding: 20px; width: 95%; }
     .box-title { font-size: 22px !important; }
