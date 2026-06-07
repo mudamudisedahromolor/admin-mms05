@@ -500,10 +500,20 @@ body {
     }
   
     .main-navbar { display: none; padding: 5px 0; width: 100%; flex-direction: column; align-items: stretch; background-color: #1a252f; } 
+    /* KODE BARU: Menu kembali ringkas dan membungkus pas di bawah menu */
     .main-navbar.aktif { 
-        display: flex !important; 
-        flex-direction: column !important;
-        min-height: calc(100vh - 70px) !important; 
+        display: block !important; 
+        height: auto !important;
+    }
+
+    /* Menata ulang container sosial media mobile agar pas di bawah menu terakhir */
+    .navbar-mobile-only {
+        display: block !important;
+        width: 100%;
+        padding: 15px 0;
+        margin-top: 10px; /* Jarak pas di bawah menu Ruang Literasi */
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        background-color: #11181f; 
     }
     .nav-list { flex-direction: column; }
     .nav-item a { border-bottom: 1px solid rgba(255,255,255,0.06); padding: 12px 20px; font-size: 13px; }
