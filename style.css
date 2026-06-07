@@ -1148,3 +1148,40 @@ body.login-page-body .login-page-wrapper {
         flex-direction: column;
     }
 }
+
+/* ==========================================================================
+   14. FIX OVERRIDE: SOSIAL MEDIA MOBILE & FLEXBOX NAVBAR
+   ========================================================================== */
+@media screen and (max-width: 768px) {
+    .navbar-mobile-only {
+        display: block !important;
+        width: 100%;
+        margin-top: auto; 
+        padding: 20px 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        background-color: #11181f; 
+    }
+
+    .navbar-mobile-only .header-socials {
+        display: flex !important;
+        justify-content: center !important;
+        gap: 20px !important;
+    }
+
+    .navbar-mobile-only .header-socials a {
+        color: rgba(255, 255, 255, 0.8) !important;
+        font-size: 20px !important;
+        border: none !important;
+        padding: 5px !important;
+    }
+    
+    .navbar-mobile-only .header-socials a:hover {
+        color: #E53935 !important; 
+    }
+
+    .main-navbar.aktif {
+        display: flex !important;
+        flex-direction: column !important;
+        min-height: calc(100vh - 70px) !important; 
+    }
+}
