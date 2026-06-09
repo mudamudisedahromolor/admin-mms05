@@ -1,428 +1,120 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Broadcast Undangan MMS</title>
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <style>
-        /* ==========================================================================
-           RESET DASAR & SINKRONISASI CSS WEB UTAMA
-           ========================================================================== */
-        * { 
-            margin: 0; 
-            padding: 0; 
-            box-sizing: border-box; 
-        }
-
-        body { 
-            font-family: 'Poppins', sans-serif; 
-            background-color: #f4f4f4; 
-        }
-
-        /* HEADER & NAVBAR (SAMA PERSIS DENGAN WEB UTAMA) */
-        .site-header { 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            z-index: 1000; 
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2); 
-        }
-
-        .top-header { 
-            background-color: #fff; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            padding: 10px 40px; 
-        }
-
-        .header-logo-area { 
-            display: flex; 
-            align-items: center; 
-            gap: 12px; 
-        }
-
-        .logo-wrapper {
-            text-decoration: none; 
-            color: inherit; 
-            display: flex; 
-            align-items: center; 
-            gap: 12px; 
-        }
-
-        .mini-logo { 
-            width: 45px; 
-            height: auto; 
-        }
-
-        .header-text { 
-            display: flex; 
-            flex-direction: column; 
-        }
-
-        .brand-title { 
-            color: #333; 
-            font-weight: bold; 
-            font-size: 18px; 
-            letter-spacing: 0.5px; 
-        }
-
-        .brand-subtitle { 
-            color: #666; 
-            font-size: 13px; 
-        }
-
-        .main-navbar { 
-            background-color: #E53935; 
-            padding: 0 40px; 
-        }
-
-        .nav-list { 
-            display: flex; 
-            list-style: none; 
-        }
-
-        .nav-item a { 
-            display: block; 
-            padding: 14px 20px; 
-            color: #fff; 
-            text-decoration: none; 
-            font-weight: bold; 
-            font-size: 14px; 
-        }
-
-        /* AREA KONTEN (MENGGUNAKAN LAYOUT PUTIH WEB UTAMA) */
-        .finance-page-wrapper { 
-            padding-top: 100px; 
-            padding-bottom: 60px; 
-            display: flex; 
-            justify-content: center; 
-        }
-
-        .content-box {
-            position: relative; 
-            z-index: 2; 
-            background-color: #ffffff;
-            width: 95%; 
-            max-width: 800px; 
-            padding: 40px 50px; 
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2); 
-            text-align: left;
-            color: #333333; 
-            margin: 0 auto;
-        }
-
-        .box-title {
-            color: #E53935 !important; 
-            font-size: 28px !important; 
-            margin-bottom: 15px !important;
-            text-align: center; 
-            text-shadow: none !important;
-            font-weight: 700;
-        }
-
-        .box-divider {
-            border: 0; 
-            height: 3px; 
-            background-color: #E53935; 
-            width: 60px;
-            margin: 0 auto 30px auto; 
-            border-radius: 2px;
-        }
-
-        /* STYLING ELEMEN FORM INPUT APPS SCRIPT */
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        .input-label { 
-            display: block; 
-            font-weight: bold; 
-            margin-bottom: 8px; 
-            color: #555; 
-            font-size: 14px; 
-        }
-        
-        .form-input { 
-            width: 100%; 
-            padding: 12px 15px; 
-            border: 1px solid #ccc; 
-            border-radius: 8px; 
-            font-family: 'Poppins', sans-serif; 
-            font-size: 14px; 
-            outline: none; 
-            box-sizing: border-box;
-            transition: 0.2s;
-        }
-        
-        .form-input:focus { 
-            border-color: #E53935; 
-        }
-
-        .btn-kirim { 
-            background-color: #E53935; 
-            color: white; 
-            border: none; 
-            padding: 14px 20px; 
-            border-radius: 8px; 
-            cursor: pointer; 
-            font-weight: bold; 
-            font-family: 'Poppins', sans-serif;
-            font-size: 15px; 
-            width: 100%;
-            transition: background-color 0.2s;
-        }
-        
-        .btn-kirim:hover { 
-            background-color: #C62828; 
-        }
-
-        /* TABEL BROADCAST WA */
-        .table-responsive { 
-            width: 100%; 
-            overflow-x: auto; 
-            margin-top: 30px;
-            display: none;
-        }
-        
-        .finance-table { 
-            width: 100%; 
-            border-collapse: collapse; 
-            text-align: left; 
-            font-size: 14px; 
-        }
-        
-        .finance-table th { 
-            background-color: #E53935; 
-            color: white; 
-            padding: 12px 15px; 
-            white-space: nowrap; 
-        }
-        
-        .finance-table td { 
-            padding: 12px 15px; 
-            border-bottom: 1px solid #eee; 
-        }
-        
-        .finance-table tr:nth-child(even) { 
-            background-color: #fafafa; 
-        }
-
-        .btn-wa-aksi {
-            background-color: #25D366;
-            color: white;
-            text-decoration: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-weight: bold;
-            font-size: 12px;
-            display: inline-block;
-            transition: background-color 0.2s;
-        }
-
-        .btn-wa-aksi:hover {
-            background-color: #128C7E;
-        }
-        
-        #status-notif { 
-            padding: 15px; 
-            border-radius: 8px; 
-            margin-top: 20px; 
-            text-align: center; 
-            display: none; 
-            font-weight: bold; 
-            font-size: 14px;
-        }
-        
-        .notif-sukses { 
-            background-color: #d4edda; 
-            color: #155724; 
-            border: 1px solid #c3e6cb;
-        }
-
-        /* RESPONSIVE HEADERS UNTUK LAYAR HP */
-        @media screen and (max-width: 768px) {
-            .top-header { flex-direction: column; padding: 15px 20px; text-align: center; }
-            .header-logo-area { margin-bottom: 0px; }
-            .main-navbar { padding: 0 10px; }
-            .nav-list { justify-content: center; }
-            .finance-page-wrapper { padding-top: 190px; }
-            .content-box { padding: 25px; width: 95%; }
-            .box-title { font-size: 22px !important; }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel Admin Eksternal - Broadcast MMS 05</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background-color: #f4f6f9; color: #333; padding: 30px 15px; }
+    .container { max-width: 750px; margin: 0 auto; background: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border-top: 5px solid #D32F2F; }
+    .header { text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid #eee; }
+    .header h1 { color: #D32F2F; font-size: 1.8rem; margin-bottom: 5px; }
+    .header p { color: #666; font-size: 0.95rem; }
+    .form-group { margin-bottom: 22px; }
+    .form-group label { display: block; font-weight: 600; margin-bottom: 8px; color: #444; font-size: 0.95rem; }
+    .form-group label i { margin-right: 6px; color: #D32F2F; }
+    input[type="text"], textarea { width: 100%; padding: 12px 15px; border: 1px solid #ccc; border-radius: 6px; font-size: 1rem; transition: all 0.3s ease; background-color: #fafafa; }
+    input[type="text"]:focus, textarea :focus { border-color: #D32F2F; background-color: #fff; box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.1); outline: none; }
+    textarea { resize: vertical; min-height: 180px; font-family: inherit; line-height: 1.5; }
+    .btn-kirim { display: block; width: 100%; background: #D32F2F; color: white; border: none; padding: 14px; font-size: 1.1rem; font-weight: bold; border-radius: 6px; cursor: pointer; transition: background 0.2s; text-align: center; }
+    .btn-kirim:hover { background: #b71c1c; }
+    .btn-kirim:disabled { background: #999; cursor: not-allowed; }
+    #status-notif { margin-top: 20px; padding: 15px; border-radius: 6px; font-weight: 600; text-align: center; display: none; }
+    .sukses { background-color: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
+    .gagal { background-color: #ffebee; color: #c62828; border: 1px solid #ffcdd2; }
+    .loading { background-color: #e3f2fd; color: #0d47a1; border: 1px solid #bbdefb; }
+    .tips { background: #fff8e1; border-left: 4px solid #ffb300; padding: 12px; margin-bottom: 25px; border-radius: 0 4px 4px 0; font-size: 0.88rem; color: #b78103; }
+  </style>
 </head>
-<body> 
+<body>
+
+<div class="container">
+  <div class="header">
+    <h1><i class="fa-solid fa-paper-plane"></i> Broadcast Undangan Rapat</h1>
+    <p>Panel Admin Eksternal - Muda Mudi Sedahromo Lor 05</p>
+  </div>
+
+  <div class="tips">
+    <strong><i class="fa-solid fa-lightbulb"></i> Info Eksternal:</strong> File HTML ini berjalan mandiri di luar Apps Script dan menembak data langsung ke server Google secara aman.
+  </div>
+
+  <div class="form-group">
+    <label for="subjek"><i class="fa-solid fa-envelope-open-text"></i> Perihal / Subjek Email</label>
+    <input type="text" id="subjek" placeholder="Contoh: Undangan Pertemuan Rutin Bulanan Karang Taruna">
+  </div>
+
+  <div class="form-group">
+    <label for="pesan"><i class="fa-solid fa-file-lines"></i> Inti Isi Surat / Pengumuman</label>
+    <textarea id="pesan" placeholder="Tulis rincian acara di sini...&#10;Hari: ...&#10;Jam: ...&#10;Tempat: ..."></textarea>
+  </div>
+
+  <button class="btn-kirim" id="btnSend" onclick="kirimEmailEksternal()"><i class="fa-solid fa-share-from-square"></i> Kirim Undangan Massal</button>
+
+  <div id="status-notif"></div>
+</div>
+
+<script>
+  function kirimEmailEksternal() {
+    // ⚠️ MASUKKAN URL WEB APP GOOGLE APPS SCRIPT HASIL NEW DEPLOYMENT KAMU DI SINI
+    const API_URL_MMS = "https://script.google.com/macros/s/AKfycbwJsN2EjXYhQgF8lyS574CtQoH5NpAJ65kQm7e9UdAwdqSwuYaSShPsWsjC8e1z85zQ/exec";
+
+    var subjek = document.getElementById("subjek").value.trim();
+    var pesan = document.getElementById("pesan").value.trim();
+    var btn = document.getElementById("btnSend");
+    var notif = document.getElementById("status-notif");
     
-       <header class="site-header">
-        <div class="top-header">
-            <div class="header-logo-area">
-                <a href="https://mudamudisedahromolor.github.io/website/admin" class="logo-wrapper">
-                  <img src="<img src="<img src="https://docs.google.com/uc?export=view&id=1UP7auwgTYVVNU6GUyhH8U_gdhLaOt_15" alt="Logo MMS" class="mini-logo">" alt="Logo MMS" class="mini-logo">" alt="Logo MMS" class="mini-logo">
-                    <div class="header-text">
-                        <span class="brand-title">MUDA MUDI</span>
-                        <span class="brand-subtitle">Sedahromo Lor 05</span>
-                    </div>
-                </a>
-            </div>
-        </div> 
-    <nav class="main-navbar">
-        
-            <ul class="nav-list">
-                <li class="nav-item"><a href="admin.html">BERANDA</a></li>
-                
-                <li class="nav-item">
-                    <a href="#">BENDAHARA</a>
-                    <ul class="submenu">
-                        <li class="submenu-item"><a href="catat-cashflow.html">  - INPUT CASHFLOW</a></li>
-                        <li class="submenu-item"><a href="input-kas.html">  - INPUT KAS BULANAN</a></li>
-                    </ul>
-                </li>
-                
-                <li class="nav-item">
-                    <a href="#">SEKRETARIS</a>
-                    <ul class="submenu">
-                        <li class="submenu-item"><a href="form-hasilrapat">  - INPUT NOTULEN</a></li>
-                        <li class="submenu-item"><a href="form-anggota.html">  - INPUT BIODATA</a></li>
-                    </ul>
-                </li>
-                
-                <li class="nav-item">
-                    <a href="#">MEDIA & HUMAS</a>
-                    <ul class="submenu">
-                        <li class="submenu-item"><a href="upload-dokumentasi.html">  - INPUT DOKUMENTASI</a></li>
-                        <li class="submenu-item"><a href="https://script.google.com/macros/library/d/1I6LEQGlm_weJMhjY4bj_5wdnMQQy_fYCsPOryUzADr4XWc8N5YxzVrtQ/2">  - INPUT UNDANGAN</a></li>
-                    </ul>
-                </li>
-                
-                <li class="nav-item">
-                    <a href="#">TOOLS</a>
-                    <ul class="submenu">
-                        <li class="submenu-item"><a href="admin-lomba.html"> - GENERATOR LOMBA</a></li>
-                        <li class="submenu-item"><a href="input-ebook.html"> - INPUT EBOOK</a></li>
-                    </ul>
-                </li>
+    if (subjek === "" || pesan === "") {
+      alert("Harap isi Subjek dan Isi Pesan terlebih dadaulu!");
+      return;
+    }
+    
+    if (!confirm("Konfirmasi: Kirim email undangan massal ke seluruh anggota?")) {
+      return;
+    }
+    
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memproses Pengiriman...';
+    notif.className = "loading";
+    notif.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Menghubungi server Google dan menyebarkan email email undangan...';
+    notif.style.display = "block";
 
-            <li>
-               <div class="navbar-mobile-only">
-                  <div class="header-socials">
-                            <a href="#" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
-                            <a href="#" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
-                            <a href="#" title="Facebook"><i class="fa-brands fa-facebook"></i></a>
-                            <a href="https://www.tiktok.com/@mudamudisedahromolor05?is_from_webapp=1&sender_device=pc" title="TikTok"><i class="fa-brands fa-tiktok"></i></a>
-                    </div>
-               </div>
-            </li>
-            </ul> 
-        </nav>
-    </header>
+    // Menyusun payload data kiriman berbentuk JSON POST
+    let payload = {
+      aksi: "broadcastEmail",
+      subjek: subjek,
+      pesan: pesan
+    };
 
-    <div class="finance-page-wrapper">
-        <div class="content-box">
-            <h2 class="box-title">KIRIM UNDANGAN MASSAL</h2>
-            <hr class="box-divider">
-            
-            <p style="text-align: center; margin-bottom: 30px; font-size: 14px; color: #666;">
-                 Satu form untuk broadcast email otomatis ke seluruh anggota & menyiapkan asisten link WhatsApp.
-            </p>
+    // Melakukan eksekusi tembakan HTTP POST API murni bebas hambatan cors
+    fetch(API_URL_MMS, {
+      method: "POST",
+      body: JSON.stringify(payload)
+    })
+    .then(response => response.json())
+    .then(res => {
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fa-solid fa-share-from-square"></i> Kirim Undangan Massal';
+      
+      if(res.status === 'success') {
+        notif.className = "sukses";
+        notif.innerHTML = '<i class="fa-solid fa-circle-check"></i> ' + res.message;
+        document.getElementById("subjek").value = "";
+        document.getElementById("pesan").value = "";
+      } else {
+        notif.className = "gagal";
+        notif.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Gagal: ' + res.message;
+      }
+    })
+    .catch(err => {
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fa-solid fa-share-from-square"></i> Kirim Undangan Massal';
+      notif.className = "gagal";
+      notif.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Terjadi gangguan koneksi internet atau URL API salah.';
+    });
+  }
+</script>
 
-            <div class="form-group">
-                <label class="input-label">Subjek / Perihal Undangan:</label>
-                <input type="text" id="subjek" class="form-input" placeholder="Contoh: Undangan Pertemuan Rutin Pemuda">
-            </div>
-
-            <div class="form-group">
-                <label class="input-label">Isi Pesan Undangan:</label>
-                <textarea id="pesan" class="form-input" style="height: 160px; resize: vertical;" placeholder="Tulis rincian lengkap acara (Hari, Tanggal, Jam, Lokasi, Agenda)..."></textarea>
-            </div>
-
-            <button class="btn-kirim" onclick="prosesBroadcast()">
-                <i class="fa-solid fa-paper-plane"></i> JALANKAN BROADCAST SEKARANG
-            </button>
-
-            <div id="status-notif"></div>
-
-            <div class="table-responsive" id="areaTabelWa">
-                <table class="finance-table" style="text-align: center;">
-                    <thead>
-                        <tr>
-                            <th style="text-align: left; padding-left: 20px;">NAMA ANGGOTA</th>
-                            <th style="width: 200px; text-align: center;">AKSI KIRIM WA</th>
-                        </tr>
-                    </thead>
-                    <tbody id="listTargetWa">
-                        </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-            
-    <script>
-        let dataAnggota = [];
-
-        // Tarik data nama, wa, dan email dari spreadsheet sesaat setelah halaman termuat
-        window.onload = function() {
-            google.script.run.withSuccessHandler(function(hasil) {
-                dataAnggota = hasil;
-            }).ambilDataAnggota();
-        };
-
-        function prosesBroadcast() {
-            const subjek = document.getElementById('subjek').value;
-            const pesan = document.getElementById('pesan').value;
-            const notif = document.getElementById('status-notif');
-            
-            if(!subjek || !pesan) {
-                alert("Harap isi Subjek dan Isi Pesan undangan terlebih dahulu!");
-                return;
-            }
-
-            notif.style.display = "block";
-            notif.className = "notif-sukses";
-            notif.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> Sedang memproses pengiriman email otomatis ke seluruh pengurus & anggota...";
-
-            let listEmail = dataAnggota.map(a => a.email);
-
-            // Tembak fungsi kirim email massal di server Google
-            google.script.run.withSuccessHandler(function(jumlahTerkirim) {
-                notif.innerHTML = "<i class='fa-solid fa-circle-check'></i> Sukses! Email berhasil terkirim ke " + jumlahTerkirim + " anggota. Silakan lanjutkan broadcast via WhatsApp di bawah.";
-                tampilkanDaftarWa(pesan);
-            }).kirimEmailMassal(subjek, pesan, listEmail);
-        }
-
-        function tampilkanDaftarWa(pesanSekretaris) {
-            const tbody = document.getElementById('listTargetWa');
-            const containerTabel = document.getElementById('areaTabelWa');
-            const teksWaEncoded = encodeURIComponent(pesanSekretaris);
-            
-            tbody.innerHTML = "";
-            
-            dataAnggota.forEach(function(item) {
-                // Ekstraksi nomor WhatsApp dari link di Kolom B
-                let nomorHp = item.linkWa.split("phone=")[1];
-                let linkFinal = "https://api.whatsapp.com/send?phone=" + nomorHp + "&text=" + teksWaEncoded;
-
-                let row = `<tr>
-                    <td style="text-align: left; padding-left: 20px; font-weight: 600; color: #333;">
-                        <i class="fa-solid fa-user" style="color:#E53935; margin-right:8px; font-size: 13px;"></i> ${item.nama}
-                    </td>
-                    <td style="text-align: center;">
-                        <a href="${linkFinal}" target="_blank" class="btn-wa-aksi">
-                            <i class="fa-brands fa-whatsapp"></i> KIRIM WA
-                        </a>
-                    </td>
-                </tr>`;
-                tbody.innerHTML += row;
-            });
-
-            containerTabel.style.display = "block";
-            
-            // Berikan efek scroll halus otomatis mengarah ke tabel daftar nama target
-            setTimeout(() => { containerTabel.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 100);
-    </script> 
 </body>
 </html>
